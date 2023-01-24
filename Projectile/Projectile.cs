@@ -1,0 +1,134 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Drawing;
+using System.Drawing.Drawing2D;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using System.Windows;
+using System.Windows.Input;
+using Foundation;
+using CirclePrefect;
+using cotf.Base;
+using cotf.World;
+
+namespace cotf
+{
+    public class Projectile : Entity
+    {
+        public Lamp light;
+        public int timeLeft;
+        public float angle;
+        public override Vector2 Center => new Vector2(X - width / 2, Y - height / 2);
+        public Projectile()
+        {
+            SetDefaults();
+        }
+        public virtual void SetDefaults()
+        {
+        }
+        protected virtual void Init()
+        {
+            SetDefaults();
+            color = defaultColor;
+        }
+        public virtual void AI()
+        {
+            if (!active)
+                return;
+            Collide();
+            foreach (Npc n in Main.npc)
+            {
+                if (n == null || !n.active || !n.InProximity(this, 200f))
+                    continue;
+                HitNPC(n);
+            }
+        }
+        public virtual void HitPlayer(Player player)
+        {
+        }
+        public virtual void HitNPC(Npc npc)
+        {
+        }
+        public virtual void Draw(Graphics graphics)
+        {
+        }
+        public virtual void Collide()
+        {
+        }
+        public static int NewProjectile(Vector2 position, Vector2 velocity, float angle, short type, Entity parent)
+        {
+            int num = Main.projectile.Length - 1;
+            for (int i = 0; i < Main.projectile.Length; i++)
+            {
+                if (Main.projectile[i] == null || !Main.projectile[i].active)
+                {
+                    num = i;
+                    break;
+                }
+            }
+            newObj(num, type);
+            Main.projectile[num].active = true;
+            Main.projectile[num].position = position;
+            Main.projectile[num].velocity = velocity;
+            Main.projectile[num].type = type;
+            Main.projectile[num].whoAmI = num;
+            Main.projectile[num].owner = parent.owner;
+            Main.projectile[num].angle = angle;
+            Main.projectile[num].Init();
+            return num;
+        }
+        private static void newObj(int index, int type)
+        {
+            switch (type)
+            {
+                case ProjectileID.Fireball:
+                    Main.projectile[index] = new Proj_Fireball();
+                    break;
+                case ProjectileID.FireBolt:
+                    Main.projectile[index] = new Proj_Firebolt();
+                    break;
+                case ProjectileID.Arrow:
+                    Main.projectile[index] = new Proj_Arrow();
+                    break;
+            }
+        }
+        public static int NewProjectile(float x, float y, float velX, float velY, float angle, short type, Entity parent)
+        {
+            int num = Main.projectile.Length - 1;
+            for (int i = 0; i < Main.projectile.Length; i++)
+            {
+                if (Main.projectile[i] == null || !Main.projectile[i].active)
+                {
+                    num = i;
+                    break;
+                }
+            }
+            newObj(num, type);
+            Main.projectile[num].active = true;
+            Main.projectile[num].position = new Vector2(x, y);
+            Main.projectile[num].velocity = new Vector2(velX, velY);
+            Main.projectile[num].type = type;
+            Main.projectile[num].whoAmI = num;
+            Main.projectile[num].owner = parent.owner;
+            Main.projectile[num].angle = angle;
+            Main.projectile[num].Init();
+            return num;
+        }
+        public override void Dispose()
+        {
+            Main.projectile[whoAmI].active = false;
+            Main.projectile[whoAmI].position = Vector2.Zero;
+            Main.projectile[whoAmI].light?.Dispose();
+            Main.projectile[whoAmI] = null;
+        }
+    }
+    public sealed class ProjectileID
+    {
+        public const short
+            None = 0,
+            Fireball = 1,
+            FireBolt = 2,
+            Arrow = 3;
+    }
+}
