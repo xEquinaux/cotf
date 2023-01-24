@@ -128,7 +128,7 @@ namespace cotf
                 {
                     SetQuality(buffered.Graphics, new System.Drawing.Rectangle(0, 0, _bounds.Width, _bounds.Height));
                     buffered.Graphics.Clear(System.Drawing.Color.CornflowerBlue);
-                    { 
+                    {
                         this.Camera(buffered.Graphics, CAMERA);
                         this.PreDraw(buffered.Graphics);
                         this.Draw(buffered.Graphics);
