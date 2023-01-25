@@ -10,6 +10,7 @@ using System.Drawing.Imaging;
 using System.IO;
 using System.Drawing.Drawing2D;
 using System.Drawing.Text;
+using System.Linq;
 using cotf.Assets;
 using cotf.Base;
 
@@ -128,7 +129,7 @@ namespace cotf
 
         protected override void Draw(GameTime gameTime)
         {
-            GC.TryStartNoGCRegion(4096000);
+            GC.TryStartNoGCRegion(6096000);
             using (Bitmap bmp = new Bitmap(_bounds.Width, _bounds.Height))
             {
                 using (Graphics graphics = Graphics.FromImage(bmp))
@@ -149,6 +150,7 @@ namespace cotf
                     bmp.Save(stream, ImageFormat.Bmp);
                     Texture2D surface = Texture2D.FromStream(_graphicsMngr.GraphicsDevice, stream);
                     _spriteBatch.Draw(surface, Vector2.Zero, Color.White);
+                    surface.Dispose();
                 }
             }
             for (int i = 0; i < Main.background.GetLength(0); i++)
@@ -157,8 +159,8 @@ namespace cotf
                 {
                     var _t = Main.background[i, j];
                     if (_t != null && _t.active)
-                    { 
-                        EffectFog(_t, false, _t.discovered, _t.onScreen, _t.position, _t.Center, _spriteBatch, size: 25, range: 150f);
+                    {
+                        EffectFog(_t.onScreen, _t.position, _t.Center, _spriteBatch, size: 25, range: 150f);
                     }
                 }
             }
@@ -169,7 +171,7 @@ namespace cotf
                     var _t = Main.tile[i, j];
                     if (_t != null && _t.Active)
                     {
-                        EffectFog(_t, false, _t.discovered, _t.onScreen, _t.position, _t.Center, _spriteBatch, size: 25, range: 150f);
+                        EffectFog( _t.onScreen, _t.position, _t.Center, _spriteBatch, size: 25, range: 150f);
                     }
                 }
             }
@@ -177,7 +179,8 @@ namespace cotf
             { 
                 GC.EndNoGCRegion();
             }
-            catch (Exception e) { }
+            catch (Exception e) 
+            { }
             finally
             { 
                 base.Draw(gameTime);
@@ -193,7 +196,7 @@ namespace cotf
         }
 
         #region EFFECT
-        private void EffectFog(Entity ent, bool updating, bool lit, bool onScreen, CirclePrefect.Vector2 ent_Position, CirclePrefect.Vector2 ent_Center, SpriteBatch sb, float range = 100f, int size = 10, int scale = 3)
+        private void EffectFog(bool onScreen, CirclePrefect.Vector2 ent_Position, CirclePrefect.Vector2 ent_Center, SpriteBatch sb, float range = 100f, int size = 10, int scale = 3)
         {
             int x = (int)ent_Position.X - size + Main.ScreenX;
             int y = (int)ent_Position.Y - size + Main.ScreenY;
@@ -202,15 +205,22 @@ namespace cotf
             { 
                 for (int i = 0; i < 2; i++)
                 for (int j = 0; j < 2; j++)
-                sb.Draw(fog, new Rectangle(x + i * size, y + j * size, size * scale, size * scale), Color.Black * Math.Min(distance / (range * scale), 1f));
+                {
+                    float alpha = GetAlphaDynamic(ent_Center, Main.lamp.Concat(new Entity[] { Main.myPlayer }).ToArray(), range);
+                    sb.Draw(fog, new Rectangle(x + i * size, y + j * size, size * scale, size * scale), Color.Black * alpha); //Math.Min(distance / (range * scale), 1f)
+                }
             }
-            updating = false;
-
-            //  Comment out for fog of war
-            //if (!Main.myPlayer.hasTorch())
-            //{ 
-                //ent.discovered = lit = false;
-            //}
+        }
+        private float Range(CirclePrefect.Vector2 to, CirclePrefect.Vector2 from, float range = 100f)
+        {
+            return (float)Math.Min(Helper.Distance(from, to) / (range * 3f), 1f);
+        }
+        public float GetAlphaDynamic(CirclePrefect.Vector2 Center, Entity[] entity, float range = 100f)
+        {
+            var e = entity.TakeWhile(t=> t != null && t.active && t.onScreen);
+            if (e.Count() == 0) 
+                return Range(Main.myPlayer.Center, Center);
+            return Range(Center, e.OrderBy(t => t.Distance(Center)).First(t => t != null && t.active).Center, range);
         }
         #endregion
         #region events
