@@ -465,6 +465,7 @@ namespace cotf
                 graphics.DrawString(DateTime.Now.ToString(), System.Drawing.SystemFonts.DialogFont, Brushes.White, 0f, 0f);
             }
         }
+
         internal static double Distance(Vector2 start, Vector2 end)
         {
             return Math.Sqrt(Math.Pow(end.X - start.X, 2) + Math.Pow(end.Y - start.Y, 2));

@@ -11,6 +11,7 @@ using System.IO;
 using System.Drawing.Drawing2D;
 using System.Drawing.Text;
 using cotf.Assets;
+using cotf.Base;
 
 namespace cotf
 {
@@ -24,7 +25,7 @@ namespace cotf
             set { GraphicsDevice.Viewport = value; }
         }
         static BufferedGraphicsContext context = BufferedGraphicsManager.Current;
-
+        
         private int _portX => _viewport.X;
         private int _portY => _viewport.Y;
         private Rectangle _size => new Rectangle(0, 0, _bounds.Width, _bounds.Height);
@@ -36,6 +37,7 @@ namespace cotf
         public static Point Position => _position;
         public static Camera CAMERA = new Camera();
 
+        private Texture2D fog; 
         private Texture2D tile;
 
         public Game()
@@ -66,7 +68,7 @@ namespace cotf
         protected override bool BeginDraw()
         {
             GraphicsDevice.Clear(Color.CornflowerBlue);
-            _spriteBatch.Begin(SpriteSortMode.Texture, BlendState.NonPremultiplied);
+            _spriteBatch.Begin(SpriteSortMode.Immediate, BlendState.AlphaBlend);
             {
                 _position = Window.Position;
                 if (_oldBounds != _bounds || _oldPosition != _position)
@@ -93,6 +95,7 @@ namespace cotf
 
         protected override void LoadContent()
         {
+            this.fog = Content.Load<Texture2D>("fow");
             this.tile = Content.Load<Texture2D>("temp");
             LoadResources();
             {
@@ -144,10 +147,30 @@ namespace cotf
                 using (MemoryStream stream = new MemoryStream())
                 {
                     bmp.Save(stream, ImageFormat.Bmp);
-                    //if (!Main.mainMenu) 
-                    //    bmp.Save("_viewport.bmp", ImageFormat.Bmp);
                     Texture2D surface = Texture2D.FromStream(_graphicsMngr.GraphicsDevice, stream);
                     _spriteBatch.Draw(surface, Vector2.Zero, Color.White);
+                }
+            }
+            for (int i = 0; i < Main.background.GetLength(0); i++)
+            {
+                for (int j = 0; j < Main.background.GetLength(1); j++)
+                {
+                    var _t = Main.background[i, j];
+                    if (_t != null && _t.active)
+                    { 
+                        Effect_Fog(_t, false, _t.discovered, _t.onScreen, _t.position, _t.Center, _spriteBatch, size: 50);
+                    }
+                }
+            }
+            for (int i = 0; i < Main.tile.GetLength(0); i++)
+            {
+                for (int j = 0; j < Main.tile.GetLength(1); j++)
+                {
+                    var _t = Main.tile[i, j];
+                    if (_t != null && _t.Active)
+                    {
+                        Effect_Fog(_t, false, _t.discovered, _t.onScreen, _t.position, _t.Center, _spriteBatch, size: 50);
+                    }
                 }
             }
             try
@@ -168,7 +191,26 @@ namespace cotf
             this.Window.AllowUserResizing = true;
             this.Window.AllowAltF4 = false;
         }
-        
+
+        #region EFFECT
+        private void Effect_Fog(Entity ent, bool updating, bool lit, bool onScreen, CirclePrefect.Vector2 ent_Position, CirclePrefect.Vector2 ent_Center, SpriteBatch sb, float range = 100f, int size = 50, int scale = 3)
+        {
+            int x = (int)ent_Position.X - size + Main.ScreenX;
+            int y = (int)ent_Position.Y - size + Main.ScreenY;
+            float distance = (float)Main.myPlayer.Distance(ent_Center);
+            if (!ent.discovered && onScreen)
+            { 
+                sb.Draw(fog, new Rectangle(x, y, size * scale, size * scale), Color.Black * Math.Abs(Math.Min(range / distance, 1f) - 1f));
+            }
+            updating = false;
+
+            //  Comment out for fog of war
+            //if (!Main.myPlayer.hasTorch())
+            //{ 
+                //ent.discovered = lit = false;
+            //}
+        }
+        #endregion
         #region events
         public static event EventHandler<EventArgs> ResizeEvent;
         public static event EventHandler<InitializeArgs> InitializeEvent;
