@@ -25,6 +25,7 @@ namespace cotf
         }
         public override void SetDefaults()
         {
+            base.SetDefaults();
             skill = ScrollType();
             condition = new Condition(skill, 10);
             name = "Scroll of " + skill.toolTip.name;

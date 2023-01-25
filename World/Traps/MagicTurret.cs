@@ -10,10 +10,14 @@ namespace cotf.World.Traps
 {
     public class MagicTurret : Trap
     {
-        protected override void Init()
+        public override void SetDefaults()
         {
+            base.SetDefaults();
             name = "Magic Turret";
             damage = 10;
+        }
+        protected override void Init()
+        {
             elapse = 180;
         }
         public override void Update()

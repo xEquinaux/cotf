@@ -12,9 +12,13 @@ namespace cotf.World.Traps
 {
     internal class TrapDoor : Trap
     {
+        public override void SetDefaults()
+        {
+            base.SetDefaults();
+            name = "Trap Door";
+        }
         protected override void Init()
         {
-            name = "Trap Door";
         }
         public override void Update()
         {

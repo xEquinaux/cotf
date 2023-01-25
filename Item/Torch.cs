@@ -24,6 +24,7 @@ namespace cotf
         }
         public override void SetDefaults()
         {
+            base.SetDefaults();
             name = "Torch";
             width = 32;
             height = 32;

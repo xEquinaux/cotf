@@ -10,10 +10,14 @@ namespace cotf.World.Traps
 {
     public class AcidPatch : Trap
     {
-        protected override void Init()
+        public override void SetDefaults()
         {
             name = "Acid Patch";
             damage = 10;
+            base.SetDefaults();
+        }
+        protected override void Init()
+        {
         }
         public override void Update()
         {

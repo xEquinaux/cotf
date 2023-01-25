@@ -13,10 +13,14 @@ namespace cotf.World.Traps
     internal class RockFall : Trap
     {
         bool trip;
-        protected override void Init()
+        public override void SetDefaults()
         {
+            base.SetDefaults();
             name = "Rock Fall";
             damage = 20;
+        }
+        protected override void Init()
+        {
         }
         public override void Update()
         {

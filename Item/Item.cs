@@ -9,6 +9,7 @@ using CirclePrefect;
 using cotf.Base;
 using cotf.World;
 using cotf.Collections;
+using cotf.Assets;
 
 namespace cotf
 {
@@ -70,7 +71,6 @@ namespace cotf
         #endregion
         public Item()
         {
-            SetDefaults();
             SetToolTip();
             color = defaultColor;
         }
@@ -78,10 +78,11 @@ namespace cotf
             => toolTip = new ToolTip(name, text, color);
         public virtual void SetDefaults()
         {
+            texture = Asset<Image>.Request(TextureName);
+            preTexture = (Bitmap)texture;
         }
         protected virtual void Init()
         {
-            preTexture = (Bitmap)texture;
             ticks = MaxTicks;
         }
         public static void RollStatus(Item item)
@@ -435,7 +436,6 @@ namespace cotf
                     }
                     Main.item[num] = new Purse(value);
                     Main.item[num].value = value;
-                    Main.item[num].Init();
                     break;
                 case ItemID.IronCoin:
                     Main.item[num] = new IronCoin();
@@ -470,6 +470,8 @@ namespace cotf
                     Main.item[num] = new Item();
                     break;
             }
+            Main.item[num].TextureName = $"item{0}";
+            Main.item[num].SetDefaults();
             Main.item[num].active = true;
             Main.item[num].position = new Vector2(x, y);
             Main.item[num].width = width;

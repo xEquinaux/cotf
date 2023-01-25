@@ -25,6 +25,7 @@ namespace cotf
         }
         public override void SetDefaults()
         {
+            base.SetDefaults();
             skill = PotionEffect();
             condition = new Condition(skill, 10);
             name = "Potion of " + skill.toolTip.name;

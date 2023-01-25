@@ -6,6 +6,7 @@ using System.Drawing.Imaging;
 using System.IO;
 using Foundation;
 using CirclePrefect;
+using cotf.Assets;
 using cotf.Base;
 using cotf.World;
 using System.Threading.Tasks;

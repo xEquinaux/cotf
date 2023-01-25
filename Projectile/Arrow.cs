@@ -9,6 +9,7 @@ using System.Windows;
 using System.Windows.Input;
 using Foundation;
 using CirclePrefect;
+using cotf.Assets;
 using cotf.Base;
 using cotf.World;
 
@@ -26,10 +27,10 @@ namespace cotf
             height = 8;
             timeLeft = 600;
             defaultColor = Color.Brown;
+            base.SetDefaults();
         }
         protected override void Init()
         {
-            texture = Main.texture;
         }
         public override void AI()
         {

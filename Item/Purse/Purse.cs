@@ -28,6 +28,7 @@ namespace cotf
         }
         public override void SetDefaults()
         {
+            base.SetDefaults();
             purse = this;
             name = "Purse";
             width = 32;

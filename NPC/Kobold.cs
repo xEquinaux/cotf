@@ -18,6 +18,7 @@ namespace cotf
     {
         public override void SetDefaults()
         {
+            base.SetDefaults();
             name = "Kobold";
             width = 18;
             height = 32;

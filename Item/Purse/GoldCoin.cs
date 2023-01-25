@@ -17,6 +17,7 @@ namespace cotf
         public override ToolTip ToolTip => toolTip = new ToolTip(name, text, rarity);
         public override void SetDefaults()
         {
+            base.SetDefaults();
             name = "Gold Coin";
             value = 10000;
             isCoin = true;

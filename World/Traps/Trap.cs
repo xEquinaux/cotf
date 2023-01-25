@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
 using CirclePrefect;
+using cotf.Assets;
 using cotf.Base;
 using cotf.ID;
 
@@ -21,17 +22,18 @@ namespace cotf.World.Traps
         }
         public virtual void SetDefaults()
         {
+            TextureName = $"trap{0}";
+            texture = preTexture = Asset<Bitmap>.Request(TextureName);
         }
         protected virtual void Init()
         {
             lifeMax = life;
-            hostile = true;
-            damage = 1;
         }
         protected void _init()
         {
             defaultColor = Color.White;
             texture = Main.trapTexture[type];
+            texture = Asset<Image>.Request(TextureName);
             preTexture = (Bitmap)texture;
         }
         public virtual bool ItemHit(Item item)
@@ -119,6 +121,7 @@ namespace cotf.World.Traps
             Main.trap[num].solid = solid;
             Main.trap[num].owner = owner;
             Main.trap[num].type = type;
+            Main.trap[num].TextureName = $"trap{0}";
             Main.trap[num]._init();
             Main.trap[num].Init();
             Main.trap[num].SetDefaults();

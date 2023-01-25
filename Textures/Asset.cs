@@ -16,6 +16,7 @@ namespace cotf.Assets
             return (T)Bitmap.FromFile("./Textures/" + name + ".png");
         }
     }
+    /*
     sealed class Content<T> where T : Item
     {
         public static T Request(string name)
@@ -32,5 +33,5 @@ namespace cotf.Assets
         //    name = Assembly.GetExecutingAssembly().GetName().Name + "." + name;
         //    return Type.GetType(name) as T;
         //}
-    }
+    } */
 }

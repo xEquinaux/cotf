@@ -9,6 +9,7 @@ using System.Windows;
 using System.Windows.Input;
 using Foundation;
 using CirclePrefect;
+using cotf.Assets;
 using cotf.Base;
 using cotf.World;
 
@@ -26,6 +27,8 @@ namespace cotf
         }
         public virtual void SetDefaults()
         {
+            TextureName = $"projectile{0}";
+            texture = preTexture = Asset<Bitmap>.Request(TextureName);
         }
         protected virtual void Init()
         {

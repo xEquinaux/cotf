@@ -10,11 +10,15 @@ namespace cotf.World.Traps
 {
     public class FogMachine : Trap
     {
-        protected override void Init()
+        public override void SetDefaults()
         {
             name = "Fog Machine";
             width = 50;
-            height = 50;
+            height = 50; 
+            base.SetDefaults();
+        }
+        protected override void Init()
+        {
         }
         public override void Update()
         {

@@ -12,10 +12,14 @@ namespace cotf.World.Traps
 {
     internal class Spikes : Trap
     {
-        protected override void Init()
+        public override void SetDefaults()
         {
+            base.SetDefaults();
             name = "Spikes";
             damage = 10;
+        }
+        protected override void Init()
+        {
         }
         public override void Update()
         {

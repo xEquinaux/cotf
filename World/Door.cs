@@ -22,7 +22,7 @@ namespace cotf.World
         }
         private void Init()
         {
-            preTexture = new Bitmap(width, height);
+            texture = preTexture = new Bitmap(width, height);
             using (Graphics gfx = Graphics.FromImage(preTexture))
                 gfx.FillRectangle(Brushes.BurlyWood, new Rectangle(0, 0, width, height));
         }

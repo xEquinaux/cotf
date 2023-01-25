@@ -19,14 +19,19 @@ using CirclePrefect.Foundation.Ext;
 using Cursor = CirclePrefect.Foundation.Ext.Cursor;
 using Keyboard = Microsoft.Xna.Framework.Input.Keyboard;
 using Keys = Microsoft.Xna.Framework.Input.Keys;
+using Microsoft.Xna.Framework.Input;
 
 namespace cotf
 {
     internal class Main : Game
     {
+        internal static Main Instance;
         #region EVENTS
         internal Main()
         {
+            Instance = this;
+            UI.Button.ButtonClickEvent += Button_ButtonClickEvent;
+            return; //  Events might mess with multithreading
             Game.InitializeEvent += Program_InitializeEvent;
             Game.MainMenuEvent += Program_MainMenuEvent;
             Game.LoadResourcesEvent += Program_LoadResourcesEvent;
@@ -34,7 +39,6 @@ namespace cotf
             Game.DrawEvent += Program_DrawEvent;
             Game.UpdateEvent += Program_UpdateEvent;
             Game.CameraEvent += Program_CameraEvent;
-            UI.Button.ButtonClickEvent += Button_ButtonClickEvent;
         }
 
         private void Button_ButtonClickEvent(object sender, UI.ButtonEventArgs e)
@@ -62,24 +66,6 @@ namespace cotf
 
         private void Program_UpdateEvent(object sender, UpdateArgs e)
         {
-            if (myPlayer.KeyDown(Keys.Escape))
-            {
-                if (Main.KeyPressTimer == 0)
-                {
-                    Main.KeyPressTimer++;
-                    if (Main.open)
-                    {
-                        myPlayer.OpenInventory(false);
-                    }
-                }
-            }
-            else
-            {
-                Main.KeyPressTimer = 0;
-            }
-            if (myPlayer.KeyDown(Keys.Space))
-                mainMenu = false;
-            if (!mainMenu) Update();
         }
 
         private void Program_DrawEvent(object sender, DrawingArgs e)
@@ -89,8 +75,7 @@ namespace cotf
             //    
             //});
             //MainWindow.Instance.Buffer.Source = game.wpfSurface;
-            if (!mainMenu && PreDraw(e.graphics))
-                Draw(e.graphics);
+            
         }
 
         private void Program_PreDrawEvent(object sender, PreDrawArgs e)
@@ -100,7 +85,7 @@ namespace cotf
 
         private void Program_LoadResourcesEvent(object sender, EventArgs e)
         {
-            LoadResources();
+            //LoadResources();
         }
 
         private void Program_MainMenuEvent(object sender, DrawingArgs e)
@@ -115,6 +100,7 @@ namespace cotf
         }
         #endregion
         //private System.Windows.Forms.Form surface;
+        public static KeyboardState keyboard;
         internal static Image
             texture,
             texture90,
@@ -162,7 +148,7 @@ namespace cotf
         internal static Staircase[] staircase = new Staircase[6];
         internal static List<Floor> floor = new List<Floor>();
         //public static LitEffect[,] effect = new LitEffect[,] { };
-        internal static Graphics Graphics { get; private set; }
+        internal static Graphics Graphics { get; set; }
         internal static Color Mask => Color.FromArgb(0, 255, 0);
         int ticks, ticks2, ticks3;
         internal static bool open = false;
@@ -175,7 +161,7 @@ namespace cotf
             ScreenWidth,
             ScreenHeight;
         private static int screenX, screenY;
-        private static bool mainMenu = true;
+        internal static bool mainMenu = true;
         public static Stopwatch time;
         public static TimeSpan timeSpan;
         public static int
@@ -206,7 +192,6 @@ namespace cotf
         public static Font DefaultFont => System.Drawing.SystemFonts.DefaultFont;
         public void MainMenu(Graphics graphics)
         {
-            return;
             if (mainMenu)
             {
                 graphics.FillRectangle(Brushes.Black, new Rectangle(0, 0, ScreenWidth, ScreenHeight));
@@ -267,22 +252,6 @@ namespace cotf
             WorldObject.NewObject(myPlayer.position.X + Tile.Size, myPlayer.position.Y, 42, 42, true);
             #endregion
 
-        }
-        public void LoadResources()
-        {
-            bg = Bitmap.FromFile(@".\Textures\bg.png");
-            texture = Bitmap.FromFile(@".\Textures\temp.png");
-            texture90 = Bitmap.FromFile(@".\Textures\temp90.png");
-            pixel = Bitmap.FromFile(@".\Textures\pixel.png");
-            fow = Bitmap.FromFile(@".\Textures\fow.png");
-            fow50 = Bitmap.FromFile(@".\Textures\fow50.png");
-            square = Bitmap.FromFile(@".\Textures\background.png");
-            grass = Bitmap.FromFile(@".\Textures\small.png");
-            for (int i = 0; i < Main.trapTexture.Length; i++)
-            {
-                Main.trapTexture[i] = texture90;
-            }
-            Main.chainTexture[0] = Asset<Image>.Request("chain");
         }
         public void Camera(Camera camera)
         {

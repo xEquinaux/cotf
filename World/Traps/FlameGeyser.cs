@@ -21,6 +21,7 @@ namespace cotf.World.Traps
         {
             name = "Flame Geyser";
             damage = 1;
+            base.SetDefaults();
         }
         protected override void Init()
         {

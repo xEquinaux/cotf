@@ -14,11 +14,15 @@ namespace cotf.World.Traps
     public class WoodenCage : Trap
     {
         bool trip;
-        protected override void Init()
+        public override void SetDefaults()
         {
+            base.SetDefaults();
             name = "Wooden Cage";
             iFramesMax = 60;
             life = lifeMax = 50;
+        }
+        protected override void Init()
+        {
         }
         public override void Update()
         {

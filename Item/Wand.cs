@@ -26,6 +26,7 @@ namespace cotf
         }
         public override void SetDefaults()
         {
+            base.SetDefaults();
             skill = WandSkill();
             condition = new Condition(skill, 10);
             name = "Wand of " + skill.toolTip.name;

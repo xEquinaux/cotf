@@ -10,6 +10,7 @@ using System.Drawing.Imaging;
 using System.IO;
 using System.Drawing.Drawing2D;
 using System.Drawing.Text;
+using cotf.Assets;
 
 namespace cotf
 {
@@ -35,6 +36,8 @@ namespace cotf
         public static Point Position => _position;
         public static Camera CAMERA = new Camera();
 
+        private Texture2D tile;
+
         public Game()
         {
             _graphicsMngr = new GraphicsDeviceManager(this);
@@ -44,10 +47,10 @@ namespace cotf
 
         protected override void Initialize()
         {
+            new Main();
             _Initialize();
             { 
                 _bounds = new Size(800, 600);
-                new Main();
                 Settings();
             }
             base.Initialize();
@@ -62,8 +65,9 @@ namespace cotf
 
         protected override bool BeginDraw()
         {
+            GraphicsDevice.Clear(Color.CornflowerBlue);
             _spriteBatch.Begin(SpriteSortMode.Texture, BlendState.NonPremultiplied);
-            { 
+            {
                 _position = Window.Position;
                 if (_oldBounds != _bounds || _oldPosition != _position)
                 {
@@ -79,6 +83,7 @@ namespace cotf
         protected override void EndDraw()
         {
             _spriteBatch.End();
+            GraphicsDevice.Present();
         }
 
         protected override void UnloadContent()
@@ -88,6 +93,7 @@ namespace cotf
 
         protected override void LoadContent()
         {
+            this.tile = Content.Load<Texture2D>("temp");
             LoadResources();
             {
                 _viewport = new Viewport(_portX, _portY, 800, 600);
@@ -119,15 +125,14 @@ namespace cotf
 
         protected override void Draw(GameTime gameTime)
         {
-            GraphicsDevice.Clear(Color.CornflowerBlue);
-
+            GC.TryStartNoGCRegion(6144000);
             using (Bitmap bmp = new Bitmap(_bounds.Width, _bounds.Height))
             {
                 using (Graphics graphics = Graphics.FromImage(bmp))
                 using (BufferedGraphics buffered = context.Allocate(graphics, new System.Drawing.Rectangle(0, 0, _bounds.Width, _bounds.Height)))
                 {
                     SetQuality(buffered.Graphics, new System.Drawing.Rectangle(0, 0, _bounds.Width, _bounds.Height));
-                    buffered.Graphics.Clear(System.Drawing.Color.CornflowerBlue);
+                    graphics.Clear(System.Drawing.Color.CornflowerBlue);
                     {
                         this.Camera(buffered.Graphics, CAMERA);
                         this.PreDraw(buffered.Graphics);
@@ -139,12 +144,13 @@ namespace cotf
                 using (MemoryStream stream = new MemoryStream())
                 {
                     bmp.Save(stream, ImageFormat.Png);
-                    using (Texture2D surface = Texture2D.FromStream(_graphicsMngr.GraphicsDevice, stream))
-                    {
-                        _spriteBatch.Draw(surface, _size, Color.White);
-                    }
+                    //if (!Main.mainMenu) 
+                    //    bmp.Save("_viewport.bmp", ImageFormat.Bmp);
+                    Texture2D surface = Texture2D.FromStream(_graphicsMngr.GraphicsDevice, stream);
+                    _spriteBatch.Draw(surface, Vector2.Zero, Color.White);
                 }
             }
+            GC.EndNoGCRegion();
 
             base.Draw(gameTime);
         }
@@ -189,40 +195,75 @@ namespace cotf
         #region methods
         private void LoadResources()
         {
-            LoadResourcesEvent?.Invoke(this, new EventArgs());
+            Main.bg = Asset<Image>.Request("bg");
+            Main.texture = Asset<Image>.Request("temp");
+            Main.texture90 = Asset<Image>.Request("temp90");
+            Main.pixel = Asset<Image>.Request("pixel");
+            Main.fow = Asset<Image>.Request("fow");
+            Main.fow50 = Asset<Image>.Request("fow50");
+            Main.square = Asset<Image>.Request("background");
+            Main.grass = Asset<Image>.Request("small");
+            for (int i = 0; i < Main.trapTexture.Length; i++)
+            {
+                Main.trapTexture[i] = Main.texture90;
+            }
+            Main.chainTexture[0] = Asset<Image>.Request("chain");
         }
         private void _Initialize()
         {
-            InitializeEvent?.Invoke(this, new InitializeArgs());
+            Main.Instance.Initialize();
         }
         private void TitleScreen(Graphics graphics)
         {
-            MainMenuEvent?.Invoke(this, new DrawingArgs() 
-            { 
-                graphics = graphics
-            });
+            Main.Instance.MainMenu(graphics);
         }
         private void PreDraw(Graphics graphics)
         {
-            PreDrawEvent?.Invoke(this, new PreDrawArgs()
-            {
-                graphics = graphics
-            });
+            Main.Graphics = graphics;
         }
         private void Draw(Graphics graphics)
         {
-            DrawEvent?.Invoke(this, new DrawingArgs() 
-            { 
-                graphics = graphics
-            });
+            if (!Main.mainMenu && Main.Instance.PreDraw(graphics))
+                Main.Instance.Draw(graphics);
         }
         private void Update()
         {
-            UpdateEvent?.Invoke(this, new UpdateArgs());
+            Main.keyboard = Keyboard.GetState();
+            if (Main.myPlayer.KeyDown(Keys.Escape))
+            {
+                if (Main.KeyPressTimer == 0)
+                {
+                    Main.KeyPressTimer++;
+                    if (Main.open)
+                    {
+                        Main.myPlayer.OpenInventory(false);
+                    }
+                }
+            }
+            else
+            {
+                Main.KeyPressTimer = 0;
+            }
+            if (Main.myPlayer.KeyDown(Keys.Space))
+                Main.mainMenu = false;
+            if (!Main.mainMenu) Main.Instance.Update();
         }
         private void Camera(Graphics graphics, Camera CAMERA)
         {
-            CameraEvent?.Invoke(this, new CameraArgs() { graphics = graphics, CAMERA = CAMERA });
+            if (Main.camera1 == null || Main.mainMenu)
+                return;
+            Main.Instance.Camera(Main.camera1);
+            if (Main.camera1.follow && Main.camera1.isMoving)
+            {
+                Main.ScreenX = (int)-Main.camera1.position.X + Main.ScreenWidth / 2;
+                Main.ScreenY = (int)-Main.camera1.position.Y + Main.ScreenHeight / 2;
+            }
+            graphics.RenderingOrigin = new System.Drawing.Point((int)Main.camera1.position.X, (int)Main.camera1.position.Y);
+            graphics.TranslateTransform(
+                Main.ScreenX,
+                Main.ScreenY,
+                MatrixOrder.Append);
+            Main.camera1.oldPosition = Main.camera1.position;
         }
         #endregion
         #region quality settings

@@ -25,7 +25,7 @@ namespace cotf.World
         private void Init()
         {
             defaultColor = Color.Black;
-            preTexture = (Bitmap)Main.texture90;
+            texture = preTexture = (Bitmap)Main.texture90;
         }
         public override void Update()
         {

@@ -60,7 +60,7 @@ namespace cotf.World
             Bitmap bmp = new Bitmap(50, 50);
             using (Graphics gfx = Graphics.FromImage(bmp))
                 gfx.FillRectangle(Brushes.LightGray, new Rectangle(0, 0, 50, 50));
-            preTexture = bmp;
+            texture = preTexture = bmp;
 
             int num = Main.tile.Length - 1;
             for (int i = 0; i < Main.tile.GetLength(0); i++)

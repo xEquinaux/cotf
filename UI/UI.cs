@@ -8,6 +8,7 @@ using System.Windows;
 using System.Windows.Input;
 using Foundation;
 using CirclePrefect;
+using cotf.Assets;
 using cotf.Base;
 using cotf.World;
 using Keyboard = Microsoft.Xna.Framework.Input.Keyboard;
@@ -383,7 +384,7 @@ namespace cotf
         private bool flag;
         public new Rectangle hitbox => PlaceUI();
         public new Rectangle box => new Rectangle((int)anchor.X, (int)anchor.Y, width, height);
-        public Image image = Main.texture;
+        public Image image;
         public Vector2 mouseWorld => Main.MouseWorld;
         public Vector2 mouseScreen => Main.MouseScreen;
         public static bool showDateTime = false;
@@ -394,6 +395,7 @@ namespace cotf
             scale = 0.5f;
             width = 48;
             height = 48;
+            image = Asset<Image>.Request("temp");
         }
         public void Click()
         {

@@ -13,6 +13,7 @@ namespace cotf.Base
 {
     public class Entity : Object, IDisposable
     {
+        public string TextureName;
         public string Name => name;
         public string name = "";
         public string text = "";
@@ -80,6 +81,8 @@ namespace cotf.Base
         {
             if (!active)
                 return false;
+            if (preTexture == null)
+                preTexture = (Bitmap)texture;
             Background bg = Background.GetSafely((int)Center.X / Tile.Size, (int)Center.Y / Tile.Size);
             if (bg == null || !bg.active)
                 return false;

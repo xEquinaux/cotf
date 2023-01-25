@@ -17,10 +17,16 @@
     <None Remove="Textures\chain.png" />
     <None Remove="Textures\fow.png" />
     <None Remove="Textures\fow50.png" />
+    <None Remove="Textures\item0.png" />
+    <None Remove="Textures\loot0.png" />
+    <None Remove="Textures\npc1.png" />
     <None Remove="Textures\pixel.png" />
+    <None Remove="Textures\projectile0.png" />
+    <None Remove="Textures\scenery0.png" />
     <None Remove="Textures\small.png" />
     <None Remove="Textures\temp.png" />
     <None Remove="Textures\temp90.png" />
+    <None Remove="Textures\trap0.png" />
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="MonoGame.Framework.WindowsDX" Version="3.8.1.303" />
@@ -36,8 +42,14 @@
     <Resource Include="Textures\chain.png" />
     <Resource Include="Textures\fow.png" />
     <Resource Include="Textures\fow50.png" />
+    <Resource Include="Textures\scenery0.png" />
+    <Resource Include="Textures\loot0.png" />
+    <Resource Include="Textures\npc1.png" />
+    <Resource Include="Textures\projectile0.png" />
+    <Resource Include="Textures\trap0.png" />
     <Resource Include="Textures\pixel.png" />
     <Resource Include="Textures\small.png" />
+    <Resource Include="Textures\item0.png" />
     <Resource Include="Textures\temp.png" />
     <Resource Include="Textures\temp90.png" />
   </ItemGroup>

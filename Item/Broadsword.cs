@@ -23,6 +23,7 @@ namespace cotf
         }
         public override void SetDefaults()
         {
+            base.SetDefaults();
             name = "Broadsword";
             autoReuse = false;
             channel = false;

@@ -17,6 +17,10 @@ namespace cotf.World.Traps
         float range;
         float speed = 4f;
         int seconds = 3;
+        public override void SetDefaults()
+        {
+            base.SetDefaults();
+        }
         protected override void Init()
         {
             name = "Crossbow Turret";
@@ -28,7 +32,6 @@ namespace cotf.World.Traps
                 float angle = AngleTo(Main.myPlayer.Center);
                 Projectile.NewProjectile(Center, Helper.AngleToSpeed(angle, speed), angle, ProjectileID.Arrow, this);
             };
-            preTexture = (Bitmap)Main.texture;
         }
         public override void Update()
         {

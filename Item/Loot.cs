@@ -5,6 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using CirclePrefect;
+using cotf.Assets;
 using cotf.Base;
 using cotf.World;
 
@@ -16,6 +17,11 @@ namespace cotf
         public List<Item> pile = new List<Item>();
         public Loot()
         {
+        }
+        public void Init()
+        {
+            TextureName = "loot0";
+            texture = preTexture = Asset<Bitmap>.Request("loot0");
         }
         public override void Update()
         {
@@ -42,6 +48,7 @@ namespace cotf
             Main.loot[num].item = item.DeepClone(true);
             Main.loot[num].item.owner = 255;
             Main.loot[num].hidden = Main.rand.NextFloat() < 0.25f && item.type != ItemID.Torch;
+            Main.loot[num].Init();
             return Main.loot[num];
         }
         public static Loot NewPile(int x, int y, Item[] item)
@@ -64,6 +71,7 @@ namespace cotf
             Main.loot[num].height = 42;
             Main.loot[num].position = new Vector2(x, y);
             Main.loot[num].pile = item.ToList();
+            Main.loot[num].Init();
             return Main.loot[num];
         }
         public void Draw(Graphics graphics)
@@ -72,7 +80,7 @@ namespace cotf
                 return;
             if (pile.Count > 0)
             {
-                Drawing.LightmapHandling(Main.texture90, this, Main.Gamma, graphics);
+                Drawing.LightmapHandling(texture, this, Main.Gamma, graphics);
                 //  Original
                 //Drawing.DrawScale(Main.texture90, position, width, height, Color.Black, graphics, Drawing.SetColor(Color.LightYellow));
             }

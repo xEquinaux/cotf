@@ -9,6 +9,7 @@ using System.Windows;
 using System.Windows.Input;
 using Foundation;
 using CirclePrefect;
+using cotf.Assets;
 using cotf.Base;
 using cotf.World;
 
@@ -34,13 +35,15 @@ namespace cotf
         }
         public virtual void SetDefaults()
         {
+            TextureName = $"npc{type}";
+            texture = preTexture = Asset<Bitmap>.Request(TextureName);
         }
         protected virtual void Init()
         {
             switch (type)
             {
                 case NpcType.Kobold:
-                    texture = Main.texture;
+                    //texture = Main.texture;
                     break;
                 default:
                     break;
@@ -323,6 +326,7 @@ namespace cotf
             Main.npc[num].type = type;
             Main.npc[num].whoAmI = num;
             Main.npc[num].Init();
+            Main.npc[num].SetDefaults();
             return num;
         }
         public bool NpcSight(Entity target)

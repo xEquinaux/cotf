@@ -8,6 +8,7 @@ using System.Windows;
 using System.Windows.Input;
 using Foundation;
 using CirclePrefect.Objects;
+using cotf.Assets;
 using cotf.Base;
 using cotf.World;
 using System.Drawing.Imaging;
@@ -68,11 +69,12 @@ namespace cotf
         {
             width = 28;
             height = 42;
+            TextureName = "temp";
+            texture = preTexture = Asset<Bitmap>.Request(TextureName);
             statMana = statMaxMana;
             defaultColor = Color.Gray;
             iFramesMax = 60;
             color = defaultColor;
-            texture = Main.texture;
             //  Need to reorient draw init positions
             FindRandomTile();
             int item = Item.NewItem(X, Y, 32, 32, ItemID.Torch, (byte)this.whoAmI);
@@ -346,6 +348,8 @@ namespace cotf
         }
         public void Draw(Graphics graphics)
         {
+            if (texture == null)
+                return;
             //graphics.FillRectangle(Brushes.White, box);
             playerData?.Init(graphics);
             playerData?.Draw(graphics);
@@ -519,11 +523,11 @@ namespace cotf
         }
         public bool KeyUp(Keys key)
         {
-            return Keyboard.GetState().IsKeyUp(key);
+            return Main.keyboard.IsKeyUp(key);
         }
         public bool KeyDown(Keys key)
         {
-            return Keyboard.GetState().IsKeyDown(key);
+            return Main.keyboard.IsKeyDown(key);
         }
         public bool IsMoving()
         {

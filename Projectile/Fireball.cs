@@ -27,6 +27,7 @@ namespace cotf
             height = 8;
             timeLeft = 600;
             defaultColor = Color.Red;
+            base.SetDefaults();
         }
         protected override void Init()
         { 

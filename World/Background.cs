@@ -22,8 +22,11 @@ namespace cotf.World
         public Color color0 = Color.Black;
         public DoorFacing doorFace = DoorFacing.None;
         public List<Entity> ent = new List<Entity>();
+
         public Background(int i, int j, int size)
         {
+            name = "Background";
+            TextureName = "background";
             active = true;
             width = size + 1;
             height = size + 1;
@@ -38,8 +41,8 @@ namespace cotf.World
             //  Brush style texture init
             Bitmap bmp = new Bitmap(50, 50);
             using (Graphics gfx = Graphics.FromImage(bmp))
-                gfx.FillRectangle(Brushes.DarkGray, new Rectangle(0, 0, 50, 50));
-            preTexture = (Bitmap)Main.square;
+                gfx.FillRectangle(Brushes.Gray, new Rectangle(0, 0, 50, 50));
+            texture = preTexture = bmp;
         }
         private bool PreUpdate()
         {

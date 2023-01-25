@@ -70,7 +70,7 @@ namespace cotf.World
         }
         public void Draw(Graphics graphics)
         {
-            if (!active || !discovered)
+            if (!active || !discovered || texture == null)
                 return;
             graphics.DrawImage(texture, hitbox);
         }

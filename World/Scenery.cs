@@ -24,7 +24,8 @@ namespace cotf.World
         private void Init()
         {
             name = "Scenery";
-            preTexture = (Bitmap)Main.texture;
+            TextureName = "temp";
+            texture = preTexture = Assets.Asset<Bitmap>.Request(TextureName);
             foreach (Tile t in Main.tile)
             {
                 if (t.hitbox.IntersectsWith(hitbox))

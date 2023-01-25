@@ -37,6 +37,8 @@ namespace cotf
         }
         public static void PreProcessing()
         {
+            //  DEBUG: disabled for testing
+            return;
             for (int n = 0; n < Main.lamp.Length; n++)
             {
                 Lamp lamp = Main.lamp[n];
@@ -51,8 +53,6 @@ namespace cotf
                     {
                         if (Main.background[i, j] == null || !Main.background[i, j].active)
                             continue;
-                        if (Main.background[i, j].preTexture == null)
-                            Main.background[i, j].preTexture = (Bitmap)Main.square;
                         Main.background[i, j].preTexture = Drawing.Lightpass0(brush, Main.background[i, j].preTexture, Main.background[i, j].position, lamp, lamp.range);
                     }
                     //if (i % Main.background.GetLength(0) / 5 == 0)
