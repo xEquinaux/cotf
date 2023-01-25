@@ -65,7 +65,7 @@ namespace cotf.World
         {
             if (!active || !onScreen || !discovered)
             {
-                
+                alpha = 0f;
                 return;
             }
             if (alpha > 0f)

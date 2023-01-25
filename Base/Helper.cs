@@ -651,64 +651,70 @@ namespace cotf.Base
         public static Bitmap Lightpass0(List<Tile> brush, Bitmap bitmap, Vector2 topLeft, Lamp light, float range)
         {
             Bitmap layer0 = (Bitmap)bitmap.Clone();
-            Bitmap layer1 = new Bitmap(bitmap.Width, bitmap.Height);
-            for (int i = 0; i < bitmap.Width; i++)
-            {
-                for (int j = 0; j < bitmap.Height; j++)
+            using (Bitmap layer1 = new Bitmap(bitmap.Width, bitmap.Height))
+            { 
+                for (int i = 0; i < bitmap.Width; i++)
                 {
-                    float distance = (float)Helper.Distance(topLeft + new Vector2(i, j), light.position);
-                    float radius = Helper.NormalizedRadius(distance, range);
-                    if (radius > 0f && dynamic(brush, new Vector2(i, j), topLeft, light, range))
+                    for (int j = 0; j < bitmap.Height; j++)
                     {
-                        Color srcPixel = layer0.GetPixel(i, j);
-                        layer1.SetPixel(i, j, Ext.Multiply(srcPixel, light.lampColor, radius));
+                        float distance = (float)Helper.Distance(topLeft + new Vector2(i, j), light.position);
+                        float radius = Helper.NormalizedRadius(distance, range);
+                        if (radius > 0f && dynamic(brush, new Vector2(i, j), topLeft, light, range))
+                        {
+                            Color srcPixel = layer0.GetPixel(i, j);
+                            layer1.SetPixel(i, j, Ext.Multiply(srcPixel, light.lampColor, radius));
+                        }
                     }
                 }
+                using (Graphics gfx = Graphics.FromImage(layer0))
+                    gfx.DrawImage(layer1, new Rectangle(0, 0, bitmap.Width, bitmap.Height));
             }
-            using (Graphics gfx = Graphics.FromImage(layer0))
-                gfx.DrawImage(layer1, new Rectangle(0, 0, bitmap.Width, bitmap.Height));
             return layer0;
         }
         public static Bitmap Lightpass0(Bitmap bitmap, Vector2 topLeft, Lamp light, float range)
         {
             Bitmap layer0 = (Bitmap)bitmap.Clone();
-            Bitmap layer1 = new Bitmap(bitmap.Width, bitmap.Height);
-            for (int i = 0; i < bitmap.Width; i++)
-            {
-                for (int j = 0; j < bitmap.Height; j++)
+            using (Bitmap layer1 = new Bitmap(bitmap.Width, bitmap.Height))
+            { 
+                for (int i = 0; i < bitmap.Width; i++)
                 {
-                    float distance = (float)Helper.Distance(topLeft + new Vector2(i, j), light.position);
-                    float radius = Helper.NormalizedRadius(distance, range);
-                    if (radius > 0f)
+                    for (int j = 0; j < bitmap.Height; j++)
                     {
-                        Color srcPixel = layer0.GetPixel(i, j);
-                        layer1.SetPixel(i, j, Ext.Multiply(srcPixel, light.lampColor, radius));
+                        float distance = (float)Helper.Distance(topLeft + new Vector2(i, j), light.position);
+                        float radius = Helper.NormalizedRadius(distance, range);
+                        if (radius > 0f)
+                        {
+                            Color srcPixel = layer0.GetPixel(i, j);
+                            layer1.SetPixel(i, j, Ext.Multiply(srcPixel, light.lampColor, radius));
+                        }
                     }
                 }
+                using (Graphics gfx = Graphics.FromImage(layer0))
+                    gfx.DrawImage(layer1, new Rectangle(0, 0, bitmap.Width, bitmap.Height));
             }
-            using (Graphics gfx = Graphics.FromImage(layer0))
-                gfx.DrawImage(layer1, new Rectangle(0, 0, bitmap.Width, bitmap.Height));
             return layer0;
         }
         public static Bitmap Lightpass0(Bitmap bitmap, Lightmap map, Vector2 topLeft, Lamp light)
         {
             Bitmap layer0 = (Bitmap)bitmap.Clone();
-            Bitmap layer1 = new Bitmap(bitmap.Width, bitmap.Height);
-            for (int i = 0; i < bitmap.Width; i++)
-            {
-                for (int j = 0; j < bitmap.Height; j++)
+            using (Bitmap layer1 = new Bitmap(bitmap.Width, bitmap.Height))
+            { 
+                for (int i = 0; i < bitmap.Width; i++)
                 {
-                    float distance = (float)Helper.Distance(topLeft + new Vector2(i, j), light.position);
-                    float radius = Helper.NormalizedRadius(distance, light.range);
-                    if (radius > 0f)
+                    for (int j = 0; j < bitmap.Height; j++)
                     {
-                        Color srcPixel = layer0.GetPixel(i, j);
-                        layer1.SetPixel(i, j, Ext.Multiply(srcPixel, light.lampColor, radius));
+                        float distance = (float)Helper.Distance(topLeft + new Vector2(i, j), light.position);
+                        float radius = Helper.NormalizedRadius(distance, light.range);
+                        if (radius > 0f)
+                        {
+                            Color srcPixel = layer0.GetPixel(i, j);
+                            layer1.SetPixel(i, j, Ext.Multiply(srcPixel, light.lampColor, radius));
+                        }
                     }
                 }
+                using (Graphics gfx = Graphics.FromImage(layer0))
+                    gfx.DrawImage(layer1, new Rectangle(0, 0, bitmap.Width, bitmap.Height));
             }
-            using (Graphics gfx = Graphics.FromImage(layer0))
-                gfx.DrawImage(layer1, new Rectangle(0, 0, bitmap.Width, bitmap.Height));
             return layer0;
         }
         public static void LightmapHandling(Image texture, Entity ent, float gamma, Graphics graphics)
@@ -719,34 +725,38 @@ namespace cotf.Base
         }
         public static void TextureLighting(Image texture, Rectangle hitbox, Entity ent, float gamma, Graphics graphics)
         {
-            Bitmap bitmap = new Bitmap(ent.width, ent.height);
-            using (Graphics gfx = Graphics.FromImage(bitmap))
-            {
-                gfx.DrawImage(texture, new Rectangle(0, 0, ent.width, ent.height));
-                //graphics.DrawImage(bitmap, hitbox);                    
-                ent.colorTransform = Drawing.SetColor(Ext.AdditiveV2(ent.color, ent.defaultColor));
-                if (ent.inShadow)
+            using (Bitmap bitmap = new Bitmap(ent.width, ent.height))
+            { 
+                using (Graphics gfx = Graphics.FromImage(bitmap))
                 {
-                    ent.colorTransform.SetGamma(gamma);
+                    gfx.DrawImage(texture, new Rectangle(0, 0, ent.width, ent.height));
+                    //graphics.DrawImage(bitmap, hitbox);                    
+                    ent.colorTransform = Drawing.SetColor(Ext.AdditiveV2(ent.color, ent.defaultColor));
+                    if (ent.inShadow)
+                    {
+                        ent.colorTransform.SetGamma(gamma);
+                    }
+                    graphics.DrawImage(bitmap, hitbox, 0, 0, hitbox.Width, hitbox.Height, GraphicsUnit.Pixel, ent.colorTransform);
                 }
-                graphics.DrawImage(bitmap, hitbox, 0, 0, hitbox.Width, hitbox.Height, GraphicsUnit.Pixel, ent.colorTransform);
             }
         }
         public static void TextureLighting(Image texture, Rectangle hitbox, Entity ent, Graphics graphics)
         {
-            Bitmap bitmap = new Bitmap(ent.width, ent.height);
-            using (Graphics gfx = Graphics.FromImage(bitmap))
-            {
-                gfx.DrawImage(texture, new Rectangle(0, 0, ent.width, ent.height));
-                graphics.DrawImage(bitmap, hitbox);
-                if (ent.alpha > 0f)
+            using (Bitmap bitmap = new Bitmap(ent.width, ent.height))
+            { 
+                using (Graphics gfx = Graphics.FromImage(bitmap))
                 {
-                    ent.colorTransform = Drawing.SetColor(Ext.Multiply(Ext.NonAlpha(ent.color), ent.defaultColor), ent.alpha);
-                    if (ent.inShadow)
-                    { 
-                        ent.colorTransform.SetGamma(1.5f);
+                    gfx.DrawImage(texture, new Rectangle(0, 0, ent.width, ent.height));
+                    graphics.DrawImage(bitmap, hitbox);
+                    if (ent.alpha > 0f)
+                    {
+                        ent.colorTransform = Drawing.SetColor(Ext.Multiply(Ext.NonAlpha(ent.color), ent.defaultColor), ent.alpha);
+                        if (ent.inShadow)
+                        { 
+                            ent.colorTransform.SetGamma(1.5f);
+                        }
+                        graphics.DrawImage(bitmap, hitbox, 0, 0, hitbox.Width, hitbox.Height, GraphicsUnit.Pixel, ent.colorTransform);
                     }
-                    graphics.DrawImage(bitmap, hitbox, 0, 0, hitbox.Width, hitbox.Height, GraphicsUnit.Pixel, ent.colorTransform);
                 }
             }
             ent.alpha = 0f;
@@ -754,35 +764,39 @@ namespace cotf.Base
         }
         public static void TextureLighting(Image texture, Rectangle hitbox, Tile ent, Lightmap map, float gamma, Graphics graphics)
         {
-            Bitmap bitmap = new Bitmap(ent.width, ent.height);
-            using (Graphics gfx = Graphics.FromImage(bitmap))
-            {
-                gfx.DrawImage(texture, new Rectangle(0, 0, ent.width, ent.height));
-                graphics.DrawImage(bitmap, hitbox);
-                ent.colorTransform = Drawing.SetColor(Ext.Multiply(Ext.NonAlpha(map.color), map.DefaultColor));
-                if (ent.inShadow)
+            using (Bitmap bitmap = new Bitmap(ent.width, ent.height))
+            { 
+                using (Graphics gfx = Graphics.FromImage(bitmap))
                 {
-                    ent.colorTransform.SetGamma(gamma);
-                }
-                graphics.DrawImage(bitmap, hitbox, 0, 0, hitbox.Width, hitbox.Height, GraphicsUnit.Pixel, ent.colorTransform);
-            }
-            ent.color = map.DefaultColor;
-        }
-        public static void TextureLighting(Image texture, Rectangle hitbox, Lightmap map, Entity ent, float gamma, Graphics graphics)
-        {
-            Bitmap bitmap = new Bitmap(ent.width, ent.height);
-            using (Graphics gfx = Graphics.FromImage(bitmap))
-            {
-                gfx.DrawImage(texture, new Rectangle(0, 0, ent.width, ent.height));
-                graphics.DrawImage(bitmap, hitbox);
-                if (map.alpha > 0f)
-                {
-                    ent.colorTransform = Drawing.SetColor(Ext.AdditiveV2(Ext.NonAlpha(map.color), map.DefaultColor, map.alpha));
+                    gfx.DrawImage(texture, new Rectangle(0, 0, ent.width, ent.height));
+                    graphics.DrawImage(bitmap, hitbox);
+                    ent.colorTransform = Drawing.SetColor(Ext.Multiply(Ext.NonAlpha(map.color), map.DefaultColor));
                     if (ent.inShadow)
                     {
                         ent.colorTransform.SetGamma(gamma);
                     }
                     graphics.DrawImage(bitmap, hitbox, 0, 0, hitbox.Width, hitbox.Height, GraphicsUnit.Pixel, ent.colorTransform);
+                }
+            }
+            ent.color = map.DefaultColor;
+        }
+        public static void TextureLighting(Image texture, Rectangle hitbox, Lightmap map, Entity ent, float gamma, Graphics graphics)
+        {
+            using (Bitmap bitmap = new Bitmap(ent.width, ent.height))
+            { 
+                using (Graphics gfx = Graphics.FromImage(bitmap))
+                {
+                    gfx.DrawImage(texture, new Rectangle(0, 0, ent.width, ent.height));
+                    graphics.DrawImage(bitmap, hitbox);
+                    if (map.alpha > 0f)
+                    {
+                        ent.colorTransform = Drawing.SetColor(Ext.AdditiveV2(Ext.NonAlpha(map.color), map.DefaultColor, map.alpha));
+                        if (ent.inShadow)
+                        {
+                            ent.colorTransform.SetGamma(gamma);
+                        }
+                        graphics.DrawImage(bitmap, hitbox, 0, 0, hitbox.Width, hitbox.Height, GraphicsUnit.Pixel, ent.colorTransform);
+                    }
                 }
             }
             map.alpha = 1f;
@@ -806,22 +820,24 @@ namespace cotf.Base
                     graphics.DrawImage(bitmap, hitbox, 0, 0, hitbox.Width, hitbox.Height, GraphicsUnit.Pixel, ent.colorTransform);
                 }
             }
-            map.alpha = 1f;
+            map.alpha = alpha;
             map.color = map.DefaultColor;
             ent.color = map.DefaultColor;
             return bitmap;
         }
         public static void TextureLighting(Image texture, Rectangle hitbox, ref Color color, Color startColor, ref float alpha, Graphics graphics, ImageAttributes attr)
         {
-            Bitmap bitmap = new Bitmap(hitbox.Width, hitbox.Height);
-            using (Graphics gfx = Graphics.FromImage(bitmap))
-            {
-                gfx.DrawImage(texture, new Rectangle(0, 0, hitbox.Width, hitbox.Height));
-                graphics.DrawImage(bitmap, hitbox);
-                if (alpha > 0f)
+            using (Bitmap bitmap = new Bitmap(hitbox.Width, hitbox.Height))
+            { 
+                using (Graphics gfx = Graphics.FromImage(bitmap))
                 {
-                    attr = Drawing.SetColor(color, alpha);
-                    graphics.DrawImage(bitmap, hitbox, 0, 0, hitbox.Width, hitbox.Height, GraphicsUnit.Pixel, attr);
+                    gfx.DrawImage(texture, new Rectangle(0, 0, hitbox.Width, hitbox.Height));
+                    graphics.DrawImage(bitmap, hitbox);
+                    if (alpha > 0f)
+                    {
+                        attr = Drawing.SetColor(color, alpha);
+                        graphics.DrawImage(bitmap, hitbox, 0, 0, hitbox.Width, hitbox.Height, GraphicsUnit.Pixel, attr);
+                    }
                 }
             }
             alpha = 0f;
@@ -829,16 +845,18 @@ namespace cotf.Base
         }
         public static void TextureLighting(Image texture, Rectangle hitbox, ref Color color, Color startColor, ref float alpha, Lightmap map, Graphics graphics, ImageAttributes attr)
         {
-            Bitmap bitmap = new Bitmap(hitbox.Width, hitbox.Height);
-            using (Graphics gfx = Graphics.FromImage(bitmap))
-            {
-                attr = Drawing.SetColor(map.DefaultColor);
-                gfx.DrawImage(texture, new Rectangle(0, 0, hitbox.Width, hitbox.Height));
-                graphics.DrawImage(bitmap, hitbox, 0, 0, hitbox.Width, hitbox.Height, GraphicsUnit.Pixel, attr);
-                if (alpha != 0f)
-                { 
-                    attr = Drawing.SetColor(map.color, alpha);
+            using (Bitmap bitmap = new Bitmap(hitbox.Width, hitbox.Height))
+            { 
+                using (Graphics gfx = Graphics.FromImage(bitmap))
+                {
+                    attr = Drawing.SetColor(map.DefaultColor);
+                    gfx.DrawImage(texture, new Rectangle(0, 0, hitbox.Width, hitbox.Height));
                     graphics.DrawImage(bitmap, hitbox, 0, 0, hitbox.Width, hitbox.Height, GraphicsUnit.Pixel, attr);
+                    if (alpha != 0f)
+                    { 
+                        attr = Drawing.SetColor(map.color, alpha);
+                        graphics.DrawImage(bitmap, hitbox, 0, 0, hitbox.Width, hitbox.Height, GraphicsUnit.Pixel, attr);
+                    }
                 }
             }
             alpha = 0f;
@@ -846,16 +864,18 @@ namespace cotf.Base
         }
         public static void TextureLighting(Image texture, Rectangle hitbox, ref Color color, Color startColor, ref float alpha, Graphics graphics)
         {
-            Bitmap bitmap = new Bitmap(hitbox.Width, hitbox.Height);
-            using (Graphics gfx = Graphics.FromImage(bitmap))
-            {
-                var attr = Drawing.SetColor(startColor);
-                gfx.DrawImage(texture, new Rectangle(0, 0, hitbox.Width, hitbox.Height));
-                graphics.DrawImage(bitmap, hitbox, 0, 0, hitbox.Width, hitbox.Height, GraphicsUnit.Pixel, attr);
-                if (alpha != 0f)
+            using (Bitmap bitmap = new Bitmap(hitbox.Width, hitbox.Height))
+            { 
+                using (Graphics gfx = Graphics.FromImage(bitmap))
                 {
-                    attr = Drawing.SetColor(color, alpha);
+                    var attr = Drawing.SetColor(startColor);
+                    gfx.DrawImage(texture, new Rectangle(0, 0, hitbox.Width, hitbox.Height));
                     graphics.DrawImage(bitmap, hitbox, 0, 0, hitbox.Width, hitbox.Height, GraphicsUnit.Pixel, attr);
+                    if (alpha != 0f)
+                    {
+                        attr = Drawing.SetColor(color, alpha);
+                        graphics.DrawImage(bitmap, hitbox, 0, 0, hitbox.Width, hitbox.Height, GraphicsUnit.Pixel, attr);
+                    }
                 }
             }
             alpha = 0f;
@@ -888,39 +908,43 @@ namespace cotf.Base
         }
         public static void BrushLighting(CirclePrefect.Extra.Lightmap map, Tile ent, Lamp light, Graphics graphics)
         {
-            Bitmap bitmap = new Bitmap(ent.width, ent.height);
-            using (Graphics gfx = Graphics.FromImage(bitmap))
-            {
-                gfx.FillRectangle(new SolidBrush(ent.defaultColor), new Rectangle(0, 0, ent.width, ent.height));
-                for (int i = 0; i < ent.width; i += map.ScaleX)
-                { 
-                    for (int j = 0; j < ent.height; j += map.ScaleY)
-                    {
-                        float distance = (float)Helper.Distance(new Vector2(ent.i * ent.width, ent.j * ent.height) + new Vector2(i, j), light.position);
-                        float radius = Helper.NormalizedRadius(distance, light.range);
-                        gfx.FillRectangle(new SolidBrush(Ext.AdditiveV2(ent.defaultColor, Lamp.TorchLight, radius)), new Rectangle(i, j, map.ScaleX, map.ScaleY));
+            using (Bitmap bitmap = new Bitmap(ent.width, ent.height))
+            { 
+                using (Graphics gfx = Graphics.FromImage(bitmap))
+                {
+                    gfx.FillRectangle(new SolidBrush(ent.defaultColor), new Rectangle(0, 0, ent.width, ent.height));
+                    for (int i = 0; i < ent.width; i += map.ScaleX)
+                    { 
+                        for (int j = 0; j < ent.height; j += map.ScaleY)
+                        {
+                            float distance = (float)Helper.Distance(new Vector2(ent.i * ent.width, ent.j * ent.height) + new Vector2(i, j), light.position);
+                            float radius = Helper.NormalizedRadius(distance, light.range);
+                            gfx.FillRectangle(new SolidBrush(Ext.AdditiveV2(ent.defaultColor, Lamp.TorchLight, radius)), new Rectangle(i, j, map.ScaleX, map.ScaleY));
+                        }
                     }
                 }
+                graphics.DrawImage(bitmap, ent.hitbox);
             }
-            graphics.DrawImage(bitmap, ent.hitbox);
         }
         public static void BrushLighting(CirclePrefect.Extra.Lightmap map, Background ent, Lamp light, Graphics graphics)
         {
-            Bitmap bitmap = new Bitmap(ent.width, ent.height);
-            using (Graphics gfx = Graphics.FromImage(bitmap))
-            {
-                gfx.FillRectangle(new SolidBrush(ent.defaultColor), new Rectangle(0, 0, ent.width, ent.height));
-                for (int i = 0; i < ent.width; i += map.ScaleX)
+            using (Bitmap bitmap = new Bitmap(ent.width, ent.height))
+            { 
+                using (Graphics gfx = Graphics.FromImage(bitmap))
                 {
-                    for (int j = 0; j < ent.height; j += map.ScaleY)
+                    gfx.FillRectangle(new SolidBrush(ent.defaultColor), new Rectangle(0, 0, ent.width, ent.height));
+                    for (int i = 0; i < ent.width; i += map.ScaleX)
                     {
-                        float distance = (float)Helper.Distance(new Vector2(ent.X, ent.Y) + new Vector2(i, j), light.position);
-                        float radius = Helper.NormalizedRadius(distance, light.range);
-                        gfx.FillRectangle(new SolidBrush(Ext.AdditiveV2(ent.defaultColor, Lamp.TorchLight, radius)), new Rectangle(i, j, map.ScaleX, map.ScaleY));
+                        for (int j = 0; j < ent.height; j += map.ScaleY)
+                        {
+                            float distance = (float)Helper.Distance(new Vector2(ent.X, ent.Y) + new Vector2(i, j), light.position);
+                            float radius = Helper.NormalizedRadius(distance, light.range);
+                            gfx.FillRectangle(new SolidBrush(Ext.AdditiveV2(ent.defaultColor, Lamp.TorchLight, radius)), new Rectangle(i, j, map.ScaleX, map.ScaleY));
+                        }
                     }
                 }
+                graphics.DrawImage(bitmap, ent.hitbox);
             }
-            graphics.DrawImage(bitmap, ent.hitbox);
         }
         [Obsolete("The Ext.Multiply Color extension provides a more accurate color transform.")]
         public static Color FullColorShift(Color color, Color newColor, float distance)
@@ -942,113 +966,122 @@ namespace cotf.Base
         public static void DrawScale(Image image, Vector2 position, int width, int height, Color transparency, Graphics graphics, ImageAttributes attr, float scaleX = 1f, float scaleY = 1f)
         {
             MemoryStream mem = new MemoryStream();
-            Bitmap clone = (Bitmap)image.Clone();
-            clone.MakeTransparent(transparency);
-            using (Bitmap bmp = new Bitmap(image.Width, image.Height))
-            {
-                using (Graphics gfx = Graphics.FromImage(bmp))
+            using (Bitmap clone = (Bitmap)image.Clone())
+            { 
+                clone.MakeTransparent(transparency);
+                using (Bitmap bmp = new Bitmap(image.Width, image.Height))
                 {
-                    gfx.ScaleTransform(scaleX, scaleY);
-                    gfx.DrawImage(clone, Point.Empty);
-                    bmp.Save(mem, ImageFormat.Png);
+                    using (Graphics gfx = Graphics.FromImage(bmp))
+                    {
+                        gfx.ScaleTransform(scaleX, scaleY);
+                        gfx.DrawImage(clone, Point.Empty);
+                        bmp.Save(mem, ImageFormat.Png);
+                    }
                 }
+                graphics.DrawImage(Bitmap.FromStream(mem), new Rectangle((int)position.X, (int)position.Y, width, height), 0, 0, image.Width, image.Height, GraphicsUnit.Pixel, attr);
             }
-            graphics.DrawImage(Bitmap.FromStream(mem), new Rectangle((int)position.X, (int)position.Y, width, height), 0, 0, image.Width, image.Height, GraphicsUnit.Pixel, attr);
             mem.Dispose();
         }
         public static void DrawRotate(Image image, Vector2 position, RectangleF rectangle, float angle, PointF origin, Color transparency, RotateType type, Graphics graphics, float scale = 1f)
         {
             MemoryStream mem = new MemoryStream();
-            Bitmap clone = (Bitmap)image.Clone();
-            clone.MakeTransparent(transparency);
-            using (Bitmap bmp = new Bitmap(image.Width, image.Height))
-            {
-                using (Graphics gfx = Graphics.FromImage(bmp))
+            using (Bitmap clone = (Bitmap)image.Clone())
+            { 
+                clone.MakeTransparent(transparency);
+                using (Bitmap bmp = new Bitmap(image.Width, image.Height))
                 {
-                    switch (type)
+                    using (Graphics gfx = Graphics.FromImage(bmp))
                     {
-                        case RotateType.MatrixTransform:
-                            var matrix = new Matrix();
-                            matrix.RotateAt(angle, origin);
-                            gfx.Transform = matrix;
-                            break;
-                        case RotateType.GraphicsTransform:
-                            gfx.TranslateTransform(origin.X, origin.Y);
-                            gfx.RotateTransform(angle);
-                            gfx.TranslateTransform(-origin.X, -origin.Y);
-                            break;
-                        default:
-                            break;
+                        switch (type)
+                        {
+                            case RotateType.MatrixTransform:
+                                var matrix = new Matrix();
+                                matrix.RotateAt(angle, origin);
+                                gfx.Transform = matrix;
+                                break;
+                            case RotateType.GraphicsTransform:
+                                gfx.TranslateTransform(origin.X, origin.Y);
+                                gfx.RotateTransform(angle);
+                                gfx.TranslateTransform(-origin.X, -origin.Y);
+                                break;
+                            default:
+                                break;
+                        }
+                        gfx.ScaleTransform(scale, scale);
+                        gfx.DrawImage(clone, Point.Empty);
+                        bmp.Save(mem, ImageFormat.Png);
                     }
-                    gfx.ScaleTransform(scale, scale);
-                    gfx.DrawImage(clone, Point.Empty);
-                    bmp.Save(mem, ImageFormat.Png);
                 }
+                graphics.DrawImage(Bitmap.FromStream(mem), position.X, position.Y, rectangle, GraphicsUnit.Pixel);
             }
-            graphics.DrawImage(Bitmap.FromStream(mem), position.X, position.Y, rectangle, GraphicsUnit.Pixel);
             mem.Dispose();
+            
         }
         public static void DrawRotate(Image image, Vector2 position, float angle, PointF origin, Color transparency, RotateType type, Graphics graphics, float scale = 1f)
         {
             MemoryStream mem = new MemoryStream();
-            Bitmap clone = (Bitmap)image.Clone();
-            clone.MakeTransparent(transparency);
-            using (Bitmap bmp = new Bitmap(image.Width, image.Height))
+            using (Bitmap clone = (Bitmap)image.Clone())
             { 
-                using (Graphics gfx = Graphics.FromImage(bmp))
-                {
-                    switch (type)
-                    { 
-                        case RotateType.MatrixTransform:
-                            var matrix = new Matrix();
-                            matrix.RotateAt(angle, origin);
-                            gfx.Transform = matrix;
-                            break;
-                        case RotateType.GraphicsTransform:
-                            gfx.TranslateTransform(origin.X, origin.Y);
-                            gfx.RotateTransform(angle);
-                            gfx.TranslateTransform(- origin.X, - origin.Y);
-                            break;
-                        default:
-                            break;
+                clone.MakeTransparent(transparency);
+                using (Bitmap bmp = new Bitmap(image.Width, image.Height))
+                { 
+                    using (Graphics gfx = Graphics.FromImage(bmp))
+                    {
+                        switch (type)
+                        { 
+                            case RotateType.MatrixTransform:
+                                var matrix = new Matrix();
+                                matrix.RotateAt(angle, origin);
+                                gfx.Transform = matrix;
+                                break;
+                            case RotateType.GraphicsTransform:
+                                gfx.TranslateTransform(origin.X, origin.Y);
+                                gfx.RotateTransform(angle);
+                                gfx.TranslateTransform(- origin.X, - origin.Y);
+                                break;
+                            default:
+                                break;
+                        }
+                        gfx.ScaleTransform(scale, scale);
+                        gfx.DrawImage(clone, Point.Empty);
+                        bmp.Save(mem, ImageFormat.Png);
                     }
-                    gfx.ScaleTransform(scale, scale);
-                    gfx.DrawImage(clone, Point.Empty);
-                    bmp.Save(mem, ImageFormat.Png);
                 }
+                graphics.DrawImage(Bitmap.FromStream(mem), new PointF(position.X, position.Y));
             }
-            graphics.DrawImage(Bitmap.FromStream(mem), new PointF(position.X, position.Y));
             mem.Dispose();
         }
         public static void DrawRotate(Image image, Rectangle rect, float angle, PointF origin, Color transparency, RotateType type, Graphics graphics)
         {
             MemoryStream mem = new MemoryStream();
-            Bitmap clone = (Bitmap)image.Clone();
-            clone.MakeTransparent(transparency);
-            using (Bitmap bmp = new Bitmap(image.Width, image.Height))
+            using (Bitmap clone = (Bitmap)image.Clone())
             { 
-                using (Graphics gfx = Graphics.FromImage(bmp))
-                {
-                    switch (type)
-                    { 
-                        case RotateType.MatrixTransform:
-                            var matrix = new Matrix();
-                            matrix.RotateAt(angle, origin);
-                            gfx.Transform = matrix;
-                            break;
-                        case RotateType.GraphicsTransform:
-                            gfx.TranslateTransform(origin.X, origin.Y);
-                            gfx.RotateTransform(angle);
-                            gfx.TranslateTransform(- origin.X, - origin.Y);
-                            break;
-                        default:
-                            break;
+                clone.MakeTransparent(transparency);
+                using (Bitmap bmp = new Bitmap(image.Width, image.Height))
+                { 
+                    using (Graphics gfx = Graphics.FromImage(bmp))
+                    {
+                        switch (type)
+                        { 
+                            case RotateType.MatrixTransform:
+                                var matrix = new Matrix();
+                                matrix.RotateAt(angle, origin);
+                                gfx.Transform = matrix;
+                                break;
+                            case RotateType.GraphicsTransform:
+                                gfx.TranslateTransform(origin.X, origin.Y);
+                                gfx.RotateTransform(angle);
+                                gfx.TranslateTransform(- origin.X, - origin.Y);
+                                break;
+                            default:
+                                break;
+                        }
+                        gfx.DrawImage(clone, Point.Empty);
+                        bmp.Save(mem, ImageFormat.Png);
                     }
-                    gfx.DrawImage(clone, Point.Empty);
-                    bmp.Save(mem, ImageFormat.Png);
                 }
+                graphics.DrawImage(Bitmap.FromStream(mem), rect);
             }
-            graphics.DrawImage(Bitmap.FromStream(mem), rect);
             mem.Dispose();
         }
         public static void DrawRotate(Image image, Rectangle rect, Rectangle sourceRect, float angle, PointF origin, Color newColor, Color transparency, RotateType type, Graphics graphics)
@@ -1065,32 +1098,34 @@ namespace cotf.Base
             attributes.SetColorMatrix(transform);                  
 
             MemoryStream mem = new MemoryStream();
-            Bitmap clone = (Bitmap)image.Clone();
-            clone.MakeTransparent(transparency);
-            using (Bitmap bmp = new Bitmap(image.Width, image.Height))
+            using (Bitmap clone = (Bitmap)image.Clone())
             { 
-                using (Graphics gfx = Graphics.FromImage(bmp))
-                {
-                    switch (type)
+                clone.MakeTransparent(transparency);
+                using (Bitmap bmp = new Bitmap(image.Width, image.Height))
+                { 
+                    using (Graphics gfx = Graphics.FromImage(bmp))
                     {
-                        case RotateType.MatrixTransform:
-                            var matrix = new Matrix();
-                            matrix.RotateAt(angle, origin);
-                            gfx.Transform = matrix;
-                            break;
-                        case RotateType.GraphicsTransform:
-                            gfx.TranslateTransform(origin.X, origin.Y);
-                            gfx.RotateTransform(angle);
-                            gfx.TranslateTransform(- origin.X, - origin.Y);
-                            break;
-                        default:
-                            break;
+                        switch (type)
+                        {
+                            case RotateType.MatrixTransform:
+                                var matrix = new Matrix();
+                                matrix.RotateAt(angle, origin);
+                                gfx.Transform = matrix;
+                                break;
+                            case RotateType.GraphicsTransform:
+                                gfx.TranslateTransform(origin.X, origin.Y);
+                                gfx.RotateTransform(angle);
+                                gfx.TranslateTransform(- origin.X, - origin.Y);
+                                break;
+                            default:
+                                break;
+                        }
+                        gfx.DrawImage(clone, Point.Empty);
+                        bmp.Save(mem, ImageFormat.Png);
                     }
-                    gfx.DrawImage(clone, Point.Empty);
-                    bmp.Save(mem, ImageFormat.Png);
                 }
+                graphics.DrawImage(Bitmap.FromStream(mem), rect, sourceRect.X, sourceRect.Y, sourceRect.Width, sourceRect.Height, GraphicsUnit.Pixel, attributes);
             }
-            graphics.DrawImage(Bitmap.FromStream(mem), rect, sourceRect.X, sourceRect.Y, sourceRect.Width, sourceRect.Height, GraphicsUnit.Pixel, attributes);
             mem.Dispose();
         }
         public static ImageAttributes ReColor(Color color, Color newColor, float alpha = 1f)

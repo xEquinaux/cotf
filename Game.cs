@@ -38,7 +38,7 @@ namespace cotf
         public static Point Position => _position;
         public static Camera CAMERA = new Camera();
 
-        private Texture2D fog; 
+        internal static Texture2D fog; 
         private Texture2D tile;
 
         public Game()
@@ -96,7 +96,7 @@ namespace cotf
 
         protected override void LoadContent()
         {
-            this.fog = Content.Load<Texture2D>("fow");
+            Game.fog = Content.Load<Texture2D>("fow");
             this.tile = Content.Load<Texture2D>("temp");
             LoadResources();
             {
@@ -129,7 +129,7 @@ namespace cotf
 
         protected override void Draw(GameTime gameTime)
         {
-            GC.TryStartNoGCRegion(6096000);
+            GC.TryStartNoGCRegion(6144000);
             using (Bitmap bmp = new Bitmap(_bounds.Width, _bounds.Height))
             {
                 using (Graphics graphics = Graphics.FromImage(bmp))
@@ -153,28 +153,6 @@ namespace cotf
                     surface.Dispose();
                 }
             }
-            for (int i = 0; i < Main.background.GetLength(0); i++)
-            {
-                for (int j = 0; j < Main.background.GetLength(1); j++)
-                {
-                    var _t = Main.background[i, j];
-                    if (_t != null && _t.active)
-                    {
-                        EffectFog(_t.onScreen, _t.position, _t.Center, _spriteBatch, size: 25, range: 150f);
-                    }
-                }
-            }
-            for (int i = 0; i < Main.tile.GetLength(0); i++)
-            {
-                for (int j = 0; j < Main.tile.GetLength(1); j++)
-                {
-                    var _t = Main.tile[i, j];
-                    if (_t != null && _t.Active)
-                    {
-                        EffectFog( _t.onScreen, _t.position, _t.Center, _spriteBatch, size: 25, range: 150f);
-                    }
-                }
-            }
             try
             { 
                 GC.EndNoGCRegion();
@@ -195,34 +173,6 @@ namespace cotf
             this.Window.AllowAltF4 = false;
         }
 
-        #region EFFECT
-        private void EffectFog(bool onScreen, CirclePrefect.Vector2 ent_Position, CirclePrefect.Vector2 ent_Center, SpriteBatch sb, float range = 100f, int size = 10, int scale = 3)
-        {
-            int x = (int)ent_Position.X - size + Main.ScreenX;
-            int y = (int)ent_Position.Y - size + Main.ScreenY;
-            float distance = (float)Main.myPlayer.Distance(ent_Center);
-            if (onScreen)
-            { 
-                for (int i = 0; i < 2; i++)
-                for (int j = 0; j < 2; j++)
-                {
-                    float alpha = GetAlphaDynamic(ent_Center, Main.lamp.Concat(new Entity[] { Main.myPlayer }).ToArray(), range);
-                    sb.Draw(fog, new Rectangle(x + i * size, y + j * size, size * scale, size * scale), Color.Black * alpha); //Math.Min(distance / (range * scale), 1f)
-                }
-            }
-        }
-        private float Range(CirclePrefect.Vector2 to, CirclePrefect.Vector2 from, float range = 100f)
-        {
-            return (float)Math.Min(Helper.Distance(from, to) / (range * 3f), 1f);
-        }
-        public float GetAlphaDynamic(CirclePrefect.Vector2 Center, Entity[] entity, float range = 100f)
-        {
-            var e = entity.TakeWhile(t=> t != null && t.active && t.onScreen);
-            if (e.Count() == 0) 
-                return Range(Main.myPlayer.Center, Center);
-            return Range(Center, e.OrderBy(t => t.Distance(Center)).First(t => t != null && t.active).Center, range);
-        }
-        #endregion
         #region events
         public static event EventHandler<EventArgs> ResizeEvent;
         public static event EventHandler<InitializeArgs> InitializeEvent;
