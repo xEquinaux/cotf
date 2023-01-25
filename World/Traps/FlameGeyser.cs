@@ -35,7 +35,7 @@ namespace cotf.World.Traps
             //rotation = Main.timeSpan.Milliseconds / 1000f * (float)Math.PI;//Helper.NormalizedRadius(Main.GlobalTime, Main.GlobalTime) * (float)(Math.PI * 2);
             //time = Main.timeSpan.TotalMilliseconds % 10000 / 10000f * Math.PI * 2f;
 
-            _angle += Math.PI / 360d;
+            _angle += Math.PI / 360d * Main.TimeScale;
             if (_angle >= Math.PI)
             {
                 _angle *= -1;
@@ -47,8 +47,9 @@ namespace cotf.World.Traps
                 return;
             for (int i = 0; i < angle.Length; i++)
             {
-                var v2 = Center + Helper.AngleToSpeed((float)(angle[i] + _angle), 300f);
-                Entity.DrawChain(Main.chainTexture[0], this, v2, graphics, true);
+                var v2 = Helper.AngleToSpeed((float)(angle[i] + _angle), 300f);
+                var result = Center + v2;
+                Entity.DrawChain(Main.chainTexture[0], this, result, graphics, true);
             }
             
             Drawing.DrawRotate(texture, hitbox, Helper.ToDegrees((float)_angle), new PointF(width / 2, height / 2), color, RotateType.GraphicsTransform, graphics);

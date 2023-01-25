@@ -154,7 +154,8 @@ namespace cotf
         internal static bool open = false;
         private bool init = false;
         public static rand rand;
-        public static float TimeScale = 1;
+        public static float TimeScale => timeScale();
+
         public static float Gamma = 1.2f;
         public static int KeyPressTimer;
         public static int
@@ -190,6 +191,17 @@ namespace cotf
         public static float GlobalTime => timeSpan.Seconds * TimeScale;
         public static int GlobalScale(int integer, float scale) => (int)(integer * scale);
         public static Font DefaultFont => System.Drawing.SystemFonts.DefaultFont;
+        private static float timeScale()
+        {
+            float max = (float)Math.Round(myPlayer.velocity.MaxNormal(), 3);
+            if (myPlayer.IsMoving())
+                return Math.Min(1f / (max / Player.maxSpeed), 1f);
+            else if (myPlayer.KeyDown(Keys.Space))
+                return 1f;
+            if (max <= 0.1f)
+                return 0f;
+            return 0f;
+        }
         public void MainMenu(Graphics graphics)
         {
             if (mainMenu)

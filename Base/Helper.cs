@@ -25,6 +25,18 @@ namespace cotf.Base
         {
             return new Vector2(one.Location.X, one.Location.Y) + new Vector2(one.Width / 2, one.Height / 2);
         }
+        public static float MaxNormal(this Vector2 v2)
+        {
+            return new float[] { Math.Abs(v2.X), Math.Abs(v2.Y) }.Max();
+        }
+        public static float Max(this Vector2 v2)
+        {
+            return new float[] { v2.X, v2.Y }.Max();
+        }
+        public static float Min(this Vector2 v2)
+        {
+            return new float[] { v2.X, v2.Y }.Min();
+        }
         public static Color FromFloat(float a, float r, float g, float b)
         {
             int A = (int)Math.Min(255f * a, 255),

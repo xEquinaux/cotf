@@ -304,25 +304,25 @@ namespace cotf
             if (controlRight = !KeyDown(Keys.A) && KeyDown(Keys.D))
             {
                 // move right
-                Main.TimeScale = 1;
+                //Main.TimeScale = 1;
                 velocity.X += moveSpeed;
             }
             if (controlLeft = KeyDown(Keys.A) && !KeyDown(Keys.D))
             {
                 // move left
-                Main.TimeScale = 1;
+                //Main.TimeScale = 1;
                 velocity.X -= moveSpeed;
             }
             if (controlDown = !KeyDown(Keys.W) && KeyDown(Keys.S))
             {
                 // move down
-                Main.TimeScale = 1;
+                //Main.TimeScale = 1;
                 velocity.Y += moveSpeed;
             }
             if (controlUp = KeyDown(Keys.W) && !KeyDown(Keys.S))
             {
                 // move up
-                Main.TimeScale = 1;
+                //Main.TimeScale = 1;
                 velocity.Y -= moveSpeed;
             }
             #endregion

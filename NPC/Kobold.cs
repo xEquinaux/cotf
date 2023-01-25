@@ -52,6 +52,7 @@ namespace cotf
             }
             else if (!idle) velocity = Vector2.Zero;
             velocity.Clamp(1f);
+            velocity *= Main.TimeScale;
         }
     }
 }

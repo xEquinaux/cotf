@@ -67,8 +67,6 @@ namespace cotf.Base
             float num = keepLit ? 0.5f : Background.RangeNormal(lamp.Center, this.Center, Tile.Range);
             if (num == 0f)
                 return;
-            if (parent == null || !parent.SightLine(Main.myPlayer))
-                return;
             alpha = 0f;
             alpha += Math.Max(0, num);
             alpha = Math.Min(alpha, 1f);

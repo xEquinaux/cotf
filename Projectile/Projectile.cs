@@ -46,6 +46,7 @@ namespace cotf
                     continue;
                 HitNPC(n);
             }
+            velocity *= Main.TimeScale;
         }
         public virtual void HitPlayer(Player player)
         {
