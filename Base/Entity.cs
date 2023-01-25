@@ -47,7 +47,7 @@ namespace cotf.Base
         public int iFrames;
         public int iFramesMax;
         public int floorNumber = 0;
-        public int Sight => 100 + (Main.myPlayer.hasTorch() ? 50 : 0);
+        public int Sight => 150 + (Main.myPlayer.hasTorch() ? 50 : 0);
         public const int LootRange = 50;
         public short type;
         public float scale;

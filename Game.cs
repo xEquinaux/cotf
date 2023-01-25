@@ -158,7 +158,7 @@ namespace cotf
                     var _t = Main.background[i, j];
                     if (_t != null && _t.active)
                     { 
-                        Effect_Fog(_t, false, _t.discovered, _t.onScreen, _t.position, _t.Center, _spriteBatch, size: 50);
+                        EffectFog(_t, false, _t.discovered, _t.onScreen, _t.position, _t.Center, _spriteBatch, size: 25, range: 150f);
                     }
                 }
             }
@@ -169,7 +169,7 @@ namespace cotf
                     var _t = Main.tile[i, j];
                     if (_t != null && _t.Active)
                     {
-                        Effect_Fog(_t, false, _t.discovered, _t.onScreen, _t.position, _t.Center, _spriteBatch, size: 50);
+                        EffectFog(_t, false, _t.discovered, _t.onScreen, _t.position, _t.Center, _spriteBatch, size: 25, range: 150f);
                     }
                 }
             }
@@ -193,14 +193,16 @@ namespace cotf
         }
 
         #region EFFECT
-        private void Effect_Fog(Entity ent, bool updating, bool lit, bool onScreen, CirclePrefect.Vector2 ent_Position, CirclePrefect.Vector2 ent_Center, SpriteBatch sb, float range = 100f, int size = 50, int scale = 3)
+        private void EffectFog(Entity ent, bool updating, bool lit, bool onScreen, CirclePrefect.Vector2 ent_Position, CirclePrefect.Vector2 ent_Center, SpriteBatch sb, float range = 100f, int size = 10, int scale = 3)
         {
             int x = (int)ent_Position.X - size + Main.ScreenX;
             int y = (int)ent_Position.Y - size + Main.ScreenY;
             float distance = (float)Main.myPlayer.Distance(ent_Center);
-            if (!ent.discovered && onScreen)
+            if (onScreen)
             { 
-                sb.Draw(fog, new Rectangle(x, y, size * scale, size * scale), Color.Black * Math.Abs(Math.Min(range / distance, 1f) - 1f));
+                for (int i = 0; i < 2; i++)
+                for (int j = 0; j < 2; j++)
+                sb.Draw(fog, new Rectangle(x + i * size, y + j * size, size * scale, size * scale), Color.Black * Math.Min(distance / (range * scale), 1f));
             }
             updating = false;
 
