@@ -19,7 +19,7 @@ namespace cotf.World
         public new Rectangle box => new Rectangle((int)position.X, (int)position.Y, width, height);
         public bool lit = false;
         public bool onScreen = false;
-        public Color color0 = Color.Black;
+        public Color color0 = Color.LightGray;
         public DoorFacing doorFace = DoorFacing.None;
         public List<Entity> ent = new List<Entity>();
 
@@ -33,7 +33,8 @@ namespace cotf.World
             color = color0;
             position = new Vector2(i * size, j * size);
             Main.background[i, j] = this;
-            defaultColor = Color.Black;
+            defaultColor = color0;
+            alpha = 0f;
             Init();
         }
         private void Init()
@@ -41,7 +42,7 @@ namespace cotf.World
             //  Brush style texture init
             Bitmap bmp = new Bitmap(50, 50);
             using (Graphics gfx = Graphics.FromImage(bmp))
-                gfx.FillRectangle(Brushes.Gray, new Rectangle(0, 0, 50, 50));
+                gfx.FillRectangle(new SolidBrush(defaultColor), new Rectangle(0, 0, 50, 50));
             texture = preTexture = bmp;
         }
         private bool PreUpdate()
@@ -63,11 +64,21 @@ namespace cotf.World
         public void Draw(Graphics graphics)
         {
             if (!active || !onScreen || !discovered)
+            {
+                
                 return;
-            //  Lightmap interaction
-            Lightmap map;
-            (map = Main.lightmap[box.X / Tile.Size, box.Y / Tile.Size]).Update(this);
-            Drawing.TextureLighting(preTexture, hitbox, map, this, Main.Gamma, graphics);
+            }
+            if (alpha > 0f)
+            { 
+                Lightmap map;
+                //  Lightmap interaction
+                (map = Main.lightmap[box.X / Tile.Size, box.Y / Tile.Size]).Update(this);
+                Drawing.TextureLighting(preTexture, hitbox, map, this, Main.Gamma, alpha, graphics);
+            }
+            if (alpha < 1f)
+            {
+                alpha += 1f / 10f;
+            }
             //  Experimental
             //graphics.DrawImage(preTexture, hitbox);
             //graphics.DrawImage(Drawing.Lightpass0(preTexture, new Lightmap(10, 10), position, Main.myPlayer.lamp), hitbox);

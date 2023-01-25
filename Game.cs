@@ -125,7 +125,7 @@ namespace cotf
 
         protected override void Draw(GameTime gameTime)
         {
-            GC.TryStartNoGCRegion(6144000);
+            GC.TryStartNoGCRegion(4096000);
             using (Bitmap bmp = new Bitmap(_bounds.Width, _bounds.Height))
             {
                 using (Graphics graphics = Graphics.FromImage(bmp))
@@ -143,16 +143,22 @@ namespace cotf
                 }
                 using (MemoryStream stream = new MemoryStream())
                 {
-                    bmp.Save(stream, ImageFormat.Png);
+                    bmp.Save(stream, ImageFormat.Bmp);
                     //if (!Main.mainMenu) 
                     //    bmp.Save("_viewport.bmp", ImageFormat.Bmp);
                     Texture2D surface = Texture2D.FromStream(_graphicsMngr.GraphicsDevice, stream);
                     _spriteBatch.Draw(surface, Vector2.Zero, Color.White);
                 }
             }
-            GC.EndNoGCRegion();
-
-            base.Draw(gameTime);
+            try
+            { 
+                GC.EndNoGCRegion();
+            }
+            catch (Exception e) { }
+            finally
+            { 
+                base.Draw(gameTime);
+            }
         }
 
         protected void Settings()

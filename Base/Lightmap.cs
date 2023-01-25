@@ -17,7 +17,7 @@ namespace cotf.Base
         public bool active;
         private int i, j;
         public Color color;
-        public Color DefaultColor => Color.FromArgb(20, 20, 20);
+        public Color DefaultColor = Color.FromArgb(20, 20, 20);
         public Vector2 position;
         public Vector2 Center => position + new Vector2(Size.Width / 2, Size.Height / 2);
         public Rectangle Hitbox => new Rectangle((int)position.X, (int)position.Y, Size.Width, Size.Height);
@@ -41,15 +41,16 @@ namespace cotf.Base
                 position.X <= Main.myPlayer.position.X + Main.ScreenWidth / 2 &&
                 position.Y >= Main.myPlayer.position.Y - Main.ScreenHeight / 2 &&
                 position.Y <= Main.myPlayer.position.Y + Main.ScreenHeight / 2;
-        public void Update(Entity ent)
+        public Color Update(Entity ent)
         {
             if (!active)
-                return;
+                return ent.color;
             ent.color = color;
             if (parent == null)
             {
                 parent = ent;
             }
+            return color;
         }
         public Color Update()
         {
@@ -66,6 +67,9 @@ namespace cotf.Base
             float num = keepLit ? 0.5f : Background.RangeNormal(lamp.Center, this.Center, Tile.Range);
             if (num == 0f)
                 return;
+            if (parent == null || !parent.SightLine(Main.myPlayer))
+                return;
+            alpha = 0f;
             alpha += Math.Max(0, num);
             alpha = Math.Min(alpha, 1f);
             color = Ext.AdditiveV2(color, lamp.lampColor, num);

@@ -777,6 +777,28 @@ namespace cotf.Base
             map.color = map.DefaultColor;
             ent.color = map.DefaultColor;
         }
+        public static Bitmap TextureLighting(Image texture, Rectangle hitbox, Lightmap map, Entity ent, float gamma, float alpha, Graphics graphics)
+        {
+            Bitmap bitmap = new Bitmap(ent.width, ent.height);
+            using (Graphics gfx = Graphics.FromImage(bitmap))
+            {
+                gfx.DrawImage(texture, new Rectangle(0, 0, ent.width, ent.height));
+                graphics.DrawImage(bitmap, hitbox);
+                if (alpha > 0f)
+                {
+                    ent.colorTransform = Drawing.SetColor(Ext.AdditiveV2(Ext.NonAlpha(map.color), map.DefaultColor, alpha));
+                    if (ent.inShadow)
+                    {
+                        ent.colorTransform.SetGamma(gamma);
+                    }
+                    graphics.DrawImage(bitmap, hitbox, 0, 0, hitbox.Width, hitbox.Height, GraphicsUnit.Pixel, ent.colorTransform);
+                }
+            }
+            map.alpha = 1f;
+            map.color = map.DefaultColor;
+            ent.color = map.DefaultColor;
+            return bitmap;
+        }
         public static void TextureLighting(Image texture, Rectangle hitbox, ref Color color, Color startColor, ref float alpha, Graphics graphics, ImageAttributes attr)
         {
             Bitmap bitmap = new Bitmap(hitbox.Width, hitbox.Height);
@@ -804,6 +826,23 @@ namespace cotf.Base
                 if (alpha != 0f)
                 { 
                     attr = Drawing.SetColor(map.color, alpha);
+                    graphics.DrawImage(bitmap, hitbox, 0, 0, hitbox.Width, hitbox.Height, GraphicsUnit.Pixel, attr);
+                }
+            }
+            alpha = 0f;
+            color = startColor;
+        }
+        public static void TextureLighting(Image texture, Rectangle hitbox, ref Color color, Color startColor, ref float alpha, Graphics graphics)
+        {
+            Bitmap bitmap = new Bitmap(hitbox.Width, hitbox.Height);
+            using (Graphics gfx = Graphics.FromImage(bitmap))
+            {
+                var attr = Drawing.SetColor(startColor);
+                gfx.DrawImage(texture, new Rectangle(0, 0, hitbox.Width, hitbox.Height));
+                graphics.DrawImage(bitmap, hitbox, 0, 0, hitbox.Width, hitbox.Height, GraphicsUnit.Pixel, attr);
+                if (alpha != 0f)
+                {
+                    attr = Drawing.SetColor(color, alpha);
                     graphics.DrawImage(bitmap, hitbox, 0, 0, hitbox.Width, hitbox.Height, GraphicsUnit.Pixel, attr);
                 }
             }
