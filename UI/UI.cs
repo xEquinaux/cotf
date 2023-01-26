@@ -270,6 +270,9 @@ namespace cotf
                 this.Init(graphics);
                 if (active)
                 { 
+                    int offX = Main.ScreenX;
+                    int offY = Main.ScreenY;
+                    Rectangle _padded = new Rectangle(padded.X + offX, padded.Y + offY, padded.Width, padded.Height);
                     if (heading != null)
                     {
                         float ratio = heading.Width / heading.Height;
@@ -279,9 +282,18 @@ namespace cotf
                         //Drawing.DrawScale(heading, new Vecto, header.Width, header.Height, graphics, Drawing.SetColor(Color.White));
                         graphics.DrawString(name, font, new SolidBrush(color), new PointF(header.Right + headerTextPadding, header.Bottom - headerFontHeight));
                     }
-                    graphics.FillRectangle(Brushes.DarkGray, padded);
-                    graphics.DrawRectangle(Pens.White, padded);
-                    graphics.DrawString(text, font, Brushes.Black, box, format);
+                    Rectangle _box = new Rectangle(box.X + offX, box.Y + offY, box.Width, box.Height);
+                    Rectangle result = padded;
+                    Rectangle result2 = box;
+                    if (text.StartsWith("[Life]"))
+                    { 
+                        result = _padded;
+                        result2 = _box;
+                    }
+                    graphics.FillRectangle(Brushes.DarkGray, result);
+                    graphics.DrawRectangle(Pens.White, result);
+                    graphics.DrawString(text, font, Brushes.Black, result2, format);
+                    
                     for (int i = 0; i < option.Length; i++)
                     {
                         if (option[i] != null)
@@ -437,7 +449,10 @@ namespace cotf
                     if (item.ticks == 0)
                         item.flag = false;
                 }
-                if (Main.mouseLeft && item.box.Contains((int)mouseScreen.X, (int)mouseScreen.Y))
+                int offset = 20;
+                int offsetHalf = 10;
+                Rectangle box = new Rectangle(item.box.X - Main.ScreenX - offsetHalf, item.box.Y - Main.ScreenY - offsetHalf, item.box.Width + offset, item.box.Height + offset);
+                if (Main.mouseLeft && box.Contains((int)mouseWorld.X, (int)mouseWorld.Y))
                 {
                     item.Click();
                     item.color = Color.Firebrick;
@@ -466,12 +481,14 @@ namespace cotf
         {
             for (int i = 0; i < icon.Length; i++)
             {
-                graphics.DrawImage(image, icon[i].hitbox);
+                Rectangle h = new Rectangle(icon[i].hitbox.X + Main.ScreenX, icon[i].hitbox.Y + Main.ScreenY, icon[i].hitbox.Width, icon[i].hitbox.Height);
+                graphics.DrawImage(image, h);
                 if (icon[i].color != default || selectedIndex == icon[i])
                 {
                     Pen pen = new Pen(Brushes.Firebrick);
                     pen.Width = 2;
-                    graphics.DrawRectangle(pen, icon[i].hitbox);
+                    
+                    graphics.DrawRectangle(pen, h);
                 }
             }
         }

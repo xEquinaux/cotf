@@ -362,7 +362,7 @@ namespace cotf
                 return;
             //graphics.FillRectangle(Brushes.White, box);
             playerData?.Init(graphics);
-            playerData?.Draw(graphics);
+            //playerData?.Draw(graphics);   //  Testing drawing this with higher priority
             //lamp?.WorldLighting();
             //color = Ext.Divide(color, lightColor);
             Drawing.LightmapHandling(texture, this, 1.2f, graphics);

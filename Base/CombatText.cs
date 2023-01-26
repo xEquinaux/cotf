@@ -73,7 +73,7 @@ namespace cotf.Base
         public void Draw(Graphics graphics)
         {
             if (!active) return;
-            graphics.DrawString(Text, Main.DefaultFont, new SolidBrush(color()), new PointF(position.X, position.Y));
+            graphics.DrawString(Text, Main.DefaultFont, new SolidBrush(color()), new PointF(position.X + Main.ScreenX, position.Y + Main.ScreenY));
         }
 
         public static void Dispose(CombatText value)

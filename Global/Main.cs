@@ -152,6 +152,7 @@ namespace cotf
         //public static LitEffect[,] effect = new LitEffect[,] { };
         internal static Graphics Graphics { get; set; }
         internal static Color Mask => Color.FromArgb(0, 255, 0);
+        public static Vector2 ScreenPosition => new Vector2(ScreenX, ScreenY);
         int ticks, ticks2, ticks3;
         internal static bool open = false;
         private bool init = false;
@@ -198,15 +199,9 @@ namespace cotf
         {
             float scale = 0f;
             float max = (float)Math.Round(myPlayer.velocity.MaxNormal(), 3);
-            if (myPlayer.IsMoving())
-                return Math.Min(1f / (max / Player.maxSpeed), 1f);
-            else if (myPlayer.KeyDown(Keys.Space))
-            { 
-                scale = 1f;
-            }
             // Player resting 
             //  TODO, make TimeScale player-proximity based
-            if (myPlayer.KeyDown(Keys.R))
+            if (!myPlayer.IsMoving() && myPlayer.KeyDown(Keys.R))
             {
                 scale = 1.2f;
                 if (myPlayer.KeyDown(Keys.Space))
@@ -214,6 +209,12 @@ namespace cotf
                     scale = 2f;
                 }
                 return scale;
+            }
+            if (myPlayer.IsMoving())
+                return Math.Min(1f / (max / Player.maxSpeed), 1f);
+            else if (myPlayer.KeyDown(Keys.Space))
+            {
+                return 1f;
             }
             if (max <= 0.1f)
                 return 0f;
@@ -249,7 +250,7 @@ namespace cotf
             int width = WorldWidth = 3000;
             int height = WorldHeight = 3000;
             //  Legacy darkness effect
-            Legacy.Fog.Create(0, 0, Main.WorldWidth, Main.WorldHeight);
+            Legacy.Fog.Create(0, 0, Main.ScreenWidth, Main.ScreenHeight);   //  TODO: recreate when window resized
             new Lighting().Init(width, height);
             //effect = LitEffect.Create(width, height, Lighting.Size);
             //  Darkness effect
@@ -476,8 +477,6 @@ namespace cotf
             {
                 room.Draw(graphics);
             }
-            DrawOverlays(graphics);
-            thumbnail.DrawUI(graphics);
             return;
             //  DEBUG: UI interaction check flag
             if (Thumbnail.showDateTime)
@@ -719,27 +718,8 @@ namespace cotf
                 }
             }
         }
-        private void DrawOverlays(Graphics graphics)
+        internal void DrawOverlays(Graphics graphics)
         {
-            //for (int i = 0; i < lamp.Length; i++)
-            //{
-            //    if (lamp[i] != null)
-            //    {
-            //        lamp[i].Draw(graphics);
-            //        lamp[i].PostDraw(graphics);
-            //    }
-            //}
-            //  Fog Draw
-            //for (int i = 0; i < fog.GetLength(0); i++)
-            //{
-            //    for (int j = 0; j < fog.GetLength(1); j++)
-            //    {
-            //        if (fog[i, j] != null)
-            //        {
-            //            fog[i, j].Draw(graphics);
-            //        }
-            //    }
-            //}
             for (int i = 0; i < CombatText.text.Count; i++)
             {
                 if (CombatText.text[i].active)
@@ -754,6 +734,7 @@ namespace cotf
                     textbox[i].Draw(graphics);
                 }
             }
+            thumbnail.DrawUI(graphics);
         }
         bool flag = false;
         private void InitDraw(Graphics graphics)

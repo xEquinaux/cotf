@@ -28,7 +28,7 @@ namespace cotf.Legacy
         public int size;
         public Vector2 position;
         public Rectangle hitbox => new Rectangle(x, y, width, height);
-        public Vector2 Center => new Vector2(x + width / 2, y + height / 2);
+        public Vector2 Center => new Vector2(position.X + width / 2, position.Y + height / 2);
         public static float range = 100f;
         public static bool updating;
         public bool onScreen;
@@ -52,6 +52,7 @@ namespace cotf.Legacy
         public void Update()
         {
             if (updating) return;
+            position = new Vector2(x, y) + Main.WorldZero.ToVector2();
 
             onScreen =
                 position.X >= Main.myPlayer.position.X - (Main.ScreenWidth + Size * 5) / 2 &&

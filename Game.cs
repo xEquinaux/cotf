@@ -154,9 +154,37 @@ namespace cotf
                     surface.Dispose();
                 }
             }
-            for (int i = 0; i < Main.effect.Count; i++)
+            if (!Main.open)
             {
-                Main.effect[i]?.Draw(_spriteBatch);
+                for (int i = 0; i < Main.effect.Count; i++)
+                {
+                    Main.effect[i]?.Draw(_spriteBatch);
+                } 
+            }
+            if (!Main.mainMenu && !Main.open)
+            { 
+                using (Bitmap bmp = new Bitmap(_bounds.Width, _bounds.Height))
+                {
+                    var transparent = System.Drawing.Color.FromArgb(20, 20, 20);
+                    using (Graphics graphics = Graphics.FromImage(bmp))
+                    {
+                        
+                        graphics.Clear(transparent);
+                        SetQuality(graphics, new System.Drawing.Rectangle(0, 0, _bounds.Width, _bounds.Height));
+                        { 
+                            Main.myPlayer.playerData?.Draw(graphics);
+                            Main.Instance.DrawOverlays(graphics);
+                        }
+                    }
+                    bmp.MakeTransparent(transparent);
+                    using (MemoryStream stream = new MemoryStream())
+                    {
+                        bmp.Save(stream, ImageFormat.Png);
+                        Texture2D surface = Texture2D.FromStream(_graphicsMngr.GraphicsDevice, stream);
+                        _spriteBatch.Draw(surface, Vector2.Zero, Color.White);
+                        surface.Dispose();
+                    }
+                }
             }
             //cotf.World.FogMethods.DrawEffect(fog, _spriteBatch);
             try

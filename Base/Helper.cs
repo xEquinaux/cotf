@@ -17,6 +17,10 @@ namespace cotf.Base
 {
     public static class Ext
     {
+        public static Vector2 ToVector2(this Point a)
+        {
+            return new Vector2(a.X, a.Y);
+        }
         public static bool Contains(this Rectangle one, Vector2 position)
         {
             return position.X > one.Left && position.X < one.Right && position.Y > one.Top && position.Y < one.Bottom;
