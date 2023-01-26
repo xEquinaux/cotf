@@ -188,16 +188,31 @@ namespace cotf
             set { progress = value; }
         }
         static float progress;
+        public static bool rest = false;
         public static float GlobalTime => timeSpan.Seconds * TimeScale;
         public static int GlobalScale(int integer, float scale) => (int)(integer * scale);
         public static Font DefaultFont => System.Drawing.SystemFonts.DefaultFont;
         private static float timeScale()
         {
+            float scale = 0f;
             float max = (float)Math.Round(myPlayer.velocity.MaxNormal(), 3);
             if (myPlayer.IsMoving())
                 return Math.Min(1f / (max / Player.maxSpeed), 1f);
             else if (myPlayer.KeyDown(Keys.Space))
-                return 1f;
+            { 
+                scale = 1f;
+            }
+            // Player resting 
+            //  TODO, make TimeScale player-proximity based
+            if (myPlayer.KeyDown(Keys.R))
+            {
+                scale = 1.2f;
+                if (myPlayer.KeyDown(Keys.Space))
+                { 
+                    scale = 2f;
+                }
+                return scale;
+            }
             if (max <= 0.1f)
                 return 0f;
             return 0f;
@@ -589,6 +604,13 @@ namespace cotf
                     projectile[i].AI();
                 }
             }
+            for (int i = 0; i < CombatText.text.Count; i++)
+            {
+                if (CombatText.text[i].active)
+                {
+                    CombatText.text[i].Update();
+                }
+            }
             for (int i = 0; i < scenery.Length; i++)
             {
                 if (scenery[i] != null)
@@ -596,6 +618,7 @@ namespace cotf
                     scenery[i].Update();
                 }
             }
+            
             //  Fog Update
             //for (int i = 0; i < fog.GetLength(0); i++)
             //{
@@ -708,6 +731,13 @@ namespace cotf
             //        }
             //    }
             //}
+            for (int i = 0; i < CombatText.text.Count; i++)
+            {
+                if (CombatText.text[i].active)
+                {
+                    CombatText.text[i].Draw(graphics);
+                }
+            }
             for (int i = 0; i < textbox.Length; i++)
             {
                 if (textbox[i] != null && textbox[i].active)

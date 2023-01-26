@@ -11,6 +11,8 @@ using Foundation;
 using CirclePrefect;
 using cotf.Base;
 using cotf.World;
+using cotf.Buff;
+using cotf.ID;
 
 namespace cotf
 {
@@ -39,15 +41,21 @@ namespace cotf
         }
         public override void AI()
         {
+            light.position = Center;
             position += velocity;
             if (timeLeft-- < 0)
                 Dispose();
             base.AI();
         }                                     
-        public override void HitNPC(Npc n)
+        public override bool HitNPC(Npc n)
         {
             if (n.NpcProjHit(this))
             {
+                if (!init)
+                {
+                    init = true;
+                    n.AddBuff(Debuff.NewDebuff(DebuffID.Fire));
+                }
                 n.NpcHurt(damage, knockBack, Helper.AngleTo(n.Center, Center));
                 switch (type)
                 {
@@ -56,7 +64,9 @@ namespace cotf
                         Dispose();
                         break;
                 }
+                return true;
             }
+            return false;
         }
         public override void Collide()
         {

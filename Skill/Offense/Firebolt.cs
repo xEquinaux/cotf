@@ -62,9 +62,9 @@ namespace cotf
         {
             if (!PreCast(player))
                 return;
-            var angle = player.UseAngle();
-            int proj = Projectile.NewProjectile(angle, player.AngleToSpeed(player.AngleTo(Main.MouseWorld), speed), 0f, ProjectileID.FireBolt, player);
+            int proj = Projectile.NewProjectile(Vector2.Zero, player.AngleToSpeed(player.AngleTo(Main.MouseWorld), speed), 0f, ProjectileID.FireBolt, player);
             projectile = Main.projectile[proj];
+            projectile.position = player.UseAngle(projectile);
             base.Cast(player);
         }
     }

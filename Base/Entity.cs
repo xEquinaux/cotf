@@ -6,8 +6,11 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using CirclePrefect;
-using cotf.World;
+using cotf.Buff;
 using cotf.Collections;
+using cotf.ID;
+using cotf.World;
+
 
 namespace cotf.Base
 {
@@ -53,6 +56,7 @@ namespace cotf.Base
         public float scale;
         public float alpha = 0f;
         public float knockBack = 1f;
+        public Debuff debuff;
         public Purse purse;
         public Image texture;
         public Color color;
@@ -109,6 +113,7 @@ namespace cotf.Base
             Background bg = Background.GetSafely((int)Center.X / Tile.Size, (int)Center.Y / Tile.Size);
             if (bg == null || !bg.active)
                 return;
+            debuff.Update(this);
             inShadow = !(bg.lit && discovered);
             if (!discovered)
                 discovered = Discovered(Main.myPlayer);
@@ -126,9 +131,18 @@ namespace cotf.Base
             float num = Background.RangeNormal(lamp.Center, this.Center, Tile.Range);
             if (num == 0f)
                 return;
+            alpha = 0f; //  DEBUG, experimental
             alpha += Math.Max(0, num);
             alpha = Math.Min(alpha, 1f);
             color = Ext.AdditiveV2(color, lamp.lampColor, num);
+        }
+        public void AddBuff(Debuff buff)
+        {
+            this.debuff = buff;
+        }
+        public void RemoveBuff()
+        {
+            this.debuff = Debuff.NewDebuff(DebuffID.None);
         }
         public static Vector2 GetTileLine(Entity target, float angle, float step)
         {

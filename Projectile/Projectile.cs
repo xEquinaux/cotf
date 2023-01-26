@@ -21,6 +21,7 @@ namespace cotf
         public int timeLeft;
         public float angle;
         public override Vector2 Center => new Vector2(X - width / 2, Y - height / 2);
+        protected bool init;
         public Projectile()
         {
             SetDefaults();
@@ -57,19 +58,23 @@ namespace cotf
             HitPlayer(Main.myPlayer);
             velocity *= Main.TimeScale;
         }
-        public virtual void HitPlayer(Player player)
+        public virtual bool HitPlayer(Player player)
         {
             if (player.ProjHit(this))
             {
                 Dispose();
+                return true;
             }
+            return false;
         }
-        public virtual void HitNPC(Npc npc)
+        public virtual bool HitNPC(Npc npc)
         {
             if (npc.NpcProjHit(this))
             {
                 npc.NpcHurt(damage, knockBack, AngleTo(npc.Center));
+                return true;
             }
+            return false;
         }
         public virtual void Draw(Graphics graphics)
         {
@@ -139,10 +144,13 @@ namespace cotf
         }
         public override void Dispose()
         {
-            Main.projectile[whoAmI].active = false;
-            Main.projectile[whoAmI].position = Vector2.Zero;
-            Main.projectile[whoAmI].light?.Dispose();
-            Main.projectile[whoAmI] = null;
+            if (Main.projectile[whoAmI] != null)
+            { 
+                Main.projectile[whoAmI].active = false;
+                Main.projectile[whoAmI].position = Vector2.Zero;
+                Main.projectile[whoAmI].light?.Dispose();
+                Main.projectile[whoAmI] = null;
+            }
         }
     }
     public sealed class ProjectileID

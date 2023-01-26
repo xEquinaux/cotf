@@ -10,6 +10,8 @@ using System.Windows.Input;
 using Foundation;
 using CirclePrefect;
 using cotf.Base;
+using cotf.Buff;
+using cotf.ID;
 using cotf.World;
 
 namespace cotf
@@ -37,11 +39,33 @@ namespace cotf
                 Dispose();
             }
         }
-        public override void HitNPC(Npc npc)
+        public override bool HitNPC(Npc npc)
         {
+            if (base.HitNPC(npc))
+            { 
+                if (!init)
+                {
+                    init = true;
+                    npc.AddBuff(Debuff.NewDebuff(DebuffID.Fire));
+                }
+                Dispose();
+                return true;
+            }
+            return false;
         }
-        public override void HitPlayer(Player player)
+        public override bool HitPlayer(Player player)
         {
+            if (base.HitPlayer(player))
+            { 
+                if (!init)
+                {
+                    init = true;
+                    player.AddBuff(Debuff.NewDebuff(DebuffID.Fire));
+                }
+                Dispose();
+                return true;
+            }
+            return false;
         }
         public override void AI()
         {

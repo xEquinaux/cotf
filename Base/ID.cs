@@ -92,4 +92,10 @@ namespace cotf.ID
             AcidPatch = 9,
             MagicTurret = 10;
     }
+    public sealed class DebuffID
+    {
+        public const short
+            None = 0,
+            Fire = 1;
+    }
 }

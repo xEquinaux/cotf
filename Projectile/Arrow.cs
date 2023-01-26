@@ -39,13 +39,15 @@ namespace cotf
                 Dispose();
             base.AI();
         }
-       public override void HitPlayer(Player player)
+       public override bool HitPlayer(Player player)
         {
             if (player.ProjHit(this))
             {
                 player.Hurt(damage, knockBack, AngleTo(player.Center));
                 Dispose();
+                return true;
             }
+            return false;
         }
         public override void Collide()
         {

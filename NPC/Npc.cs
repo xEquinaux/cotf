@@ -179,6 +179,7 @@ namespace cotf
         }
         public virtual void NpcHurt(int damage, float knockBack, float angle)
         {
+            CombatText.NewText(damage, this);
             this.iFrames = iFramesMax;
             this.life -= damage;
             velocity += Helper.AngleToSpeed(angle, knockBack);

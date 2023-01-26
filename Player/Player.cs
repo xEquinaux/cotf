@@ -58,7 +58,7 @@ namespace cotf
         public Rectangle lightBox => new Rectangle((int)(position.X - lightRange), (int)(position.Y - lightRange), width + (int)lightRange * 2, height + (int)lightRange * 2);
         public bool hasTorch() => equipment[EquipType.OffHand] != null && Main.myPlayer.equipment[EquipType.OffHand].equipped && Main.myPlayer.equipment[EquipType.OffHand].type == ItemID.Torch;
         int debug = 0;
-        public Skill activeSkill = Skill.SetActive(SkillID.None);
+        public Skill activeSkill = Skill.SetActive(SkillID.FireBolt);
         public Skill[] skill = new Skill[SkillID.Total];
         public Purse Purse => (Purse)equipment[EquipType.Purse];
         public bool cursed;
@@ -165,18 +165,22 @@ namespace cotf
             //  Stats dynamics
             if (velocity == Vector2.Zero && KeyDown(Keys.R))
             {
-                if (++restTicks % RestInterval == 0)
+                if (KeyDown(Keys.Space))
+                {
+                    restTicks += 10;
+                }
+                if (++restTicks > RestInterval) //++restTicks % RestInterval == 0)
                 {
                     if (life < lifeMax)
                         life++;
-                    restTicks = 1;
+                    restTicks = 0;    // = 1
                     manaRestTicks++;
                 }
-                if (manaRestTicks % (RestInterval / 6) == 0)
+                if (manaRestTicks > RestInterval / 6) // manaRestTicks % (RestInterval / 6) == 0
                 {
                     if (statMana < statMaxMana)
                         statMana++;
-                    manaRestTicks = 1;
+                    manaRestTicks = 0; // = 1
                 }
             }
             if (velocity != Vector2.Zero)
@@ -383,12 +387,13 @@ namespace cotf
         }
         public void Hurt(int damage, float knockback, float angle)
         {
+            CombatText.NewText(damage, this);
             life -= damage;
             iFrames = 0;
             velocity += Helper.AngleToSpeed(angle, knockBack);
             if (life <= 0)
             {
-                //  Requires home location
+                //  TODO Requires home location
             }
         }
         public void Heal(int amount)
@@ -401,6 +406,13 @@ namespace cotf
             var plr = myPlayer.position;
             var v2 = AngleToSpeed(AngleTo(Main.MouseWorld), 30f);
             return plr + v2 + new Vector2(-myPlayer.width / 2 + xOffset, 0);
+        }
+        public Vector2 UseAngle(Projectile proj)
+        {
+            int xOffset = 12;
+            var plr = myPlayer.position;
+            var v2 = AngleToSpeed(AngleTo(Main.MouseWorld), 30f);
+            return plr + v2 + new Vector2(-myPlayer.width / 2 + xOffset, height / 2 - proj.height / 2);
         }
         public bool ProjHit(Projectile projectile)
         {
