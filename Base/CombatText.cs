@@ -62,11 +62,11 @@ namespace cotf.Base
             if (!active) return;
             if (!flipped) angle += Helper.Radian;
             else          angle -= Helper.Radian;
-            double s = parent.hitbox.Left + offX + 10f * Math.Sin(angle);
+            double s = parent.hitbox.Left + offX + 5f * Math.Sin(angle);
             double c = parent.hitbox.Top + 30f * Math.Cos(angle); 
             position = new Vector2((float)s, (float)c);
             if (ticks++ > 90)
-            { 
+            {
                 Dispose();
             }
         }

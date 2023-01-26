@@ -132,7 +132,7 @@ namespace cotf
         internal static Item[] item = new Item[256];
         internal static Tile[,] tile = new Tile[,] { };
         internal static Background[,] background = new Background[,] { };
-        public static Lighting[,] fog = new Lighting[,] { };
+        //public static Lighting[,] fog = new Lighting[,] { };
         internal static Lightmap[,] lightmap = new Lightmap[,] { };
         internal static Lamp[] lamp = new Lamp[10];
         internal static Projectile[] projectile = new Projectile[256];
@@ -147,6 +147,8 @@ namespace cotf
         internal static WorldObject[] wldObject = new WorldObject[20];
         internal static Staircase[] staircase = new Staircase[6];
         internal static List<Floor> floor = new List<Floor>();
+        //  Fog
+        internal static IList<Legacy.Fog> effect = new List<Legacy.Fog>();
         //public static LitEffect[,] effect = new LitEffect[,] { };
         internal static Graphics Graphics { get; set; }
         internal static Color Mask => Color.FromArgb(0, 255, 0);
@@ -246,6 +248,8 @@ namespace cotf
             #region LOGIC
             int width = WorldWidth = 3000;
             int height = WorldHeight = 3000;
+            //  Legacy darkness effect
+            Legacy.Fog.Create(0, 0, Main.WorldWidth, Main.WorldHeight);
             new Lighting().Init(width, height);
             //effect = LitEffect.Create(width, height, Lighting.Size);
             //  Darkness effect
@@ -325,7 +329,7 @@ namespace cotf
             //EscState = Keyboard.GetState().IsKeyDown(Keys.Escape);
             timeSpan = TimeSpan.FromMilliseconds(time.ElapsedMilliseconds);
             var point = System.Windows.Forms.Cursor.Position;
-            MouseScreen = new Vector2(Math.Max(point.X - (float)Game.Position.X, 0f) - 7, Math.Max(point.Y - (float)Game.Position.Y - 30, 0f));//  -7 to X coord, -30 to Y coord due to WPF factor
+            MouseScreen = new Vector2(Math.Max(point.X - (float)Game.Position.X, 0f), Math.Max(point.Y - (float)Game.Position.Y, 0f));//  -7 to X coord, -30 to Y coord due to WPF factor
             MouseWorld = MouseScreen + new Vector2(WorldZero.X, WorldZero.Y);
             pressO = ticks3++ == 1 && myPlayer.KeyDown(Keys.O);
             if (Keyboard.GetState().IsKeyUp(Keys.O))
@@ -381,7 +385,8 @@ namespace cotf
                 {
                     int w = (int)Helper.RatioConvert(Helper.Ratio(Item.DrawSize, myPlayer.equipment[i].texture.Width), myPlayer.equipment[i].texture.Width);
                     Rectangle slot = new Rectangle(box.X + 1, box.Y + 1, Item.DrawSize - 1, w - 1);
-                    graphics.DrawImage(myPlayer.equipment[i].texture, slot);
+                    Drawing.DrawScale(myPlayer.equipment[i].texture, new Vector2(slot.X, slot.Y), slot.Width, slot.Height, Color.Green, graphics, Drawing.SetColor(myPlayer.equipment[i].defaultColor));
+                    //graphics.DrawImage(myPlayer.equipment[i].texture, slot);
                 }
             }
 
@@ -403,8 +408,8 @@ namespace cotf
                 new RectangleF(scroll[0].X, scroll[0].Y, UI.Scroll.Width, UI.Scroll.Height),
                 new RectangleF(scroll[1].X, scroll[1].Y, UI.Scroll.Width, UI.Scroll.Height)
             });
-            UI.Container.DrawItems(Item.nearby, scroll[0]);
-            UI.Container.DrawItems(myPlayer.inventory, scroll[1]);
+            UI.Container.DrawItems(Item.nearby, scroll[0], graphics);
+            UI.Container.DrawItems(myPlayer.inventory, scroll[1], graphics);
             if (Player.itemTextBox != null && Player.itemTextBox.active)
             {
                 Player.itemTextBox.Draw(graphics);
@@ -552,6 +557,10 @@ namespace cotf
             //        }
             //    }
             //}
+            for (int i = 0; i < effect.Count; i++)
+            {
+                effect[i]?.Update();
+            }
             for (int i = 0; i < door.Length; i++)
             {
                 door[i]?.Update();

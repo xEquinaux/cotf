@@ -10,6 +10,8 @@ using cotf.Base;
 using cotf.World;
 using cotf.Collections;
 using cotf.Assets;
+using Color = Microsoft.Xna.Framework.Color;
+using Rectangle = Microsoft.Xna.Framework.Rectangle;
 using Microsoft.Xna.Framework.Graphics;
 
 namespace cotf.World
@@ -25,16 +27,17 @@ namespace cotf.World
     public class FogMethods
     {
         public Texture2D texture => Game.fog;
-        public static void DrawEffect(SpriteBatch sb)
+        public static void DrawEffect(Texture2D texture, SpriteBatch sb)
         {
             for (int i = 0; i < Main.background.GetLength(0); i++)
             {
                 for (int j = 0; j < Main.background.GetLength(1); j++)
                 {
                     var _t = Main.background[i, j];
-                    if (_t != null && _t.active)
+                    if (_t != null && _t.active && !_t.discovered)
                     {
-                        EffectFog(_t.onScreen, _t.position, _t.Center, sb, size: 25, range: 150f);
+                        EffectFog(texture, _t.onScreen, _t.position, _t.Center, sb, size: 25, range: 150f);
+                        //EffectFog(texture, _t.onScreen, _t.position, _t.Center, sb, 0.34f);
                     }
                 }
             }
@@ -43,15 +46,16 @@ namespace cotf.World
                 for (int j = 0; j < Main.tile.GetLength(1); j++)
                 {
                     var _t = Main.tile[i, j];
-                    if (_t != null && _t.Active)
+                    if (_t != null && _t.Active && !_t.discovered)
                     {
-                        EffectFog(_t.onScreen, _t.position, _t.Center, sb, size: 25, range: 150f);
+                        EffectFog(texture, _t.onScreen, _t.position, _t.Center, sb, size: 25, range: 150f);
+                        //EffectFog(texture, _t.onScreen, _t.position, _t.Center, sb, 0.34f);
                     }
                 }
             }
         }
 
-        private static void EffectFog(bool onScreen, CirclePrefect.Vector2 ent_Position, CirclePrefect.Vector2 ent_Center, SpriteBatch sb, float range = 100f, int size = 10, int scale = 3)
+        private static void EffectFog(Texture2D texture, bool onScreen, CirclePrefect.Vector2 ent_Position, CirclePrefect.Vector2 ent_Center, SpriteBatch sb, float range = 100f, int size = 10, int scale = 3)
         {
             int x = (int)ent_Position.X - size + Main.ScreenX;
             int y = (int)ent_Position.Y - size + Main.ScreenY;
@@ -61,8 +65,27 @@ namespace cotf.World
                 for (int i = 0; i < 2; i++)
                 for (int j = 0; j < 2; j++)
                 {
+                    float alpha = Math.Min(distance / (range * scale), 1f);
                     //float alpha = GetAlphaDynamic(ent_Center, Main.lamp.Concat(new Entity[] { Main.myPlayer }).ToArray(), range);
-                    //sb.Draw(texture, new Rectangle(x + i * size, y + j * size, size * scale, size * scale), Color.Black * alpha); //Math.Min(distance / (range * scale), 1f)
+                    sb.Draw(texture, new Rectangle(x + i * size, y + j * size, size * scale, size * scale), Color.Black * alpha);
+                }
+            }
+        }
+        private static void EffectFog(Texture2D texture, bool onScreen, CirclePrefect.Vector2 ent_Position, CirclePrefect.Vector2 ent_Center, SpriteBatch sb, float alpha = 0.3f)
+        {
+            float range = 150f; 
+            int size = 25; 
+            int scale = 3;
+            int x = (int)ent_Position.X - size + Main.ScreenX;
+            int y = (int)ent_Position.Y - size + Main.ScreenY;
+            float distance = (float)Main.myPlayer.Distance(ent_Center);
+            if (onScreen)
+            {
+                for (int i = 0; i < 2; i++)
+                for (int j = 0; j < 2; j++)
+                {
+                    //float alpha = GetAlphaDynamic(ent_Center, Main.lamp.Concat(new Entity[] { Main.myPlayer }).ToArray(), range);
+                    sb.Draw(texture, new Rectangle(x + i * size, y + j * size, size * scale, size * scale), Color.Black * (alpha * distance));
                 }
             }
         }
@@ -72,7 +95,7 @@ namespace cotf.World
             return (float)Math.Min(Helper.Distance(from, to) / (range * 3f), 1f);
         }
 
-        public float GetAlphaDynamic(CirclePrefect.Vector2 Center, Entity[] e, float range = 100f)
+        public static float GetAlphaDynamic(CirclePrefect.Vector2 Center, Entity[] e, float range = 100f)
         {
             //if (t != null && t.active && t.onScreen)
             //{

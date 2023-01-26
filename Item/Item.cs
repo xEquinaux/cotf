@@ -367,11 +367,11 @@ namespace cotf
                 if (equipped)
                 {
                     if (holdStyle == HoldStyle.HoldOut)
-                        Drawing.DrawRotate(texture, box, new Rectangle(0, 0, width, height), Helper.ToDegrees(angle) + 45f, new PointF(width / 2, height / 2), color, Color.Black, RotateType.GraphicsTransform, graphics);
+                        Drawing.DrawRotate(texture, box, new Rectangle(0, 0, width, height), Helper.ToDegrees(angle) + 135f, new PointF(width / 2, height / 2), defaultColor, Color.Black, RotateType.GraphicsTransform, graphics);
                     else if (useStyle == UseStyle.Stab)
-                        Drawing.DrawRotate(texture, hurtbox, new Rectangle(0, 0, width, height), Helper.ToDegrees(AngleTo(Main.myPlayer.Center, Center)) + 45f, new PointF(width / 2, height / 2), color, Color.Black, RotateType.MatrixTransform, graphics);
+                        Drawing.DrawRotate(texture, hurtbox, new Rectangle(0, 0, width, height), Helper.ToDegrees(AngleTo(Main.myPlayer.Center, Center)) + 135f, new PointF(width / 2, height / 2), defaultColor, Color.Black, RotateType.MatrixTransform, graphics);
                     else if (inUse) 
-                        Drawing.DrawRotate(texture, hurtbox, new Rectangle(0, 0, width, height), Helper.ToDegrees(AngleTo(Main.myPlayer.Center, Center)) + 45f, new PointF(width / 2, height / 2), color, Color.Black, RotateType.MatrixTransform, graphics);
+                        Drawing.DrawRotate(texture, hurtbox, new Rectangle(0, 0, width, height), Helper.ToDegrees(AngleTo(Main.myPlayer.Center, Center)) + 135f, new PointF(width / 2, height / 2), defaultColor, Color.Black, RotateType.MatrixTransform, graphics);
                 }
                 else if (discovered && !inPile && !inStash)
                 {
@@ -498,7 +498,7 @@ namespace cotf
             nearby.Add(item);
             return item.whoAmI;
         }
-        internal void DrawInventory(int x, int y, bool onScreen)
+        internal void DrawInventory(int x, int y, bool onScreen, Graphics graphics)
         {
             //  Draw Inventory Items
             if (!active)
@@ -510,7 +510,8 @@ namespace cotf
                 {
                     //  TODO: sort out relative dimensions
                     float ratio = (float)width / height;
-                    Main.Graphics.DrawImage(texture, hitbox = new Rectangle(x + DrawSize / 2 - width / 2, y, width, (int)(ratio * height)));
+                    hitbox = new Rectangle(x + DrawSize / 2 - width / 2, y, width, (int)(ratio * height));
+                    Drawing.DrawTexture(texture, hitbox, hitbox.Width, hitbox.Height, graphics, Drawing.SetColor(defaultColor));
                 }
             }
         }

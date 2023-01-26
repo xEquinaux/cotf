@@ -982,6 +982,10 @@ namespace cotf.Base
             }
             mem.Dispose();
         }
+        public static void DrawTexture(Image image, Rectangle rectangle, int width, int height, Graphics graphics, ImageAttributes attr)
+        {
+            graphics.DrawImage(image, rectangle, 0, 0, width, height, GraphicsUnit.Pixel, attr);
+        }
         public static void DrawRotate(Image image, Vector2 position, RectangleF rectangle, float angle, PointF origin, Color transparency, RotateType type, Graphics graphics, float scale = 1f)
         {
             MemoryStream mem = new MemoryStream();

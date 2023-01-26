@@ -46,6 +46,7 @@ namespace cotf.World.Traps
         }
         public virtual void Hurt(int damage)
         {
+            CombatText.NewText(damage, this);
             this.iFrames = iFramesMax;
             this.life -= damage;
             if (life <= 0)

@@ -13,6 +13,7 @@ using System.Drawing.Text;
 using System.Linq;
 using cotf.Assets;
 using cotf.Base;
+using cotf.Legacy;
 
 namespace cotf
 {
@@ -153,6 +154,11 @@ namespace cotf
                     surface.Dispose();
                 }
             }
+            for (int i = 0; i < Main.effect.Count; i++)
+            {
+                Main.effect[i]?.Draw(_spriteBatch);
+            }
+            //cotf.World.FogMethods.DrawEffect(fog, _spriteBatch);
             try
             { 
                 GC.EndNoGCRegion();

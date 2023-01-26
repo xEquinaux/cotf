@@ -58,7 +58,7 @@ namespace cotf
         public Rectangle lightBox => new Rectangle((int)(position.X - lightRange), (int)(position.Y - lightRange), width + (int)lightRange * 2, height + (int)lightRange * 2);
         public bool hasTorch() => equipment[EquipType.OffHand] != null && Main.myPlayer.equipment[EquipType.OffHand].equipped && Main.myPlayer.equipment[EquipType.OffHand].type == ItemID.Torch;
         int debug = 0;
-        public Skill activeSkill = Skill.SetActive(SkillID.FireBolt);
+        public Skill activeSkill = Skill.SetActive(SkillID.Melee);
         public Skill[] skill = new Skill[SkillID.Total];
         public Purse Purse => (Purse)equipment[EquipType.Purse];
         public bool cursed;
@@ -94,6 +94,9 @@ namespace cotf
         public override void Update()
         {
             base.Update();
+
+            //  DEBUG active skill swapping
+            activeSkill = Skill.SetActive(SkillID.Melee);
 
             //  Stats information
             playerData = new UI.Textbox("", Vector2.Zero, new Rectangle(Main.ScreenWidth / 10 - 5, Main.ScreenHeight / 2 - 80, 0, 0), Main.ScreenWidth / 2, ButtonStyle.None, true, myPlayer.whoAmI);
@@ -131,10 +134,13 @@ namespace cotf
                     inventory[i].Update(this);
                     if (i >= inventory.Count)
                         return;
-                    if (Main.mouseLeft && inventory[i].hitbox.Contains(mouse))
+                    if (Main.mouseLeft)
                     {
-                        itemTextBox = new UI.Textbox(inventory[i], inventory[i].texture, inventory[i].ToolTip.name, inventory[i].Text(), Main.InventoryCenter, (int)Main.InventoryCenter.X / 2, ButtonStyle.EquipDropCancel, true, whoAmI);
-                        return;
+                        if (inventory[i].hitbox.Contains(mouse))
+                        {
+                            itemTextBox = new UI.Textbox(inventory[i], inventory[i].texture, inventory[i].ToolTip.name, inventory[i].Text(), Main.InventoryCenter, (int)Main.InventoryCenter.X / 2, ButtonStyle.EquipDropCancel, true, whoAmI);
+                            return;
+                        }
                     }
                 }
                 for (int i = 0; i < Item.nearby.Count; i++)

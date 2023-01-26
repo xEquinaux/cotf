@@ -274,7 +274,9 @@ namespace cotf
                     {
                         float ratio = heading.Width / heading.Height;
                         var header = new Rectangle(padded.Left, padded.Top - headerImageWidth - 4, headerImageWidth, (int)(headerImageWidth * ratio));
+                        //  TODO get item color and draw
                         graphics.DrawImage(heading, header);
+                        //Drawing.DrawScale(heading, new Vecto, header.Width, header.Height, graphics, Drawing.SetColor(Color.White));
                         graphics.DrawString(name, font, new SolidBrush(color), new PointF(header.Right + headerTextPadding, header.Bottom - headerFontHeight));
                     }
                     graphics.FillRectangle(Brushes.DarkGray, padded);
@@ -307,7 +309,7 @@ namespace cotf
         {
             private const int Size = 64;
             private const int Padding = 24;
-            internal static void DrawItems(IList<Item> list, Scroll bar)
+            internal static void DrawItems(IList<Item> list, Scroll bar, Graphics graphics)
             {
                 const int offset = 6;
                 int c = (int)bar.parent.X + offset, r = (int)bar.parent.Y + offset;
@@ -315,7 +317,7 @@ namespace cotf
                 {
                     if (i == null) continue;
                     int n = r - (int)(bar.value * bar.parent.Height);
-                    i.DrawInventory(c, n, n < bar.parent.Height + bar.parent.Y - Padding && n > bar.parent.Y);
+                    i.DrawInventory(c, n, n < bar.parent.Height + bar.parent.Y - Padding && n > bar.parent.Y, graphics);
                     c += Size;
                     if (c > bar.parent.Width + bar.parent.X - Padding)
                     {
