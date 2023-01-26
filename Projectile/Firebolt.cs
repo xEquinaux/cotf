@@ -30,7 +30,17 @@ namespace cotf
             defaultColor = Color.Red;
             base.SetDefaults();
         }
-        protected override void Init()
+        public override void Collide()
+        {
+            if (Collision(this, 4))
+            { 
+                Dispose();
+            }
+        }
+        public override void HitNPC(Npc npc)
+        {
+        }
+        public override void HitPlayer(Player player)
         {
         }
         public override void AI()

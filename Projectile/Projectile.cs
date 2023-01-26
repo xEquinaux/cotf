@@ -35,9 +35,17 @@ namespace cotf
             SetDefaults();
             color = defaultColor;
         }
+        public virtual bool PreAI()
+        {
+            if (Main.TimeScale == 1f)
+            {
+                velocity = oldVelocity;
+            }
+            return true;
+        }
         public virtual void AI()
         {
-            if (!active)
+            if (!active || !PreAI())
                 return;
             Collide();
             foreach (Npc n in Main.npc)
@@ -46,13 +54,22 @@ namespace cotf
                     continue;
                 HitNPC(n);
             }
+            HitPlayer(Main.myPlayer);
             velocity *= Main.TimeScale;
         }
         public virtual void HitPlayer(Player player)
         {
+            if (player.ProjHit(this))
+            {
+                Dispose();
+            }
         }
         public virtual void HitNPC(Npc npc)
         {
+            if (npc.NpcProjHit(this))
+            {
+                npc.NpcHurt(damage, knockBack, AngleTo(npc.Center));
+            }
         }
         public virtual void Draw(Graphics graphics)
         {
@@ -75,6 +92,7 @@ namespace cotf
             Main.projectile[num].active = true;
             Main.projectile[num].position = position;
             Main.projectile[num].velocity = velocity;
+            Main.projectile[num].oldVelocity = velocity;
             Main.projectile[num].type = type;
             Main.projectile[num].whoAmI = num;
             Main.projectile[num].owner = parent.owner;

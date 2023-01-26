@@ -64,12 +64,9 @@ namespace cotf.World
         public void Draw(Graphics graphics)
         {
             if (!active || !onScreen || !discovered)
-            {
-                alpha = 0f;
                 return;
-            }
             if (alpha > 0f)
-            { 
+            {
                 Lightmap map;
                 //  Lightmap interaction
                 (map = Main.lightmap[box.X / Tile.Size, box.Y / Tile.Size]).Update(this);

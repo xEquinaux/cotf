@@ -51,7 +51,7 @@ namespace cotf.Base
         public const int LootRange = 50;
         public short type;
         public float scale;
-        public float alpha = 1f;
+        public float alpha = 0f;
         public float knockBack = 1f;
         public Purse purse;
         public Image texture;
@@ -62,6 +62,7 @@ namespace cotf.Base
         public Rectangle box;
         public Vector2 position;
         public Vector2 velocity;
+        public Vector2 oldVelocity;
         public Bitmap preTexture;
         public List<Entity> objChild = new List<Entity>();
         public ImageAttributes colorTransform = new ImageAttributes();
