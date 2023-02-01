@@ -21,7 +21,7 @@ namespace cotf.Buff
             this.damage = damage;
             this.oldColor = oldColor;
         }
-        public static Debuff NewDebuff(short type)
+        public static Debuff NewDebuff(short type, int time)
         {
             int frames = 0;
             int damage = 0;
@@ -33,6 +33,11 @@ namespace cotf.Buff
                 case DebuffID.Fire:
                     damage = 5;
                     frames = 180;
+                    hostile = true;
+                    break;
+                case DebuffID.Poison:
+                    damage = 1;
+                    frames = time;
                     hostile = true;
                     break;
             }

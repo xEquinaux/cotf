@@ -17,7 +17,7 @@ namespace cotf.ID
         public sealed class Sets
         {
             public const int Total = 11;
-            public bool[] Damaging 
+            public static bool[] Damaging 
             {
                 get
                 {
@@ -39,7 +39,7 @@ namespace cotf.ID
                     return result;
                 }
             }
-            public bool[] IsTurret
+            public static bool[] IsTurret
             { 
                 get
                 {
@@ -58,7 +58,7 @@ namespace cotf.ID
                     return result;
                 }
             }
-            public bool[] Effect
+            public static bool[] Effect
             {
                 get
                 {
@@ -96,6 +96,7 @@ namespace cotf.ID
     {
         public const short
             None = 0,
-            Fire = 1;
+            Fire = 1,
+            Poison = 2;
     }
 }

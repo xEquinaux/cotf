@@ -17,7 +17,7 @@ namespace cotf.Base
     public class Entity : Object, IDisposable
     {
         public string TextureName;
-        public string Name => name;
+        public string Name { get; private set; }
         public string name = "";
         public string text = "";
         public virtual string Text()
@@ -62,6 +62,7 @@ namespace cotf.Base
         public Color color;
         public Color defaultColor;
         public Color lightColor;
+        public Color borderColor = Color.White;
         public Brush brush;
         public Rectangle box;
         public Vector2 position;
@@ -142,7 +143,7 @@ namespace cotf.Base
         }
         public void RemoveBuff()
         {
-            this.debuff = Debuff.NewDebuff(DebuffID.None);
+            this.debuff = Debuff.NewDebuff(DebuffID.None, 0);
         }
         public static Vector2 GetTileLine(Entity target, float angle, float step)
         {

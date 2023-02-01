@@ -106,6 +106,7 @@ namespace cotf
             if (flag)
             { 
                 EnchantedStats();
+                borderColor = Color.LightSkyBlue;
                 cursed = false;
             }
             return enchanted = flag;
@@ -115,6 +116,7 @@ namespace cotf
             if (flag)
             { 
                 CursedStats();
+                borderColor = Color.Purple;
                 enchanted = false;
             }
             return cursed = flag;
@@ -576,13 +578,154 @@ namespace cotf
         public const byte
             None = 0,
             Swing = 1,
-            Stab = 2;
+            Stab = 2,
+            Slash = 3;
     }
     public sealed class ItemID
     {
-        public const short
+        public sealed class Sets
+        {
+            public static bool[] Hurts
+            {
+                get
+                {
+                    bool[] result = new bool[Total];
+                    for (int i = 0; i < Total; i++)
+                    {
+                        switch (i)
+                        {
+                            case 1:
+                            case 3:
+                            case 13:
+                            case 14:
+                            case 15:
+                            case 16:
+                            case 17:
+                            case 18:
+                                result[i] = true;
+                                break;
+                        }
+                    }
+                    return result;
+                }
+            }
+            public static bool[] isSword
+            {
+                get
+                {
+                    bool[] result = new bool[Total];
+                    for (int i = 0; i < Total; i++)
+                    {
+                        switch (i)
+                        {
+                            case 1:
+                            case 16:
+                            case 17:
+                            case 18:
+                                result[i] = true;
+                                break;
+                        }
+                    }
+                    return result;
+                }
+            }
+            public static bool[] Utility
+            {
+                get
+                {
+                    bool[] result = new bool[Total];
+                    for (int i = 0; i < Total; i++)
+                    {
+                        switch (i)
+                        {
+                            case 2:
+                            case 4:
+                            case 12:
+                            case 19:
+                                result[i] = true;
+                                break;
+                        }
+                    }
+                    return result;
+                }
+            }
+            public static bool[] Ability
+            {
+                get
+                {
+                    bool[] result = new bool[Total];
+                    for (int i = 0; i < Total; i++)
+                    {
+                        switch (i)
+                        {
+                            case 10:
+                            case 11:
+                            case 12:
+                                result[i] = true;
+                                break;
+                        }
+                    }
+                    return result;
+                }
+            }
+            public static bool[] isCoin
+            {
+                get
+                {
+                    bool[] result = new bool[Total];
+                    for (int i = 0; i < Total; i++)
+                    {
+                        switch (i)
+                        {
+                            case 5:
+                            case 6:
+                            case 7:
+                            case 8:
+                            case 9:
+                                result[i] = true;
+                                break;
+                        }
+                    }
+                    return result;
+                }
+            }
+            public static bool[] Armor
+            {
+                get
+                {
+                    bool[] result = new bool[Total];
+                    for (int i = 0; i < Total; i++)
+                    {
+                        switch (i)
+                        {
+                            case 19:
+                            case 20:
+                            case 21:
+                            case 22:
+                            case 23:
+                            case 24:
+                            case 25:
+                            case 26:
+                            case 27:
+                            //   Extra? |
+                            //          v
+                            case 28:
+                            case 29:
+                            case 30:
+                            case 31:
+                            case 32:
+                                result[i] = true;
+                                break;
+                        }
+                    }
+                    return result;
+                }
+            }
+        }
+
+        public const int
             None = 0,
-            Broadsword = 1,
+            Broadsword = 1,  
             Torch = 2,
             Spear = 3,
             Purse = 4,
@@ -593,7 +736,30 @@ namespace cotf
             PlatinumCoin = 9,
             Scroll = 10,
             Wand = 11,
-            Potion = 12;
+            Potion = 12,
+            Bow = 13,
+            Mace = 14,       // swing motion effect
+            Club = 15,       // forward effect
+            Dagger = 16,     // quick motion effect
+            Longsword = 17,  // bigger swing
+            Shortsword = 18, // fast
+                             // | Armor
+            Belt = 19,       // v
+            BodyArmor = 20,  // Mail
+            Gauntlets = 21,  // Gloves
+            Cape = 22,
+            Helm = 23,       // Coif
+            Boots = 24,
+            Ring1 = 25,
+            Ring2 = 26,
+            Necklace = 27, 
+            Shirt = -28,      //  | Extra? 
+            Coif = -29,       //  v
+            Cap = -30,
+            Leggings = -31,
+            Wrists = -32;
+        public const byte 
+            Total = 33;
     }
     public sealed class EquipType
     {
@@ -612,6 +778,7 @@ namespace cotf
             Ring2 = 11,
             Gauntlets = 12,
             Belt = 13,
-            Bracers = 14;
+            Bracers = 14,
+            Wrists = 15;
     }
 }

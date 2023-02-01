@@ -14,6 +14,7 @@ using cotf;
 using cotf.Assets;
 using cotf.Base;
 using cotf.ID;
+using cotf.World;
 
 namespace cotf.Legacy
 {
@@ -37,8 +38,17 @@ namespace cotf.Legacy
         public static Color TorchLight = Color.Orange;
         public void Draw(SpriteBatch sb)
         {
+            float alpha = 1f;
+            //  Leaving discovered areas dim
+            {
+                Vector2 World = position;
+                alpha = (float)Math.Min(Helper.Distance(Center, Main.myPlayer.Center) / (range * 2f), 1f);
+                Background bg = Background.GetSafely((int)World.X / Tile.Size, (int)World.Y / Tile.Size);
+                if (bg != null && bg.active && bg.discovered)
+                    alpha /= 3f;
+            }
             if (!lit && onScreen)
-                sb.Draw(Game.fog, new Rectangle((int)position.X - 10 + Main.ScreenX, (int)position.Y - 10 + Main.ScreenY, Size * 3, Size * 3), Color.Black * (float)Math.Min(Helper.Distance(Center, Main.myPlayer.Center) / (range * 2f), 1f));
+                sb.Draw(Game.fog, new Rectangle((int)position.X - 10 + Main.ScreenX, (int)position.Y - 10 + Main.ScreenY, Size * 3, Size * 3), Color.Black * alpha);
             updating = false;
 
             lit = false;
