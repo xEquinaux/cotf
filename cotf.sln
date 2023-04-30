@@ -5,9 +5,9 @@ VisualStudioVersion = 17.2.32602.215
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "cotf", "cotf.csproj", "{A9692099-59EB-4E8F-9293-818E42DFCF6F}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "gmvsample", "F:\!! Backup Storage SSD\src\repos transfer\gmvsample\gmvsample.csproj", "{7409C241-2B17-4B1E-A780-AF2737A5F106}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "gmvsample", "G:\!! Backup Storage SSD\src\repos transfer\gmvsample\gmvsample.csproj", "{7409C241-2B17-4B1E-A780-AF2737A5F106}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CirclePrefect", "..\..\..\Desktop\desktop\Apps\src\CirclePrefect dll\CirclePrefect.csproj", "{A224A5CF-FF3B-479B-BC58-D558E799513C}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CirclePrefect", "E:\hidden\desktop\Apps\src\CirclePrefect dll\CirclePrefect.csproj", "{A224A5CF-FF3B-479B-BC58-D558E799513C}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MonoGamePort", "..\MonoGamePort stable\MonoGamePort.csproj", "{D68FE842-55AC-439C-B245-6DB7818DD09A}"
 EndProject

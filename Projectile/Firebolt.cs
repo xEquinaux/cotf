@@ -46,7 +46,7 @@ namespace cotf
                 if (!init)
                 {
                     init = true;
-                    npc.AddBuff(Debuff.NewDebuff(DebuffID.Fire));
+                    //npc.AddBuff(Debuff.NewDebuff(DebuffID.Fire));
                 }
                 Dispose();
                 return true;
@@ -56,11 +56,11 @@ namespace cotf
         public override bool HitPlayer(Player player)
         {
             if (base.HitPlayer(player))
-            { 
+            {
                 if (!init)
                 {
                     init = true;
-                    player.AddBuff(Debuff.NewDebuff(DebuffID.Fire));
+                    //player.AddBuff(Debuff.NewDebuff(DebuffID.Fire));
                 }
                 Dispose();
                 return true;

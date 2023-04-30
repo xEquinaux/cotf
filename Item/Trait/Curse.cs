@@ -19,13 +19,15 @@ namespace cotf
                 case ItemID.Broadsword:
                     item.damage = (int)(item.damage * 1.2f);
                     item.useSpeed /= 2;
-                    item.Cursed(cursed);
-                    Main.myPlayer.AddBuff(Debuff.NewDebuff(DebuffID.Poison, 60));
                     break;
                 case ItemID.Boots:
-
+                    Main.myPlayer.moveSpeed /= 1.5f;
                     break;
             }
+        }
+        public override void RemoveEffect(Player player)
+        {
+            
         }
     }
 }

@@ -61,9 +61,12 @@ namespace cotf
         public Stash GetStash => Main.stash.FirstOrDefault(t => t != null && t.active && t.content.Contains(this));
         public bool enchanted, cursed;
         public ToolTip toolTip { get; protected set; }
-        public bool 
+        public bool
             inPile = false,
             inStash = false;
+        public Prefix prefix;
+        public Suffix suffix;
+        public Trait trait;
         public override string ToString()
         {
             return $"Name:{name}, X:{X}, Y:{Y}, Active:{active}, Index:{whoAmI}";
@@ -104,18 +107,20 @@ namespace cotf
         private bool Enchanted(bool flag)
         {
             if (flag)
-            { 
-                EnchantedStats();
+            {
+                //  trait = //Add an enchantment
+                //  EnchantedStats();
                 borderColor = Color.LightSkyBlue;
                 cursed = false;
             }
             return enchanted = flag;
         }
-        public bool Cursed(bool flag)
+        private bool Cursed(bool flag)
         {
             if (flag)
-            { 
-                CursedStats();
+            {
+                //  trait = //Add a Curse
+                //  CursedStats();    // Handled in Curse class
                 borderColor = Color.Purple;
                 enchanted = false;
             }

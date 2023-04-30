@@ -37,7 +37,7 @@ namespace cotf
         }
         public static void PreProcessing()
         {
-            //  DEBUG: disabled for testing
+            //  DEBUG: comment out for lighting
             return;
             for (int n = 0; n < Main.lamp.Length; n++)
             {

@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace cotf.Base
 {
-    internal class Trait
+    public class Trait
     {
         public string prefix;
         public string suffix;
@@ -22,18 +22,24 @@ namespace cotf.Base
         public virtual void Enchanted(Item item, bool enchanted)
         {
         }
+        public virtual void RemoveEffect(Player player)
+        {
+            //  With things directly effecting player,
+            //  should have buffer variables to compare with:
+            //  A default player variables class perhaps
+        }
         public virtual string GetName(Item item)
         {
             return item.name = $"{prefix} {item.Name} {suffix}";
         }
     }
-    internal interface IAffix
+    public interface IAffix
     {
         public abstract void Apply(Trait trait);
         public abstract void Effect(Item item);
         public abstract void Effect(Player player);
     }
-    internal class Prefix : Trait, IAffix
+    public class Prefix : Trait, IAffix
     {
         public virtual void Apply(Trait trait)
         {
@@ -47,7 +53,7 @@ namespace cotf.Base
         {
         }
     }
-    internal class Suffix : Trait, IAffix
+    public class Suffix : Trait, IAffix
     {
         public virtual void Apply(Trait trait)
         {

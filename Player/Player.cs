@@ -349,7 +349,7 @@ namespace cotf
             {
                 //position = Main.lamp[2].position + new Vector2(10, 10);
                 //var debug = Main.item.First(t => t != null && t.active && t.type == ItemID.Broadsword);
-                var debug = Main.trap.LastOrDefault(t => t != null && t.active && t.type == ID.TrapID.MagicTurret);
+                var debug = Main.trap.LastOrDefault(t => t != null && t.active && t.type > 0);
                 if (debug != null)
                 {
                     position = debug.position;

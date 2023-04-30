@@ -54,7 +54,7 @@ namespace cotf
                 if (!init)
                 {
                     init = true;
-                    n.AddBuff(Debuff.NewDebuff(DebuffID.Fire));
+                    //n.AddBuff(Debuff.NewDebuff(DebuffID.Fire));
                 }
                 n.NpcHurt(damage, knockBack, Helper.AngleTo(n.Center, Center));
                 switch (type)
