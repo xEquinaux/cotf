@@ -126,6 +126,7 @@ namespace cotf
             mouseLeft,
             mouseRight,
             pressO;
+        internal static Player[] player = new Player[256];
         internal static Player myPlayer;
         internal static UI.Scroll[] scroll = new UI.Scroll[2];
         internal static UI.Textbox[] textbox = new UI.Textbox[20];

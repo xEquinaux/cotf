@@ -19,8 +19,8 @@ namespace cotf.Network
         internal static NetPlayer[] stream = new NetPlayer[256];
         private static BinaryWriter writer;
         private static BinaryReader reader;
-        protected BinaryReader Reader(int whoAmI) => new BinaryReader(stream[whoAmI].Stream);
-        protected BinaryWriter Writer(int whoAmI) => new BinaryWriter(stream[whoAmI].Stream);
+        protected static BinaryReader Reader(int whoAmI) => new BinaryReader(stream[whoAmI].Stream);
+        protected static BinaryWriter Writer(int whoAmI) => new BinaryWriter(stream[whoAmI].Stream);
         internal Player instance => Main.myPlayer;
 
         internal static async void Initialize(IPAddress ip, int port = 8000, byte whoAmI = 0)
@@ -50,7 +50,7 @@ namespace cotf.Network
                 Local = new NetworkStream(udp.Client);
                 writer = new BinaryWriter(Local);
                 reader = new BinaryReader(Local);
-                RecieveData();
+                HandlePackets();
             }
             if (Main.netMode == NetModeID.Server)
             {
@@ -88,7 +88,9 @@ namespace cotf.Network
                 //  Give index
                 player.whoAmI = whoAmI;
                 //  Process data
-                //  Load and handle Player object
+                SendData(PacketID.PlayerData, whoAmI, -1, new NetInfo(new Packet(PacketID.PlayerData, whoAmI, -1)));
+                //  Load and handle Player objects
+                SendData(PacketID.SyncPlayerData, whoAmI, -1, new NetInfo(new Packet(PacketID.SyncPlayerData, whoAmI, -1)));
                 return player;
             });
         }
@@ -123,12 +125,12 @@ namespace cotf.Network
                         Task.WaitAll(new[] { Task.Delay(5) });
                         continue;
                     }
-                    Packet get = HandlePacket();
-                    
+                    Packet get = GetPacket();
+                    RecieveData(get.packet, get.to, get.from, null, get.num, get.num2, get.num3);
                 }
             });
         }
-        private static Packet HandlePacket()
+        private static Packet GetPacket()
         {
             Packet packet = new Packet();
             long start = 0;
@@ -147,6 +149,8 @@ namespace cotf.Network
             }
             if (start == -100L)
             { 
+                packet.from = reader.ReadByte();
+                packet.to = reader.ReadByte();
                 packet.packet = reader.ReadByte();
                 packet.num  = reader.ReadInt32();
                 packet.num2 = reader.ReadInt32();
@@ -155,7 +159,7 @@ namespace cotf.Network
             }
             return null;
         }
-        private static void RecieveData(Packet packet, int toWhom = -1, int fromWhom = -1, NetInfo info = null, int num = 0, int num2 = 0, int num3 = 0)
+        private static void RecieveData(byte packet, int toWhom = -1, int fromWhom = -1, NetInfo info = null, int num = 0, int num2 = 0, int num3 = 0)
         {
             if (Main.netMode == NetModeID.Singleplayer)
                 return;
@@ -163,7 +167,13 @@ namespace cotf.Network
             {
                 switch (packet)
                 {
-
+                    case PacketID.JoinWorld:
+                        break;
+                    case PacketID.PlayerData:
+                        //  Getting whoAmI from toWhom specifically recieved by player who recently connected
+                        Main.myPlayer.whoAmI = toWhom;
+                        Main.player[toWhom] = Main.myPlayer;
+                        break;
                 }
             }
             if (Main.netMode == NetModeID.Server)
@@ -200,7 +210,14 @@ namespace cotf.Network
             }
             if (Main.netMode == NetModeID.Server)
             {
-
+                Packet send = info?.packet;
+                switch (packet)
+                {
+                    case PacketID.PlayerData:
+                        //  Generic send of whoAmI data
+                        send.Send(packet, toWhom, info);
+                        break;
+                }
             }
         }
     }
@@ -209,9 +226,16 @@ namespace cotf.Network
         public Packet()
         {
         }
+        public Packet(byte id, int to, int from)
+        {
+            this.packet = id;
+            this.to = to;
+            this.from = from;
+        }
         public const long 
             START = -100;
         public byte packet;
+        public int to, from;
         public int num, num2, num3;
         private BinaryWriter write;
         public void Send(byte packet, int toWhom = 255, NetInfo info = null)
@@ -219,13 +243,21 @@ namespace cotf.Network
             if (NetMessage.stream[toWhom] == null)
                 return;
             write = new BinaryWriter(NetMessage.stream[toWhom].Stream);
-            write.Write(packet);
+            write.Write(-100L);
+            write.Write(from);
+            write.Write(to);
+            write.Write(packet); 
+            write.Write(num);
+            write.Write(num2);
+            write.Write(num3);
         }
     }
     public class PacketID
     {
         public const byte
-            JoinWorld = 0;
+            JoinWorld = 0,
+            PlayerData = 1,
+            SyncPlayerData = 2;
     }
     public class NetPlayer
     {
@@ -244,6 +276,10 @@ namespace cotf.Network
     }
     public class NetInfo
     {
+        public NetInfo(Packet packet)
+        {
+            this.packet = packet;
+        }
         public Packet packet;
     }
     public sealed class NetMessageID
