@@ -280,6 +280,7 @@ namespace cotf.Network
         {
             this.packet = packet;
         }
+        public string text;
         public Packet packet;
     }
     public sealed class NetMessageID

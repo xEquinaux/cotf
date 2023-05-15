@@ -742,7 +742,8 @@ namespace cotf
             Scroll = 10,
             Wand = 11,
             Potion = 12,
-            Bow = 13,
+            Bow = 13,        // fast
+            CrossBow = -13,  // slow
             Mace = 14,       // swing motion effect
             Club = 15,       // forward effect
             Dagger = 16,     // quick motion effect
