@@ -49,7 +49,7 @@ namespace cotf.World.Traps
             {
                 var v2 = Helper.AngleToSpeed((float)(angle[i] + _angle), 300f);
                 var result = Center + v2;
-                Entity.DrawChain(Main.chainTexture[0], this, result, graphics, true);
+                Entity.DrawChain(Main.chainTexture[0], this, result, graphics, 300, true);
             }
             
             Drawing.DrawRotate(texture, hitbox, Helper.ToDegrees((float)_angle), new PointF(width / 2, height / 2), color, RotateType.GraphicsTransform, graphics);

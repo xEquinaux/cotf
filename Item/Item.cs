@@ -67,6 +67,7 @@ namespace cotf
         public Prefix prefix;
         public Suffix suffix;
         public Trait trait;
+        public float weight;
         public override string ToString()
         {
             return $"Name:{name}, X:{X}, Y:{Y}, Active:{active}, Index:{whoAmI}";
@@ -224,7 +225,7 @@ namespace cotf
                 inUse = true;
             }
             if (inUse)
-            { 
+            {
                 switch (useStyle)
                 { 
                     case UseStyle.Swing:

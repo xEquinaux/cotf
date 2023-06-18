@@ -14,6 +14,9 @@ using System.Linq;
 using cotf.Assets;
 using cotf.Base;
 using cotf.Legacy;
+using System.Diagnostics;
+using System.Collections.Generic;
+using System.Timers;
 
 namespace cotf
 {
@@ -128,9 +131,21 @@ namespace cotf
             base.Update(gameTime);
         }
 
+        int seconds = 0;
+        long average = 0;
+        List<long> elapsed = new List<long>(10);
+        Stopwatch watch = new Stopwatch();
+        Timer timer = new Timer();
         protected override void Draw(GameTime gameTime)
         {
             GC.TryStartNoGCRegion(6144000);
+            if (!timer.Enabled)
+            {
+                watch.Start();
+                timer.Interval = 1000;
+                timer.Enabled = true;
+            }
+            
             using (Bitmap bmp = new Bitmap(_bounds.Width, _bounds.Height))
             {
                 using (Graphics graphics = Graphics.FromImage(bmp))
@@ -168,12 +183,19 @@ namespace cotf
                     var transparent = System.Drawing.Color.FromArgb(20, 20, 20);
                     using (Graphics graphics = Graphics.FromImage(bmp))
                     {
-                        
                         graphics.Clear(transparent);
                         SetQuality(graphics, new System.Drawing.Rectangle(0, 0, _bounds.Width, _bounds.Height));
                         { 
                             Main.myPlayer.playerData?.Draw(graphics);
                             Main.Instance.DrawOverlays(graphics);
+                            if (elapsed.Count >= 10)
+                            {
+                                average = (long)elapsed.Average();
+                                elapsed.Clear();
+                            }
+                            elapsed.Add((long)(watch.Elapsed.TotalMilliseconds));//(long)(60d * (watch.Elapsed.Milliseconds / gameTime.ElapsedGameTime.TotalSeconds / 1000d)));
+                            watch.Restart();
+                            graphics.DrawString(average.ToString(), Main.DefaultFont, Brushes.White, PointF.Empty);
                         }
                     }
                     bmp.MakeTransparent(transparent);
@@ -194,9 +216,11 @@ namespace cotf
             catch (Exception e) 
             { }
             finally
-            { 
+            {
                 base.Draw(gameTime);
             }
+
+            var a = gameTime.ElapsedGameTime.Milliseconds;
         }
 
         protected void Settings()

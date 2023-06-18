@@ -347,6 +347,33 @@ namespace cotf.Base
                     new RectangleF(0, 0, texture.Width, (int)(texture.Width * f)), Helper.ToDegrees(angle - Helper.Radian * 90f), new PointF(texture.Width / 2, texture.Height / 2), Color.Black, RotateType.GraphicsTransform, graphics);
             }
         }
+        public static void DrawChain(Image texture, Entity ent, Vector2 target, Graphics graphics, float rangeLimit = 300f, bool collision = false)
+        {
+            Vector2 limit = Vector2.Zero;
+            for (int n = 0; n < Helper.Distance(ent.Center, target); n += texture.Width - 1)
+            {
+                if (n > rangeLimit)
+                    return;
+                double f = 1d;
+                float angle = Helper.AngleTo(ent.Center, target);
+                double cos = ent.Center.X + n * Math.Cos(angle);
+                double sine = ent.Center.Y + n * Math.Sin(angle);
+                if (collision)
+                {
+                    var tile = Tile.GetSafely((float)cos, (float)sine);
+                    if (tile != null && tile.Active && tile.solid && tile.hitbox.Contains((int)cos, (int)sine))
+                    {
+                        cos = ent.Center.X + n * Math.Cos(angle);
+                        sine = ent.Center.Y + n * Math.Sin(angle);
+                        limit = new Vector2((float)cos, (float)sine);
+                        return;
+                    }
+                }
+                //if (flag) f = Helper.Distance(ent.Center, limit) % texture.Width / texture.Width;
+                Drawing.DrawRotate(texture, new Vector2((float)cos, (float)sine),
+                    new RectangleF(0, 0, texture.Width, (int)(texture.Width * f)), Helper.ToDegrees(angle - Helper.Radian * 90f), new PointF(texture.Width / 2, texture.Height / 2), Color.Black, RotateType.GraphicsTransform, graphics);
+            }
+        }
         public static void DrawChain(Image texture, Entity ent, Tile tile, Graphics graphics)
         {
             for (int n = 0; n < tile.Distance(ent.Center); n += texture.Width)
