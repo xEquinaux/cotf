@@ -66,7 +66,6 @@ namespace cotf
             inStash = false;
         public Prefix prefix;
         public Suffix suffix;
-        public Trait trait;
         public float weight;
         public override string ToString()
         {
@@ -105,7 +104,7 @@ namespace cotf
                     break;
             }
         }
-        private bool Enchanted(bool flag)
+        public bool Enchanted(bool flag)
         {
             if (flag)
             {
@@ -116,12 +115,12 @@ namespace cotf
             }
             return enchanted = flag;
         }
-        private bool Cursed(bool flag)
+        public bool Cursed(bool flag)
         {
             if (flag)
             {
-                //  trait = //Add a Curse
-                //  CursedStats();    // Handled in Curse class
+                //trait = //Add a Curse
+                CursedStats();
                 borderColor = Color.Purple;
                 enchanted = false;
             }

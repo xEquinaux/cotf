@@ -13,7 +13,7 @@ using cotf.World;
 
 namespace cotf
 {
-    public class Broadsword : Item
+    public class Broadsword : Item, ITrait, IAffix
     {
         protected override Color rarity => base.rarity;
         public override ToolTip ToolTip => toolTip;
@@ -56,6 +56,46 @@ namespace cotf
         public override void Draw(Graphics graphics)
         {
             base.Draw(graphics);
+        }
+
+        public int Quality(Item item)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void Cursed(Item item, bool cursed)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void Enchanted(Item item, bool enchanted)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void RemoveEffect(Player player)
+        {
+            throw new NotImplementedException();
+        }
+
+        public string GetName(Item item)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void Apply(ITrait trait)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void Effect(Item item)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void Effect(Player player)
+        {
+            throw new NotImplementedException();
         }
     }
 }

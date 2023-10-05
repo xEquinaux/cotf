@@ -138,14 +138,6 @@ namespace cotf
         Timer timer = new Timer();
         protected override void Draw(GameTime gameTime)
         {
-            GC.TryStartNoGCRegion(6144000);
-            if (!timer.Enabled)
-            {
-                watch.Start();
-                timer.Interval = 1000;
-                timer.Enabled = true;
-            }
-            
             using (Bitmap bmp = new Bitmap(_bounds.Width, _bounds.Height))
             {
                 using (Graphics graphics = Graphics.FromImage(bmp))
@@ -169,7 +161,7 @@ namespace cotf
                     surface.Dispose();
                 }
             }
-            if (!Main.open)
+            if (!Main.open)                                                     
             {
                 for (int i = 0; i < Main.effect.Count; i++)
                 {
@@ -188,14 +180,7 @@ namespace cotf
                         { 
                             Main.myPlayer.playerData?.Draw(graphics);
                             Main.Instance.DrawOverlays(graphics);
-                            if (elapsed.Count >= 10)
-                            {
-                                average = (long)elapsed.Average();
-                                elapsed.Clear();
-                            }
-                            elapsed.Add((long)(watch.Elapsed.TotalMilliseconds));//(long)(60d * (watch.Elapsed.Milliseconds / gameTime.ElapsedGameTime.TotalSeconds / 1000d)));
-                            watch.Restart();
-                            graphics.DrawString(average.ToString(), Main.DefaultFont, Brushes.White, PointF.Empty);
+                            //graphics.DrawString(gameTime.ElapsedGameTime.Milliseconds.ToString(), Main.DefaultFont, Brushes.White, PointF.Empty);
                         }
                     }
                     bmp.MakeTransparent(transparent);
@@ -209,18 +194,7 @@ namespace cotf
                 }
             }
             //cotf.World.FogMethods.DrawEffect(fog, _spriteBatch);
-            try
-            { 
-                GC.EndNoGCRegion();
-            }
-            catch (Exception e) 
-            { }
-            finally
-            {
-                base.Draw(gameTime);
-            }
-
-            var a = gameTime.ElapsedGameTime.Milliseconds;
+            base.Draw(gameTime);
         }
 
         protected void Settings()

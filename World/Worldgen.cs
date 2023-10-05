@@ -31,8 +31,7 @@ namespace cotf.World
             { 1, 0, 0, 0, 0, 0, 1 },
             { 1, 1, 1, 1, 1, 1, 1 }
         };
-        static List<Task> light = new List<Task>();
-
+        
         public Worldgen()
         {
             Instance = this;
@@ -40,30 +39,19 @@ namespace cotf.World
 
         public static void UpdateLampMaps()
         {
-            if (light.Count > 0)
-            { 
-                if (!light.All(t => t.IsCompleted))
-                { 
-                    return;
-                }
-                else light.Clear();
-            }
             foreach (Lamp lamp in Main.lamp)
-            { 
+            {
                 if (lamp == null || !lamp.active) continue;
-            //  light.Add(Task.Run(() => 
-            //  {
-                    int radius = (int)lamp.range / 2;
-                    for (int i = (int)lamp.Center.X - radius; i <= lamp.Center.X + radius; i += Tile.Size)
+                int radius = (int)lamp.range / 2;
+                for (int i = (int)lamp.Center.X - radius; i <= lamp.Center.X + radius; i += Tile.Size)
+                {
+                    for (int j = (int)lamp.Center.Y - radius; j <= lamp.Center.Y + radius; j += Tile.Size)
                     {
-                        for (int j = (int)lamp.Center.Y - radius; j <= lamp.Center.Y + radius; j += Tile.Size)
-                        {
-                            int x = i / Tile.Size;
-                            int y = j / Tile.Size;
-                            Lightmap.GetSafely(x, y).LampEffect(lamp);
-                        }
+                        int x = i / Tile.Size;
+                        int y = j / Tile.Size;
+                        Lightmap.GetSafely(x, y).LampEffect(lamp);
                     }
-            //  }));
+                }
             }
         }
         

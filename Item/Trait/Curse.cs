@@ -10,9 +10,9 @@ using cotf.ID;
 
 namespace cotf
 {
-    internal class Curse : Trait
+    internal class Curse : ITrait
     {
-        public override void Cursed(Item item, bool cursed)
+        public void Cursed(Item item, bool cursed)
         {
             switch (item.type)
             {
@@ -25,7 +25,23 @@ namespace cotf
                     break;
             }
         }
-        public override void RemoveEffect(Player player)
+
+        public void Enchanted(Item item, bool enchanted)
+        {
+            
+        }
+
+        public string GetName(Item item)
+        {
+            return item.Name;
+        }
+
+        public int Quality(Item item)
+        {
+            return 0;
+        }
+
+        public void RemoveEffect(Player player)
         {
             
         }
