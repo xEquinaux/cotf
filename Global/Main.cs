@@ -14,12 +14,14 @@ using cotf.World;
 using cotf.World.Traps;
 using cotf.Collections;
 using System.Diagnostics;
-using CirclePrefect;
-using CirclePrefect.Foundation.Ext;
-using Cursor = CirclePrefect.Foundation.Ext.Cursor;
 using Keyboard = Microsoft.Xna.Framework.Input.Keyboard;
 using Keys = Microsoft.Xna.Framework.Input.Keys;
 using Microsoft.Xna.Framework.Input;
+using Microsoft.Xna.Framework;
+using Color = System.Drawing.Color;
+using Rectangle = System.Drawing.Rectangle;
+using tUserInterface.Extension;
+using Helper = cotf.Base.Helper;
 
 namespace cotf
 {
@@ -101,6 +103,7 @@ namespace cotf
         #endregion
         //private System.Windows.Forms.Form surface;
         public static KeyboardState keyboard;
+        public static MouseState mouse;
         internal static Image
             texture,
             texture90,
@@ -109,7 +112,9 @@ namespace cotf
             fow,
             fow50,
             square,
-            grass;
+            grass,
+            ground,
+            wall;
         public static Image[] trapTexture = new Image[TrapID.Sets.Total];
         public static Image[] chainTexture = new Image[1];
         //public static KeyStates EscState = KeyStates.None;
@@ -279,8 +284,8 @@ namespace cotf
                     ButtonStyle.YesNo,
                     false,
                     0);
-            for (int i = 0; i < 3; i++)
-                Item.NewItem(myPlayer.position.X, myPlayer.position.Y, 32, 32, ItemID.Purse, 255, CirclePrefect.Objects.Stash.GoldValue);
+            //for (int i = 0; i < 3; i++)
+            //  Item.NewItem(myPlayer.position.X, myPlayer.position.Y, 32, 32, ItemID.Purse, 255, CirclePrefect.Objects.Stash.GoldValue);
             Item.NewItem(myPlayer.position.X + Tile.Size, myPlayer.position.Y, 32, 32, ItemID.Torch);
             WorldObject.NewObject(myPlayer.position.X + Tile.Size, myPlayer.position.Y, 42, 42, true);
             #endregion
@@ -336,11 +341,11 @@ namespace cotf
             pressO = ticks3++ == 1 && myPlayer.KeyDown(Keys.O);
             if (Keyboard.GetState().IsKeyUp(Keys.O))
                 ticks3 = 0;
-            mouseLeft = ticks++ == 1 && Cursor.IsLeftPressed();
-            if (!Cursor.IsLeftPressed())
+            mouseLeft = ticks++ == 1 && LeftMouse();
+            if (!LeftMouse())
                 ticks = 0;
-            mouseRight = ticks2++ == 1 && Cursor.IsRightPressed();
-            if (!Cursor.IsRightPressed())
+            mouseRight = ticks2++ == 1 && RightMouse();
+            if (!RightMouse())
                 ticks2 = 0;
             camera1.position = myPlayer.position - new Vector2(myPlayer.width / 2, myPlayer.height / 2);
             thumbnail.Update();
@@ -757,11 +762,11 @@ namespace cotf
         }
         public static bool LeftMouse()
         {
-            return Cursor.IsLeftPressed();
+            return Input.IsLeftPressed();
         }
         public static bool RightMouse()
         {
-            return Cursor.IsRightPressed();
+            return Input.IsRightPressed();
         }
         private Rectangle CenterBox(int screenWidth, int screenHeight, int centerWidth, int centerHeight)
         {

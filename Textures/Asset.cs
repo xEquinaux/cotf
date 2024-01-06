@@ -27,6 +27,10 @@ namespace cotf.Assets
         {
             return (T)Bitmap.FromFile("./Textures/" + name + ".png");
         }
+        public static T Request(string name, string extension)
+        {
+            return (T)Bitmap.FromFile("./Textures/" + name + extension);
+        }
         public static T Get(Type type, int style)
         {
             switch (type.Name)

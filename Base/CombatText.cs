@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using Color = System.Drawing.Color;
 using System.Drawing;
 using System.Drawing.Drawing2D;
 using System.Linq;
@@ -14,8 +15,7 @@ using cotf.World;
 using cotf.World.Traps;
 using cotf.Collections;
 using System.Diagnostics;
-using CirclePrefect;
-using CirclePrefect.Foundation.Ext;
+using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Input;
 
 namespace cotf.Base

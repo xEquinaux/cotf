@@ -3,11 +3,10 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
 using System.Timers;
-using CirclePrefect;
-using Foundation;
 using cotf;
 using cotf.Base;
 using cotf.ID;
+using Timer = System.Timers.Timer;
 
 namespace cotf.World.Traps
 {

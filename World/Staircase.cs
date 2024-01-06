@@ -5,10 +5,11 @@ using System.Drawing.Imaging;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using CirclePrefect;
 using cotf.Base;
 using cotf.World;
 using cotf.Collections;
+using Microsoft.Xna.Framework;
+using Rectangle = System.Drawing.Rectangle;
 
 namespace cotf.World
 {

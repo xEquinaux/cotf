@@ -6,13 +6,14 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Input;
-using Foundation;
-using CirclePrefect;
 using cotf.Assets;
 using cotf.Base;
 using cotf.World;
+using Microsoft.Xna.Framework;
+using Color = System.Drawing.Color;
 using Keyboard = Microsoft.Xna.Framework.Input.Keyboard;
 using Keys = Microsoft.Xna.Framework.Input.Keys;
+using Rectangle = System.Drawing.Rectangle;
 
 namespace cotf
 {

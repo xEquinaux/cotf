@@ -5,7 +5,6 @@ using System.Drawing.Imaging;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using CirclePrefect;
 using cotf.Base;
 using cotf.World;
 using cotf.Collections;
@@ -13,6 +12,7 @@ using cotf.Assets;
 using Color = Microsoft.Xna.Framework.Color;
 using Rectangle = Microsoft.Xna.Framework.Rectangle;
 using Microsoft.Xna.Framework.Graphics;
+using Microsoft.Xna.Framework;
 
 namespace cotf.World
 {
@@ -55,7 +55,7 @@ namespace cotf.World
             }
         }
 
-        private static void EffectFog(Texture2D texture, bool onScreen, CirclePrefect.Vector2 ent_Position, CirclePrefect.Vector2 ent_Center, SpriteBatch sb, float range = 100f, int size = 10, int scale = 3)
+        private static void EffectFog(Texture2D texture, bool onScreen, Vector2 ent_Position, Vector2 ent_Center, SpriteBatch sb, float range = 100f, int size = 10, int scale = 3)
         {
             int x = (int)ent_Position.X - size + Main.ScreenX;
             int y = (int)ent_Position.Y - size + Main.ScreenY;
@@ -71,7 +71,7 @@ namespace cotf.World
                 }
             }
         }
-        private static void EffectFog(Texture2D texture, bool onScreen, CirclePrefect.Vector2 ent_Position, CirclePrefect.Vector2 ent_Center, SpriteBatch sb, float alpha = 0.3f)
+        private static void EffectFog(Texture2D texture, bool onScreen, Vector2 ent_Position, Vector2 ent_Center, SpriteBatch sb, float alpha = 0.3f)
         {
             float range = 150f; 
             int size = 25; 
@@ -90,12 +90,12 @@ namespace cotf.World
             }
         }
 
-        private float Range(CirclePrefect.Vector2 to, CirclePrefect.Vector2 from, float range = 100f)
+        private float Range(Vector2 to, Vector2 from, float range = 100f)
         {
             return (float)Math.Min(Helper.Distance(from, to) / (range * 3f), 1f);
         }
 
-        public static float GetAlphaDynamic(CirclePrefect.Vector2 Center, Entity[] e, float range = 100f)
+        public static float GetAlphaDynamic(Vector2 Center, Entity[] e, float range = 100f)
         {
             //if (t != null && t.active && t.onScreen)
             //{

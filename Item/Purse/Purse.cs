@@ -6,10 +6,10 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Input;
-using Foundation;
-using CirclePrefect.Objects;
 using cotf.Base;
 using cotf.World;
+using RUDD;
+using ToolTip = cotf.Base.ToolTip;
 
 namespace cotf
 {
@@ -40,7 +40,7 @@ namespace cotf
         }
         public override void Update()
         {
-            text = $"Iron: {Content.iron}\n" +
+            text = //$"Iron: {Content.iron}\n" +
                    $"Copper: {Content.copper}\n" +
                    $"Silver: {Content.silver}\n" +
                    $"Gold: {Content.gold}\n" +

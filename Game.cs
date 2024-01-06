@@ -17,6 +17,9 @@ using cotf.Legacy;
 using System.Diagnostics;
 using System.Collections.Generic;
 using System.Timers;
+using ButtonState = Microsoft.Xna.Framework.Input.ButtonState;
+using Keys = Microsoft.Xna.Framework.Input.Keys;
+using Timer = System.Timers.Timer;
 
 namespace cotf
 {
@@ -245,6 +248,8 @@ namespace cotf
             Main.fow50 = Asset<Image>.Request("fow50");
             Main.square = Asset<Image>.Request("background");
             Main.grass = Asset<Image>.Request("small");
+            Main.ground = Asset<Image>.Request("sahara", ".bmp");
+            Main.wall = Asset<Image>.Request("n_Wall9", ".jpg");
             for (int i = 0; i < Main.trapTexture.Length; i++)
             {
                 Main.trapTexture[i] = Main.texture90;
@@ -330,10 +335,10 @@ namespace cotf
     }
     public class Camera
     {
-        public CirclePrefect.Vector2 oldPosition;
-        public CirclePrefect.Vector2 position;
-        public CirclePrefect.Vector2 velocity;
-        public bool isMoving => velocity != CirclePrefect.Vector2.Zero || oldPosition != position;
+        public Vector2 oldPosition;
+        public Vector2 position;
+        public Vector2 velocity;
+        public bool isMoving => velocity != Vector2.Zero || oldPosition != position;
         public bool follow = false;
         public bool active = false;
     }

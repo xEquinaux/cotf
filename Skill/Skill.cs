@@ -4,12 +4,10 @@ using System.Drawing;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using Foundation;
-using CirclePrefect;
-using CirclePrefect.Objects;
 using cotf.Base;
 using cotf.World;
 using System.Drawing.Imaging;
+using ToolTip = cotf.Base.ToolTip;
 
 namespace cotf
 {

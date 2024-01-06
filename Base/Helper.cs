@@ -4,14 +4,17 @@ using System.Drawing;
 using System.Drawing.Drawing2D;
 using System.Drawing.Imaging;
 using System.IO;
-using Foundation;
-using CirclePrefect;
 using cotf.Assets;
 using cotf.Base;
 using cotf.World;
 using System.Threading.Tasks;
 using System.Threading;
 using System.Linq;
+using Microsoft.Xna.Framework;
+using Rectangle = System.Drawing.Rectangle;
+using Color = System.Drawing.Color;
+using Point = System.Drawing.Point;
+using Matrix = System.Drawing.Drawing2D.Matrix;
 
 namespace cotf.Base
 {
@@ -886,7 +889,7 @@ namespace cotf.Base
             color = startColor;
         }
         [Obsolete("Drawing with a light map is currently not integrated.")]
-        public static void BrushLighting(Image texture, CirclePrefect.Extra.Lightmap map, Background ent, Lamp light, Graphics graphics)
+        public static void BrushLighting(Image texture, Lightmap map, Background ent, Lamp light, Graphics graphics)
         {
             Bitmap bitmap = new Bitmap(ent.width, ent.height);
             using (Graphics gfx = Graphics.FromImage(bitmap))
@@ -910,7 +913,7 @@ namespace cotf.Base
             ent.alpha = 0f;
             ent.color = ent.defaultColor;
         }
-        public static void BrushLighting(CirclePrefect.Extra.Lightmap map, Tile ent, Lamp light, Graphics graphics)
+        public static void BrushLighting(Lightmap map, Tile ent, Lamp light, Graphics graphics)
         {
             using (Bitmap bitmap = new Bitmap(ent.width, ent.height))
             { 
@@ -930,7 +933,7 @@ namespace cotf.Base
                 graphics.DrawImage(bitmap, ent.hitbox);
             }
         }
-        public static void BrushLighting(CirclePrefect.Extra.Lightmap map, Background ent, Lamp light, Graphics graphics)
+        public static void BrushLighting(Lightmap map, Background ent, Lamp light, Graphics graphics)
         {
             using (Bitmap bitmap = new Bitmap(ent.width, ent.height))
             { 

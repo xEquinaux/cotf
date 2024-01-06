@@ -5,12 +5,13 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using CirclePrefect;
 using cotf.Base;
 using cotf.Collections;
 using cotf.ID;
 using cotf.World;
 using cotf.World.Traps;
+using Microsoft.Xna.Framework;
+using Rectangle = System.Drawing.Rectangle;
 
 namespace cotf.World
 {

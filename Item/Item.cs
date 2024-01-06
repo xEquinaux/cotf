@@ -5,11 +5,14 @@ using System.Drawing.Imaging;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using CirclePrefect;
 using cotf.Base;
 using cotf.World;
 using cotf.Collections;
 using cotf.Assets;
+using ToolTip = cotf.Base.ToolTip;
+using Microsoft.Xna.Framework;
+using Color = System.Drawing.Color;
+using Rectangle = System.Drawing.Rectangle;
 
 namespace cotf
 {
@@ -185,7 +188,7 @@ namespace cotf
                     break;
                 case ItemID.Purse:
                     drop = ((Purse)myPlayer.equipment[equipType]).DeepClone(true);
-                    ((Purse)myPlayer.equipment[equipType]).Content = CirclePrefect.Objects.Stash.Empty;
+                    ((Purse)myPlayer.equipment[equipType]).Content = new RUDD.Stash();
                     break;
                 default:
                     break;
@@ -439,7 +442,7 @@ namespace cotf
                 case ItemID.Purse:
                     if (value == 0)
                     {
-                        value = (uint)Main.rand.Next(100, CirclePrefect.Objects.Stash.GoldValue);
+                        value = (uint)Main.rand.Next(100, RUDD.Stash.GoldCoin);
                     }
                     Main.item[num] = new Purse(value);
                     Main.item[num].value = value;

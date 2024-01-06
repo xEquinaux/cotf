@@ -19,6 +19,10 @@ namespace cotf
         }
         public override int Next(int min, int max)
         {
+            if (min >= max)
+            {
+                min *= max / min;
+            }
             return random.Next(min, max);
         }
         public bool NextBool()

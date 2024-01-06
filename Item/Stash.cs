@@ -4,10 +4,12 @@ using System.Drawing;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using CirclePrefect;
+using ToolTip = cotf.Base.ToolTip;
 using cotf;
 using cotf.Base;
 using cotf.World;
+using Microsoft.Xna.Framework;
+using Color = System.Drawing.Color;
 
 namespace cotf.Collections
 {

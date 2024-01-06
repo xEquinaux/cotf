@@ -7,11 +7,10 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Input;
-using Foundation;
-using CirclePrefect;
 using cotf.Assets;
 using cotf.Base;
 using cotf.World;
+using Microsoft.Xna.Framework;
 
 namespace cotf
 {

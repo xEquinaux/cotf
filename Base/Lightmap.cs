@@ -5,10 +5,11 @@ using System.Drawing.Drawing2D;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using Foundation;
-using CirclePrefect;
 using cotf.Base;
 using cotf.World;
+using Microsoft.Xna.Framework;
+using Color = System.Drawing.Color;
+using Rectangle = System.Drawing.Rectangle;
 
 namespace cotf.Base
 {
@@ -25,6 +26,7 @@ namespace cotf.Base
         public Entity parent;
         public float alpha;
         bool keepLit = false;
+        public int ScaleX, ScaleY;
         private Lightmap()
         {
         }

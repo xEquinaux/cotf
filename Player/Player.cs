@@ -6,16 +6,18 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Input;
-using Foundation;
-using CirclePrefect.Objects;
 using cotf.Assets;
 using cotf.Base;
 using cotf.World;
 using System.Drawing.Imaging;
 using System.Diagnostics;
-using CirclePrefect;
 using Keyboard = Microsoft.Xna.Framework.Input.Keyboard;
 using Keys = Microsoft.Xna.Framework.Input.Keys;
+using Microsoft.Xna.Framework;
+using Rectangle = System.Drawing.Rectangle;
+using Color = System.Drawing.Color;
+using RUDD;
+using Vector2 = Microsoft.Xna.Framework.Vector2;
 
 namespace cotf
 {
@@ -454,15 +456,16 @@ namespace cotf
                 return false;
             else
             {
-                Stash p = Stash.Empty;
+                Stash p = new RUDD.Stash();
                 if (item.isCoin)
                     p = Stash.DoConvert(item.value * (uint)item.stack);
-                else p += item.purse.Content;
+                //  TODO: add purses to each other
+                //else p += item.purse.Content;
                 if (myPlayer.Purse == null || !myPlayer.Purse.active || !myPlayer.Purse.equipped)
                     return false;
-                if (myPlayer.Purse.Content == Stash.Empty)
+                if (myPlayer.Purse.Content == new RUDD.Stash())
                     myPlayer.Purse.Content = p;
-                else myPlayer.Purse.Content += p;
+                //else myPlayer.Purse.Content += p;
                 return true;
             }
         }

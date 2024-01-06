@@ -5,7 +5,7 @@ using System.Drawing.Imaging;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using CirclePrefect;
+using ToolTip = cotf.Base.ToolTip;
 using cotf.Base;
 using cotf.World;
 using cotf.Collections;

@@ -8,13 +8,12 @@ using Rectangle = Microsoft.Xna.Framework.Rectangle;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 
-using CirclePrefect;
-using CirclePrefect.Native;
 using cotf;
 using cotf.Assets;
 using cotf.Base;
 using cotf.ID;
 using cotf.World;
+using Microsoft.Xna.Framework;
 
 namespace cotf.Legacy
 {
@@ -74,7 +73,7 @@ namespace cotf.Legacy
             foreach (var ent in Main.lamp.Concat(new[] { Main.myPlayer.lamp }))
             {
                 if (ent == null || !ent.active) continue;
-                Vector2 center = ent.position + new CirclePrefect.Vector2(ent.width / 2, ent.height / 2);
+                Vector2 center = ent.position + new Vector2(ent.width / 2, ent.height / 2);
                 if (Helper.Distance(Center, center) < range)
                 {
                     lit = true;

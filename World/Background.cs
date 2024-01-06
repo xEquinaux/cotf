@@ -7,9 +7,10 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Input;
-using Foundation;
-using CirclePrefect;
 using cotf.Base;
+using Microsoft.Xna.Framework;
+using Color = System.Drawing.Color;
+using Rectangle = System.Drawing.Rectangle;
 
 
 namespace cotf.World
@@ -40,10 +41,10 @@ namespace cotf.World
         private void Init()
         {
             //  Brush style texture init
-            Bitmap bmp = new Bitmap(50, 50);
-            using (Graphics gfx = Graphics.FromImage(bmp))
-                gfx.FillRectangle(new SolidBrush(defaultColor), new Rectangle(0, 0, 50, 50));
-            texture = preTexture = bmp;
+            //Bitmap bmp = new Bitmap(50, 50);
+            //using (Graphics gfx = Graphics.FromImage(bmp))
+            //    gfx.FillRectangle(new SolidBrush(defaultColor), new Rectangle(0, 0, 50, 50));
+            texture = preTexture = Main.ground;
         }
         private bool PreUpdate()
         {

@@ -5,8 +5,11 @@ using System.Linq;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
-using CirclePrefect;
 using cotf.Base;
+using Microsoft.Xna.Framework;
+using Color = System.Drawing.Color;
+using Point = System.Drawing.Point;
+using Rectangle = System.Drawing.Rectangle;
 
 namespace cotf.World
 {
@@ -57,10 +60,10 @@ namespace cotf.World
             defaultColor = Color.LightGray;
 
             //  Brush style texture init
-            Bitmap bmp = new Bitmap(50, 50);
-            using (Graphics gfx = Graphics.FromImage(bmp))
-                gfx.FillRectangle(Brushes.LightGray, new Rectangle(0, 0, 50, 50));
-            texture = preTexture = bmp;
+            //Bitmap bmp = new Bitmap(50, 50);
+            //using (Graphics gfx = Graphics.FromImage(bmp))
+            //    gfx.FillRectangle(Brushes.LightGray, new Rectangle(0, 0, 50, 50));
+            texture = preTexture = Main.wall;
 
             int num = Main.tile.Length - 1;
             for (int i = 0; i < Main.tile.GetLength(0); i++)

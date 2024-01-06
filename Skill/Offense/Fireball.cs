@@ -3,13 +3,11 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using Foundation;
-using CirclePrefect;
-using CirclePrefect.Objects;
 using cotf.Base;
 using cotf.World;
 using System.Drawing.Imaging;
 using System.Drawing;
+using ToolTip = cotf.Base.ToolTip;
 
 namespace cotf
 {

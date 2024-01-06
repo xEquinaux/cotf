@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using cotf;
 using cotf.Base;
 using cotf.World;
+using ToolTip = cotf.Base.ToolTip;
 
 namespace cotf
 {
