@@ -248,8 +248,6 @@ namespace cotf
             Main.fow50 = Asset<Image>.Request("fow50");
             Main.square = Asset<Image>.Request("background");
             Main.grass = Asset<Image>.Request("small");
-            Main.ground = Asset<Image>.Request("sahara", ".bmp");
-            Main.wall = Asset<Image>.Request("n_Wall9", ".jpg");
             for (int i = 0; i < Main.trapTexture.Length; i++)
             {
                 Main.trapTexture[i] = Main.texture90;

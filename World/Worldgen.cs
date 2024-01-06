@@ -490,7 +490,7 @@ namespace cotf.World
                                     {
                                         int offsetX = Main.rand.Next(Tile.Size);
                                         int offsetY = Main.rand.Next(Tile.Size);
-                                        index = Lamp.NewLamp(new Vector2(randv2.X + offsetX, randv2.Y + offsetY), 200f, Lamp.TorchLight, b, true);
+                                        index = Lamp.NewLamp(new Vector2(randv2.X + offsetX, randv2.Y + offsetY), 200f, Lamp.RandomLight(), b, true);
                                         Main.lamp[index].active = true;
                                         Main.lamp[index].owner = 255;
                                         //b.lamp = Main.lamp[index];

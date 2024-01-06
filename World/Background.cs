@@ -43,8 +43,8 @@ namespace cotf.World
             //  Brush style texture init
             //Bitmap bmp = new Bitmap(50, 50);
             //using (Graphics gfx = Graphics.FromImage(bmp))
-            //    gfx.FillRectangle(new SolidBrush(defaultColor), new Rectangle(0, 0, 50, 50));
-            texture = preTexture = Main.ground;
+                //gfx.FillRectangle(new SolidBrush(defaultColor), new Rectangle(0, 0, 50, 50));
+            texture = preTexture = (Bitmap)Main.square;
         }
         private bool PreUpdate()
         {

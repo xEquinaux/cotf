@@ -114,7 +114,8 @@ namespace cotf
             square,
             grass,
             ground,
-            wall;
+            wall,
+            bg0;
         public static Image[] trapTexture = new Image[TrapID.Sets.Total];
         public static Image[] chainTexture = new Image[1];
         //public static KeyStates EscState = KeyStates.None;
@@ -252,22 +253,6 @@ namespace cotf
                 scroll[i] = new UI.Scroll();
             worldgen = new Worldgen();
             var box = CenterBox(ScreenWidth, ScreenHeight, 300, 75);
-            #region LOGIC
-            int width = WorldWidth = 3000;
-            int height = WorldHeight = 3000;
-            //  Legacy darkness effect
-            Legacy.Fog.Create(0, 0, Main.ScreenWidth, Main.ScreenHeight);   //  TODO: recreate when window resized
-            new Lighting().Init(width, height);
-            //effect = LitEffect.Create(width, height, Lighting.Size);
-            //  Darkness effect
-            //fog = Worldgen.Instance.Fog(width, height);
-            lightmap = worldgen.InitLightmap(width, height);
-            tile = worldgen.CastleGen(Tile.Size, width, height, width / 250, 300f, 600f);
-            Room.ConstructAllRooms();
-            //myPlayer.lamp = lamp[Lamp.NewLamp(myPlayer.Center, myPlayer.lightRange, Lamp.TorchLight, myPlayer, false, 0)];
-            myPlayer.Init();
-            #endregion
-            init = true;
             #region DEBUG
             return;
             Trap.NewTrap(myPlayer.X, myPlayer.Y, 32, 32, ID.TrapID.FlameGeyser);
@@ -332,7 +317,26 @@ namespace cotf
         }
         public void Update()
         {
-            if (!init) return;
+            if (!init)
+            {
+                #region LOGIC
+                int width = WorldWidth = 3000;
+                int height = WorldHeight = 3000;
+                //  Legacy darkness effect
+                Legacy.Fog.Create(0, 0, Main.ScreenWidth, Main.ScreenHeight);   //  TODO: recreate when window resized
+                new Lighting().Init(width, height);
+                //effect = LitEffect.Create(width, height, Lighting.Size);
+                //  Darkness effect
+                //fog = Worldgen.Instance.Fog(width, height);
+                lightmap = worldgen.InitLightmap(width, height);
+                tile = worldgen.CastleGen(Tile.Size, width, height, width / 250, 300f, 600f);
+                Room.ConstructAllRooms();
+                //myPlayer.lamp = lamp[Lamp.NewLamp(myPlayer.Center, myPlayer.lightRange, Lamp.TorchLight, myPlayer, false, 0)];
+                myPlayer.Init();
+                #endregion
+                init = true; 
+                return;
+            }
             //EscState = Keyboard.GetState().IsKeyDown(Keys.Escape);
             timeSpan = TimeSpan.FromMilliseconds(time.ElapsedMilliseconds);
             var point = System.Windows.Forms.Cursor.Position;

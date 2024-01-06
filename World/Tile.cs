@@ -60,10 +60,10 @@ namespace cotf.World
             defaultColor = Color.LightGray;
 
             //  Brush style texture init
-            //Bitmap bmp = new Bitmap(50, 50);
-            //using (Graphics gfx = Graphics.FromImage(bmp))
-            //    gfx.FillRectangle(Brushes.LightGray, new Rectangle(0, 0, 50, 50));
-            texture = preTexture = Main.wall;
+            Bitmap bmp = new Bitmap(50, 50);
+            using (Graphics gfx = Graphics.FromImage(bmp))
+                gfx.FillRectangle(Brushes.LightGray, new Rectangle(0, 0, 50, 50));
+            texture = preTexture = bmp;
 
             int num = Main.tile.Length - 1;
             for (int i = 0; i < Main.tile.GetLength(0); i++)
@@ -104,12 +104,16 @@ namespace cotf.World
                 if (preTexture == null)
                     return;
                 Lightmap map;
-                color = (map = Main.lightmap[hitbox.X / Tile.Size, hitbox.Y / Tile.Size]).Update();
-                if (map != null && map.parent != this)
+                if (alpha > 0f)
                 {
-                    map.parent = this;
+                    //  Lightmap interaction
+                    (map = Main.lightmap[hitbox.X / Tile.Size, hitbox.Y / Tile.Size]).Update(this);
+                    Drawing.TextureLighting(preTexture, hitbox, map, this, Main.Gamma, alpha, graphics);
                 }
-                Drawing.TextureLighting(preTexture, hitbox, ref color, map.DefaultColor, ref map.alpha, map, graphics, colorTransform);
+                if (alpha < 1f)
+                {
+                    alpha += 1f / 10f;
+                }
                 //graphics.DrawImage(Drawing.Lightpass0(preTexture, new Lightmap(10, 10), position, Main.myPlayer.lamp), hitbox);
                 //Drawing.BrushLighting(new Lightmap(10, 10), this, Main.myPlayer.lamp, graphics);
             }

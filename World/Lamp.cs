@@ -153,6 +153,12 @@ namespace cotf
             Main.myPlayer.color = Ext.Multiply(Main.myPlayer.color, lampColor, num);
             #endregion
         }
+        public static Color RandomLight()
+        {
+            int len = Enum.GetNames<KnownColor>().Length;
+            KnownColor c = Enum.Parse<KnownColor>(Enum.GetNames(typeof(KnownColor))[Main.rand.Next(len)]);
+            return Color.FromKnownColor(c);
+        }
         public static int AddLamp(Lamp lamp)
         {
             int num = Main.lamp.Length - 1;
@@ -185,7 +191,7 @@ namespace cotf
             Main.lamp[num].range = range;
             Main.lamp[num].whoAmI = num;
             Main.lamp[num].owner = owner;
-            Main.lamp[num].lampColor = TorchLight;
+            Main.lamp[num].lampColor = RandomLight();
             Main.lamp[num].staticLamp = staticLamp;
             return num;
         }
@@ -206,7 +212,7 @@ namespace cotf
             Main.lamp[num].range = range;
             Main.lamp[num].whoAmI = num;
             Main.lamp[num].owner = owner;
-            Main.lamp[num].lampColor = TorchLight;
+            Main.lamp[num].lampColor = RandomLight();
             Main.lamp[num].itemLink = item;
             return num;
         }
