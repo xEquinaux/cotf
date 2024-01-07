@@ -258,6 +258,9 @@ namespace cotf
                     case StaircaseDirection.LeadingUp:
                         break;
                     case StaircaseDirection.LeadingDown:
+                        Main.GenerateFloor(true);
+                        var entrance = Main.staircase.FirstOrDefault(t => t != null && t.X != 0 && t.Y != 0 && t.active && t.direction == StaircaseDirection.LeadingUp);
+                        position = entrance.position;
                         break;
                     default:
                         break;
@@ -347,6 +350,11 @@ namespace cotf
                 activeSkill.Cast(this);
             }
             //  DEBUG
+            Staircase _s = Main.staircase.FirstOrDefault(t => t != null && t.direction == StaircaseDirection.LeadingDown);
+            if (_s != default && KeyDown(Keys.D1))
+            {
+                position = _s.position;
+            }
             if (Main.mouseRight)
             {
                 //position = Main.lamp[2].position + new Vector2(10, 10);
@@ -442,7 +450,7 @@ namespace cotf
         }
         public bool NpcHit(Npc npc)
         {
-            if (npc != null && npc.active && npc.hostile && npc.velocity == Vector2.Zero && npc.InProximity(this, Math.Max(height, Math.Max(npc.width, npc.height)) * 2) && iFrames == iFramesMax)
+            if (Main.TimeScale > 0 && npc != null && npc.active && npc.hostile && npc.velocity == Vector2.Zero && npc.InProximity(this, Math.Max(height, Math.Max(npc.width, npc.height)) * 2) && iFrames == iFramesMax)
             {
                 Hurt(npc.damage, npc.knockBack, Helper.AngleTo(npc.Center, Center));
                 return true;

@@ -163,7 +163,7 @@ namespace cotf
         int ticks, ticks2, ticks3;
         internal static bool open = false;
         private bool init = false;
-        public static rand rand;
+        public static rand rand = new rand();
         public static float TimeScale => timeScale();
 
         public static float Gamma = 1.2f;
@@ -240,7 +240,7 @@ namespace cotf
             time = Stopwatch.StartNew();
             ScreenWidth = 800;
             ScreenHeight = 600;
-            rand = new rand();
+            //rand = new rand();
             //Mouse.Capture(MainWindow.Instance.Buffer);
             thumbnail = new Thumbnail();
             thumbnail.Init(10, ScreenWidth);
@@ -274,7 +274,6 @@ namespace cotf
             Item.NewItem(myPlayer.position.X + Tile.Size, myPlayer.position.Y, 32, 32, ItemID.Torch);
             WorldObject.NewObject(myPlayer.position.X + Tile.Size, myPlayer.position.Y, 42, 42, true);
             #endregion
-
         }
         public void Camera(Camera camera)
         {
@@ -315,25 +314,79 @@ namespace cotf
                     break;
             }
         }
+        private static void Save(TagCompound tag)
+        {
+            int stairLen = 0;
+            foreach (Staircase s in Main.staircase)
+            {
+                if (s != null && s.active)
+                {
+                    string name = $"stair{stairLen}";
+                    tag.SaveValue(name + "_v2", s.position);
+                    tag.SaveValue(name + "_flag", s.discovered);
+                    tag.SaveValue(name + "_enum", s.direction.ToString());
+                    tag.SaveValue(name + "_size", Tile.Size);
+                    stairLen++;
+                }
+            }
+            int sceneryLen = 0;
+            foreach (Scenery scenery in Main.scenery)
+            {
+                if (scenery != null && scenery.active)
+                {
+
+                }
+            }
+            Array.ForEach(Main.scenery, t => t?.Dispose());
+            Array.ForEach(Main.lamp, t => t?.Dispose());
+            Array.ForEach(Main.npc, t => t?.Dispose());
+            Array.ForEach(Main.item, t => t?.Dispose(true));
+            Array.ForEach(Main.trap, t => t?.Dispose());
+        }
+        private static void UnloadFloor()
+        {
+            using (TagCompound tag = new TagCompound(SaveType.Map))
+            {
+                Save(tag);
+            }
+            foreach (Tile item1 in tile)
+            {
+                item1?.Dispose();
+            }
+            foreach (Background item2 in background)
+            {
+                item2?.Dispose();
+            }
+            Main.room.Clear();
+            Array.ForEach(Main.staircase, t => t?.Dispose());
+            Array.ForEach(Main.scenery, t => t?.Dispose());
+            Array.ForEach(Main.lamp, t => t?.Dispose());
+            Array.ForEach(Main.npc, t => t?.Dispose());
+            Array.ForEach(Main.item, t => t?.Dispose(true));
+            Array.ForEach(Main.trap, t => t?.Dispose());
+        }
+        public static void GenerateFloor(bool unload = false, int width = 3000, int height = 3000)
+        {
+            if (unload)
+                UnloadFloor();
+            WorldWidth = width;
+            WorldHeight = height;
+            new Lighting().Init(width, height);
+            tile = worldgen.CastleGen(Tile.Size, width, height, width / 250, 300f, 600f);
+            Room.ConstructAllRooms();
+        }
         public void Update()
         {
             if (!init)
             {
-                #region LOGIC
-                int width = WorldWidth = 3000;
-                int height = WorldHeight = 3000;
+                int width = 3000;
+                int height = 3000;
                 //  Legacy darkness effect
                 Legacy.Fog.Create(0, 0, Main.ScreenWidth, Main.ScreenHeight);   //  TODO: recreate when window resized
-                new Lighting().Init(width, height);
-                //effect = LitEffect.Create(width, height, Lighting.Size);
-                //  Darkness effect
-                //fog = Worldgen.Instance.Fog(width, height);
-                lightmap = worldgen.InitLightmap(width, height);
-                tile = worldgen.CastleGen(Tile.Size, width, height, width / 250, 300f, 600f);
-                Room.ConstructAllRooms();
+                GenerateFloor(false, width, height);
                 //myPlayer.lamp = lamp[Lamp.NewLamp(myPlayer.Center, myPlayer.lightRange, Lamp.TorchLight, myPlayer, false, 0)];
+                lightmap = worldgen.InitLightmap(width, height);
                 myPlayer.Init();
-                #endregion
                 init = true; 
                 return;
             }

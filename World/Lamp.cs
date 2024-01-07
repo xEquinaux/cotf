@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
+using System.Reflection.Metadata;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
@@ -261,6 +262,10 @@ namespace cotf
         }
         public override void Dispose()
         {
+            if (Main.lamp[whoAmI]?.owner < 255)
+                return;
+            if (Main.lamp[whoAmI]?.itemLink?.owner < 255)
+                return;
             if (Main.lamp[whoAmI] != null)
             { 
                 Main.lamp[whoAmI].active = false;

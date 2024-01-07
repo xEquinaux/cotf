@@ -452,7 +452,7 @@ namespace cotf.World
             int numTorches = 0;
             const float mult = 1.5f;
             //SquareBrush.InitializeArray(brush.Length);
-            while (numDown == 0 || numUp == 0 || numTorches < maxTorches || numItems < maxItems)
+            while (numTorches < maxTorches || numItems < maxItems)
             {
                 foreach (var b in brush)
                 {
@@ -509,48 +509,8 @@ namespace cotf.World
                                         Stash.NewStash((int)(randv2.X + randv2.X % Tile.Size + Tile.Size / 10), (int)(randv2.Y + randv2.Y % Tile.Size + Tile.Size / 10), 0, Item.FillStash((int)randv2.X, (int)randv2.Y, Main.rand.Next(3, 12)));
                                     break;
                                 case TileID.StairsDown:
-                                    if (numDown < 1)
-                                    {
-                                        //  Place down stairs
-                                        Vector2 vector2 = randv2;
-                                        var up = Main.staircase.Where(t => t != null && t.direction == StaircaseDirection.LeadingUp);
-                                        if (up.Count() > 0)
-                                        {
-                                            var stair = up.First();
-                                            if (Helper.Distance(stair.Center, vector2) > range)
-                                            {
-                                                Staircase.NewStaircase((int)vector2.X, (int)vector2.Y, stair, StaircaseDirection.LeadingDown);
-                                                numDown++;
-                                            }
-                                        }
-                                        else
-                                        {
-                                            Staircase.NewStaircase((int)vector2.X, (int)vector2.Y, StaircaseDirection.LeadingDown);
-                                            numDown++;
-                                        }
-                                    }
                                     break;
                                 case TileID.StairsUp:
-                                    if (numUp < 1)
-                                    {
-                                        //  Place up stairs
-                                        Vector2 vector2 = randv2;
-                                        var down = Main.staircase.Where(t => t != null && t.direction == StaircaseDirection.LeadingDown);
-                                        if (down.Count() > 0)
-                                        {
-                                            var stair = down.First();
-                                            if (Helper.Distance(stair.Center, vector2) > range)
-                                            {
-                                                Staircase.NewStaircase((int)vector2.X, (int)vector2.Y, stair, StaircaseDirection.LeadingUp);
-                                                numUp++;
-                                            }
-                                        }
-                                        else
-                                        {
-                                            Staircase.NewStaircase((int)vector2.X, (int)vector2.Y, StaircaseDirection.LeadingUp);
-                                            numUp++;
-                                        }
-                                    }
                                     break;
                                 default:
                                     break;
@@ -577,7 +537,87 @@ namespace cotf.World
                     }
                 }
             }
+            while (numDown < 1)
+            {
+                Vector2 randv2 = Vector2.Zero;
+                do
+                {
+                    randX = Main.rand.Next(size, width - size);
+                    randY = Main.rand.Next(size, height - size);
+                    randv2 = new Vector2(randX, randY);
+                } while (brush[randX / size, randY / size].Active);
+                randv2.X -= randv2.X % size;
+                randv2.Y -= randv2.Y % size;
+                if (!PlaceDownStairs(ref numDown, randv2, range))
+                    continue;
+            }
+            while (numUp < 1)
+            {
+                Vector2 randv2 = Vector2.Zero;
+                do
+                {
+                    randX = Main.rand.Next(size, width - size);
+                    randY = Main.rand.Next(size, height - size);
+                    randv2 = new Vector2(randX, randY);
+                } while (brush[randX / size, randY / size].Active);
+                randv2.X -= randv2.X % size;
+                randv2.Y -= randv2.Y % size;
+                if (!PlaceUpStairs(ref numUp, randv2, range))
+                    continue;
+            }
             return brush;
+        }
+        private bool PlaceDownStairs(ref int numDown, Vector2 randv2, float range)
+        {
+            if (numDown < 1)
+            { 
+                //  Place down stairs
+                Vector2 vector2 = randv2;
+                var up = Main.staircase.Where(t => t != null && t.direction == StaircaseDirection.LeadingUp);
+                if (up.Count() > 0)
+                {
+                    var stair = up.First();
+                    if (Helper.Distance(stair.Center, vector2) > range)
+                    {
+                        Staircase.NewStaircase((int)vector2.X, (int)vector2.Y, stair, StaircaseDirection.LeadingDown);
+                        numDown++;
+                        return true;
+                    }
+                }
+                else
+                {
+                    Staircase.NewStaircase((int)vector2.X, (int)vector2.Y, StaircaseDirection.LeadingDown);
+                    numDown++;
+                    return true;
+                }
+            }
+            return false;
+        }
+        private bool PlaceUpStairs(ref int numUp, Vector2 randv2, float range)
+        {
+            if (numUp < 1)
+            {
+                //  Place up stairs
+                Vector2 vector2 = randv2;
+                var down = Main.staircase.Where(t => t != null && t.direction == StaircaseDirection.LeadingDown);
+                if (down.Count() > 0)
+                {
+                    var stair = down.First();
+                    if (Helper.Distance(stair.Center, vector2) > range)
+                    {
+                        Staircase.NewStaircase((int)vector2.X, (int)vector2.Y, stair, StaircaseDirection.LeadingUp);
+                        numUp++;
+                        return true;
+                    }
+                }
+                else
+                {
+                    Staircase.NewStaircase((int)vector2.X, (int)vector2.Y, StaircaseDirection.LeadingUp);
+                    numUp++;
+                    return true;
+                }
+            }
+            return false;
         }
         public Tile[,] DungeonGen(int size, int width, int height, int maxNodes = 4, float range = 300f)
         {

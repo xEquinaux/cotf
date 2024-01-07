@@ -191,6 +191,13 @@ namespace cotf.World
             tile.hitbox = copy.hitbox;
             return tile;
         }
+        public override void Dispose()
+        {
+            this.active(false);
+            this.X = 0;
+            this.Y = 0;
+            Main.tile[i, j] = null;
+        }
     }
     sealed class OutOfBoundsException : Exception
     {

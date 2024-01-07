@@ -23,9 +23,11 @@ namespace cotf.World
         public Color color0 = Color.LightGray;
         public DoorFacing doorFace = DoorFacing.None;
         public List<Entity> ent = new List<Entity>();
+        public int size;
 
         public Background(int i, int j, int size)
         {
+            this.size = size;
             name = "Background";
             TextureName = "background";
             active = true;
@@ -85,6 +87,15 @@ namespace cotf.World
         public static Background GetSafely(int i, int j)
         {
             return Main.background[Math.Max(Math.Min(i, Main.background.GetLength(0) - 1), 0), Math.Max(Math.Min(j, Main.background.GetLength(1) - 1), 0)];
+        }
+        public override void Dispose()
+        {
+            int i = (int)position.X / size;
+            int j = (int)position.Y / size;
+            Main.background[i, j].active = false;
+            Main.background[i, j].lit = false;
+            Main.background[i, j].lamp?.Dispose();
+            Main.background[i, j] = null;
         }
     }
     public enum DoorFacing

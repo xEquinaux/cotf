@@ -58,6 +58,8 @@ namespace cotf
         protected override void Initialize()
         {
             new Main();
+            string path = Path.Combine(new[] { Environment.GetEnvironmentVariable("USERPROFILE"), "Documents", "My Games", "CotF" });
+            TagCompound.SetPaths(Path.Combine(path, "Players"), Path.Combine(path, "World"));   //  TODO: make relative to player name
             _Initialize();
             { 
                 _bounds = new Size(800, 600);

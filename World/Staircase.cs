@@ -80,7 +80,7 @@ namespace cotf.World
             int num = Main.staircase.Length - 1;
             for (int i = 0; i < Main.staircase.Length; i++)
             {
-                if (Main.staircase[num] == null || !Main.staircase[num].active)
+                if (Main.staircase[i] == null || !Main.staircase[i].active)
                 {
                     num = i;
                     break;
@@ -99,7 +99,7 @@ namespace cotf.World
             int num = Main.staircase.Length - 1;
             for (int i = 0; i < Main.staircase.Length; i++)
             {
-                if (Main.staircase[num] == null || !Main.staircase[num].active)
+                if (Main.staircase[i] == null || !Main.staircase[i].active)
                 {
                     num = i;
                     break;
@@ -135,6 +135,9 @@ namespace cotf.World
         {
             if (Main.staircase[whoAmI] != null)
             {
+                Main.staircase[whoAmI].X = 0;
+                Main.staircase[whoAmI].Y = 0;
+                Main.staircase[whoAmI].direction = StaircaseDirection.None;
                 Main.staircase[whoAmI].active = false;
                 Main.staircase[whoAmI] = null;
             }

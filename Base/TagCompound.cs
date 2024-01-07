@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 using System.Text;
+using Microsoft.Xna.Framework;
 
 namespace cotf.Base
 {
@@ -22,6 +23,10 @@ namespace cotf.Base
         public TagCompound(Entity subject, SaveType type)
         {
             this.subject = subject;
+            this.type = type;
+        }
+        public TagCompound(SaveType type)
+        {
             this.type = type;
         }
         private static string 
@@ -53,15 +58,23 @@ namespace cotf.Base
                 case SaveType.None:
                     break;
                 case SaveType.Player:
-                    name = name.Insert(0, psPath); //  Has path separator at end
+                    name = Path.Combine(psPath, name); //  Has path separator at end
                     break;
                 case SaveType.Map:
+                    name = Path.Combine(msPath, name);
                     //  Something similar to SaveType.Player, perhaps putting data in OS
                     //  %userprofile%\\Documents\\"My Games"
                     break;
                 case SaveType.World:
                     break;
             }
+            file = new FileStream(name, FileMode.OpenOrCreate);
+            br = new BinaryReader(file);
+            bw = new BinaryWriter(file);
+        }
+        public void WorldInit(string name)
+        {
+            name = Path.Combine(msPath, name);
             file = new FileStream(name, FileMode.OpenOrCreate);
             br = new BinaryReader(file);
             bw = new BinaryWriter(file);
@@ -122,6 +135,12 @@ namespace cotf.Base
                             else if (type == typeof(double))
                             {
                                 return value = br.ReadDouble();
+                            }
+                            else if (type == typeof(Vector2))
+                            {
+                                float x = br.ReadSingle();
+                                float y = br.ReadSingle();
+                                return value = new Vector2(x, y);
                             }
                         }
                     }
@@ -254,6 +273,18 @@ namespace cotf.Base
                 bw.Write(tag);
             }
             bw.Write(value);
+            Dispose();
+        }
+        public void SaveValue(string tag, Vector2 value)
+        {
+            Init(subject.Name);
+            if (!TagExists(tag))
+            {
+                //throw new Exception($"Tag, {tag}, already exists");
+                bw.Write(tag);
+            }
+            bw.Write(value.X);
+            bw.Write(value.Y);
             Dispose();
         }
         #endregion

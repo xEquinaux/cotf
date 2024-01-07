@@ -13,6 +13,14 @@
     <ApplicationIcon>Icon.ico</ApplicationIcon>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Remove="Item\Prefix\**" />
+    <Compile Remove="Item\Suffix\**" />
+    <EmbeddedResource Remove="Item\Prefix\**" />
+    <EmbeddedResource Remove="Item\Suffix\**" />
+    <None Remove="Item\Prefix\**" />
+    <None Remove="Item\Suffix\**" />
+  </ItemGroup>
+  <ItemGroup>
     <None Remove="Textures\background.png" />
     <None Remove="Textures\bg.png" />
     <None Remove="Textures\chain.png" />
@@ -52,10 +60,6 @@
     <Resource Include="Textures\item0.png" />
     <Resource Include="Textures\temp.png" />
     <Resource Include="Textures\temp90.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Item\Prefix\" />
-    <Folder Include="Item\Suffix\" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="Native">

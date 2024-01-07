@@ -574,6 +574,15 @@ namespace cotf
             item.Init();
             return item;
         }
+        public void Dispose(bool check = false)
+        {
+            if (check && Main.item[whoAmI].owner < 255)
+                return;
+            Main.item[whoAmI].active = false;
+            Main.item[whoAmI].position = Vector2.Zero;
+            Main.item[whoAmI].lamp?.Dispose();
+            Main.item[whoAmI] = null;
+        }
     }
     public sealed class HoldStyle
     {
