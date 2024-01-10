@@ -4,6 +4,9 @@ using System.Collections.Generic;
 using System.IO;
 using System.Text;
 using Microsoft.Xna.Framework;
+using RUDD;
+using Color = System.Drawing.Color;
+using Vector2 = Microsoft.Xna.Framework.Vector2;
 
 namespace cotf.Base
 {
@@ -23,10 +26,6 @@ namespace cotf.Base
         public TagCompound(Entity subject, SaveType type)
         {
             this.subject = subject;
-            this.type = type;
-        }
-        public TagCompound(SaveType type)
-        {
             this.type = type;
         }
         private static string 
@@ -141,6 +140,24 @@ namespace cotf.Base
                                 float x = br.ReadSingle();
                                 float y = br.ReadSingle();
                                 return value = new Vector2(x, y);
+                            }
+                            else if (type == typeof(Color))
+                            {
+                                byte a = br.ReadByte();
+                                byte r = br.ReadByte();
+                                byte g = br.ReadByte();
+                                byte b = br.ReadByte();
+                                return value = Color.FromArgb(a, r, g, b);
+                            }
+                            else if (type == typeof(Purse))
+                            {
+                                Purse purse = new Purse(0);
+                                purse.Content = new Stash();
+                                purse.Content.copper = br.ReadUInt32();
+                                purse.Content.silver = br.ReadInt32();
+                                purse.Content.gold = br.ReadInt32();
+                                purse.Content.platinum = br.ReadInt32();
+                                return value = purse;
                             }
                         }
                     }
@@ -287,6 +304,34 @@ namespace cotf.Base
             bw.Write(value.Y);
             Dispose();
         }
+        public void SaveValue(string tag, Color value)
+        {
+            Init(subject.Name);
+            if (!TagExists(tag))
+            {
+                //throw new Exception($"Tag, {tag}, already exists");
+                bw.Write(tag);
+            }
+            bw.Write(value.A);
+            bw.Write(value.R);
+            bw.Write(value.G);
+            bw.Write(value.B);
+            Dispose();
+        }
+        public void SaveValue(string tag, Purse value)
+        {
+            Init(subject.Name);
+            if (!TagExists(tag))
+            {
+                //throw new Exception($"Tag, {tag}, already exists");
+                bw.Write(tag);
+            }
+            bw.Write(value.Content.copper);
+            bw.Write(value.Content.silver);
+            bw.Write(value.Content.gold);
+            bw.Write(value.Content.platinum);
+            Dispose();
+        }
         #endregion
         #region variable retrieve
         public bool GetBool(string name)
@@ -401,6 +446,51 @@ namespace cotf.Base
             try
             {
                 value = (string)GetValue(name, typeof(string));
+            }
+            catch { }
+            finally
+            {
+                Dispose();
+            }
+            return value;
+        }
+        public Vector2 GetVector2(string name)
+        {
+            Init(subject.Name);
+            Vector2 value = Vector2.Zero;
+            try
+            {
+                value = (Vector2)GetValue(name, typeof(Vector2));
+            }
+            catch { }
+            finally
+            {
+                Dispose();
+            }
+            return value;
+        }
+        public Color GetColor(string name)
+        {
+            Init(subject.Name);
+            Color value = Color.Gray;
+            try
+            {
+                value = (Color)GetValue(name, typeof(Color));
+            }
+            catch { }
+            finally
+            {
+                Dispose();
+            }
+            return value;
+        }
+        public Stash GetStash(string name)
+        {
+            Init(subject.Name);
+            Stash value = new Stash();
+            try
+            {
+                value = (Stash)GetValue(name, typeof(Stash));
             }
             catch { }
             finally

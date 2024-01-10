@@ -256,11 +256,16 @@ namespace cotf
                     case StaircaseDirection.None:
                         break;
                     case StaircaseDirection.LeadingUp:
+                        Main.FloorNum--;
                         break;
                     case StaircaseDirection.LeadingDown:
-                        Main.GenerateFloor(true);
-                        var entrance = Main.staircase.FirstOrDefault(t => t != null && t.X != 0 && t.Y != 0 && t.active && t.direction == StaircaseDirection.LeadingUp);
-                        position = entrance.position;
+                        Main.FloorNum++;
+                        if (!Main.DoesMapExist("_map", Main.FloorNum))
+                        { 
+                            Main.GenerateFloor(true);
+                            var entrance = Main.staircase.FirstOrDefault(t => t != null && t.X != 0 && t.Y != 0 && t.active && t.direction == StaircaseDirection.LeadingUp);
+                            position = entrance.position;
+                        }
                         break;
                     default:
                         break;

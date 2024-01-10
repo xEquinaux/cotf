@@ -48,6 +48,10 @@ namespace cotf
         internal static Texture2D fog; 
         private Texture2D tile;
 
+        public static string SavePath => Path.Combine(new[] { Environment.GetEnvironmentVariable("USERPROFILE"), "Documents", "My Games", "CotF" });
+        public static string PlayerSavePath => Path.Combine(SavePath, "Players");
+        public static string WorldSavePath => Path.Combine(SavePath, "World");
+
         public Game()
         {
             _graphicsMngr = new GraphicsDeviceManager(this);
@@ -58,8 +62,7 @@ namespace cotf
         protected override void Initialize()
         {
             new Main();
-            string path = Path.Combine(new[] { Environment.GetEnvironmentVariable("USERPROFILE"), "Documents", "My Games", "CotF" });
-            TagCompound.SetPaths(Path.Combine(path, "Players"), Path.Combine(path, "World"));   //  TODO: make relative to player name
+            TagCompound.SetPaths(PlayerSavePath, WorldSavePath);   //  TODO: make relative to player name
             _Initialize();
             { 
                 _bounds = new Size(800, 600);

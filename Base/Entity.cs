@@ -1,15 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Drawing;
-using System.Drawing.Imaging;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using cotf.Buff;
-using cotf.Collections;
+﻿using cotf.Buff;
 using cotf.ID;
 using cotf.World;
 using Microsoft.Xna.Framework;
+using System.Drawing.Imaging;
 using Color = System.Drawing.Color;
 using Rectangle = System.Drawing.Rectangle;
 
@@ -24,6 +17,14 @@ namespace cotf.Base
         public virtual string Text()
         {
             return text;
+        }
+        public int SetNameLength()
+        {
+            return NameLen = Name.Length;
+        }
+        public string SetSuffix(string suffix)
+        {
+            return Name = Name.Substring(0, NameLen) + suffix;
         }
         public bool active = false;
         public bool 
@@ -52,6 +53,11 @@ namespace cotf.Base
         public int iFramesMax;
         public int floorNumber = 0;
         public int Sight => 150 + (Main.myPlayer.hasTorch() ? 50 : 0);
+        public int NameLen
+        {
+            get; 
+            private set;
+        }
         public const int LootRange = 50;
         public short type;
         public float scale;
@@ -84,6 +90,7 @@ namespace cotf.Base
         {
             return $"Name:{name}, Active:{active}, Index:{whoAmI}";
         }
+        public static Entity None => new Entity() { Name = "null", NameLen = "null".Length };
         public virtual bool PreUpdate(bool onScreenCheck = false)
         {
             if (!active)

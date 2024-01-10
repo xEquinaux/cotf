@@ -22,6 +22,7 @@ using Color = System.Drawing.Color;
 using Rectangle = System.Drawing.Rectangle;
 using tUserInterface.Extension;
 using Helper = cotf.Base.Helper;
+using System.Xml.Linq;
 
 namespace cotf
 {
@@ -179,6 +180,7 @@ namespace cotf
             FloorNumber = 1,
             CurrentFloor = 1;
         public static int netMode = 0;
+        private static int floorNum = 1; // Default is set to start at floor 1
         public static int ScreenX
         {
             get { return screenX; }
@@ -197,11 +199,24 @@ namespace cotf
             get { return progress; }
             set { progress = value; }
         }
+        public static int FloorNum
+        {
+            get { return floorNum; }
+            internal set { floorNum = value; }
+        }
         static float progress;
         public static bool rest = false;
         public static float GlobalTime => timeSpan.Seconds * TimeScale;
         public static int GlobalScale(int integer, float scale) => (int)(integer * scale);
         public static Font DefaultFont => System.Drawing.SystemFonts.DefaultFont;
+        private static string setMapName(string name, int num)
+        {
+            return $"{name}{num}";
+        }
+        public static bool DoesMapExist(string name, int num)
+        {
+            return File.Exists(Path.Combine(Game.WorldSavePath, $"null{name}{num}"));
+        }
         private static float timeScale()
         {
             float scale = 0f;
@@ -314,8 +329,53 @@ namespace cotf
                     break;
             }
         }
-        private static void Save(TagCompound tag)
+        private static void SaveMap(Entity ent, TagCompound tag)
         {
+            ent.SetSuffix(setMapName("_map", FloorNum));
+            int tileLen = 0;
+            foreach (Tile item1 in tile)
+            {
+                if (item1 != null && item1.Active)
+                { 
+                    string name = $"tile{tileLen}";
+                    tag.SaveValue(name + "_v2", item1.position);
+                    tag.SaveValue(name + "_flag", item1.Active);
+                    tag.SaveValue(name + "_flag2", item1.discovered);
+                    tag.SaveValue(name + "_flag3", item1.solid);
+                    tag.SaveValue(name + "_int", item1.width);
+                    tag.SaveValue(name + "_int2", item1.height);
+                    tileLen++;
+                }
+            }
+            int bgLen = 0;
+            foreach (Background item2 in background)
+            {
+                if (item2 != null && item2.active)
+                {
+                    string name = $"background{bgLen}";
+                    tag.SaveValue(name + "_v2", item2.position);
+                    tag.SaveValue(name + "_flag", item2.active);
+                    tag.SaveValue(name + "_flag2", item2.discovered);
+                    tag.SaveValue(name + "_int", item2.width);
+                    tag.SaveValue(name + "_int2", item2.height);
+                    bgLen++;
+                }
+            }
+            int roomLen = 0;
+            for (int i = 0; i < Main.room.Count; i++)
+            {
+                Room item3 = Main.room[i];
+                if (item3 != null)
+                {
+                    string name = $"room{roomLen}";
+                    tag.SaveValue(name + "_id", i);
+                    tag.SaveValue(name + "_x", item3.bounds.X);
+                    tag.SaveValue(name + "_y", item3.bounds.Y);
+                    tag.SaveValue(name + "_width", item3.bounds.Width);
+                    tag.SaveValue(name + "_height", item3.bounds.Height);
+                    roomLen++;
+                }
+            }
             int stairLen = 0;
             foreach (Staircase s in Main.staircase)
             {
@@ -334,20 +394,123 @@ namespace cotf
             {
                 if (scenery != null && scenery.active)
                 {
-
+                    string name = $"scenery{sceneryLen}";
+                    tag.SaveValue(name + "_v2", scenery.position);
+                    tag.SaveValue(name + "_flag", scenery.active);
+                    tag.SaveValue(name + "_flag2", scenery.discovered);
+                    tag.SaveValue(name + "_flag3", scenery.solid);
+                    tag.SaveValue(name + "_int", scenery.width);
+                    tag.SaveValue(name + "_int2", scenery.height);
+                    tag.SaveValue(name + "_short", scenery.type);
+                    sceneryLen++;
                 }
             }
-            Array.ForEach(Main.scenery, t => t?.Dispose());
-            Array.ForEach(Main.lamp, t => t?.Dispose());
-            Array.ForEach(Main.npc, t => t?.Dispose());
-            Array.ForEach(Main.item, t => t?.Dispose(true));
-            Array.ForEach(Main.trap, t => t?.Dispose());
+            int lampLen = 0;
+            foreach (Lamp lamp in Main.lamp)
+            {
+                if (lamp != null && lamp.active)
+                {
+                    string name = $"lamp{lampLen}";
+                    tag.SaveValue(name + "_v2", lamp.position);
+                    tag.SaveValue(name + "_flag", lamp.active);
+                    tag.SaveValue(name + "_int", lamp.width);
+                    tag.SaveValue(name + "_int2", lamp.height);
+                    tag.SaveValue(name + "_color", lamp.lampColor);
+                    lampLen++;
+                }
+            }
+            int npcLen = 0;
+            foreach (Npc npc in Main.npc)
+            {
+                if (npc != null && npc.active)
+                {
+                    string name = $"npc{npcLen}";
+                    tag.SaveValue(name + "_v2", npc.position);
+                    tag.SaveValue(name + "_flag", npc.active);
+                    tag.SaveValue(name + "_int", npc.width);
+                    tag.SaveValue(name + "_int2", npc.height);
+                    tag.SaveValue(name + "_int3", npc.life);
+                    tag.SaveValue(name + "_color", npc.defaultColor);
+                    //  If mana value, save here
+                    tag.SaveValue(name + "_short", npc.type);
+                    //  If cursed or enchanted, save -- or if items carried are such and so on
+                    //  Look into saving items carried
+                    npcLen++;
+                }
+            }
+            int itemLen = 0;
+            foreach (Item item in Main.item)
+            {
+                if (item != null && item.active)
+                {
+                    string name = $"item{itemLen}";
+                    tag.SaveValue(name + "_v2", item.position);
+                    tag.SaveValue(name + "_flag", item.active);
+                    tag.SaveValue(name + "_int", item.width);
+                    tag.SaveValue(name + "_int2", item.height);
+                    tag.SaveValue(name + "_int3", item.life);
+                    tag.SaveValue(name + "_color", item.defaultColor);
+                    tag.SaveValue(name + "_short", item.type);
+                    if (item.purse != null && item.purse.Content != null)
+                    { 
+                        tag.SaveValue(name + "_purse", item.purse);
+                    }
+                    itemLen++;
+                }
+            }
+            int trapLen = 0;
+            foreach (Trap trap in Main.trap)
+            {
+                if (trap != null && trap.active)
+                {
+                    string name = $"trap{trapLen}";
+                    tag.SaveValue(name + "_v2", trap.position);
+                    tag.SaveValue(name + "_flag", trap.active);
+                    tag.SaveValue(name + "_int", trap.width);
+                    tag.SaveValue(name + "_int2", trap.height);
+                    tag.SaveValue(name + "_int3", trap.life);
+                    tag.SaveValue(name + "_color", trap.defaultColor);
+                    tag.SaveValue(name + "_short", trap.type);
+                    tag.SaveValue(name + "_single", trap.rotation);
+                    trapLen++;
+                }
+            }
+            int stashLen = 0;
+            foreach (Stash stash in Main.stash)
+            {
+                if (stash != null && stash.active)
+                {
+                    string name = $"stash{stashLen}";
+                    tag.SaveValue(name + "_v2", stash.position);
+                    tag.SaveValue(name + "_flag", stash.active);
+                    tag.SaveValue(name + "_int", stash.width);
+                    tag.SaveValue(name + "_int2", stash.height);
+                    tag.SaveValue(name + "_color", stash.defaultColor);
+                    int contentLen = 0;
+                    foreach (Item i in stash.content)
+                    {
+                        string _name = $"stash{stashLen}_content{contentLen}";
+                        tag.SaveValue(_name + "_v2", i.position);
+                        tag.SaveValue(_name + "_flag", i.active);
+                        tag.SaveValue(_name + "_int", i.width);
+                        tag.SaveValue(_name + "_int2", i.height);
+                        tag.SaveValue(_name + "_color", i.defaultColor);
+                        tag.SaveValue(_name + "_short", i.type);
+                        if (i.purse != null && i.purse.Content != null)
+                        {
+                            tag.SaveValue(_name + "_purse", i.purse);
+                        }
+                        contentLen++;
+                    }
+                    stashLen++;
+                }
+            }
         }
         private static void UnloadFloor()
         {
-            using (TagCompound tag = new TagCompound(SaveType.Map))
+            using (TagCompound tag = new TagCompound(Entity.None, SaveType.Map))
             {
-                Save(tag);
+                SaveMap(Entity.None, tag);
             }
             foreach (Tile item1 in tile)
             {
