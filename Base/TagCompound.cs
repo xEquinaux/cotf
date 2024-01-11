@@ -308,16 +308,16 @@ namespace cotf.Base
                     break;
             }
         }
-        public void WorldMap(Map map, Manager manager)
+        public void WorldMap(Manager manager)
         {
             if (manager == Manager.Save)
             {
                 int tileLen = 0;
-                bw.Write(map.tile.Length);
-                for (int k = 0; k < map.tile.GetLength(0); k++)
-                    for (int l = 0; l < map.tile.GetLength(1); l++)
+                bw.Write(Main.tile.Length);
+                for (int k = 0; k < Main.tile.GetLength(0); k++)
+                    for (int l = 0; l < Main.tile.GetLength(1); l++)
                     {
-                        Tile item1 = map.tile[k, l];
+                        Tile item1 = Main.tile[k, l];
                         if (item1 != null && item1.Active)
                         {
                             string name = $"tile{tileLen}";
@@ -333,8 +333,8 @@ namespace cotf.Base
                         }
                     }
                 int bgLen = 0;
-                //bw.Write("backgroundLen", map.background.Length);
-                foreach (Background item2 in map.background)
+                //bw.Write("backgroundLen", Main.background.Length);
+                foreach (Background item2 in Main.background)
                 {
                     if (item2 != null && item2.active)
                     {
@@ -350,10 +350,10 @@ namespace cotf.Base
                     }
                 }
                 int roomLen = 0;
-                bw.Write(map.room.Values.Count(t => t != null));
-                for (int i = 0; i < map.room.Count; i++)
+                bw.Write(Main.room.Values.Count(t => t != null));
+                for (int i = 0; i < Main.room.Count; i++)
                 {
-                    Room item3 = map.room[i];
+                    Room item3 = Main.room[i];
                     if (item3 != null)
                     {
                         string name = $"room{roomLen}";
@@ -367,8 +367,8 @@ namespace cotf.Base
                     }
                 }
                 int stairLen = 0;
-                bw.Write(map.staircase.Count(t => t != null && t.active));
-                foreach (Staircase s in map.staircase)
+                bw.Write(Main.staircase.Count(t => t != null && t.active));
+                foreach (Staircase s in Main.staircase)
                 {
                     if (s != null && s.active)
                     {
@@ -382,8 +382,8 @@ namespace cotf.Base
                     }
                 }
                 int sceneryLen = 0;
-                bw.Write(map.scenery.Count(t => t != null && t.active));
-                foreach (Scenery scenery in map.scenery)
+                bw.Write(Main.scenery.Count(t => t != null && t.active));
+                foreach (Scenery scenery in Main.scenery)
                 {
                     if (scenery != null && scenery.active)
                     {
@@ -400,8 +400,8 @@ namespace cotf.Base
                     }
                 }
                 int lampLen = 0;
-                bw.Write(map.lamp.Count(t => t != null && t.active));
-                foreach (Lamp lamp in map.lamp)
+                bw.Write(Main.lamp.Count(t => t != null && t.active));
+                foreach (Lamp lamp in Main.lamp)
                 {
                     if (lamp != null && lamp.active)
                     {
@@ -419,8 +419,8 @@ namespace cotf.Base
                     }
                 }
                 int npcLen = 0;
-                bw.Write(map.npc.Count(t => t != null && t.active));
-                foreach (Npc npc in map.npc)
+                bw.Write(Main.npc.Count(t => t != null && t.active));
+                foreach (Npc npc in Main.npc)
                 {
                     if (npc != null && npc.active)
                     {
@@ -440,8 +440,8 @@ namespace cotf.Base
                     }
                 }
                 int itemLen = 0;
-                bw.Write(map.item.Count(t => t != null && t.active));
-                foreach (Item item in map.item)
+                bw.Write(Main.item.Count(t => t != null && t.active));
+                foreach (Item item in Main.item)
                 {
                     if (item != null && item.active)
                     {
@@ -463,8 +463,8 @@ namespace cotf.Base
                     }
                 }
                 int trapLen = 0;
-                bw.Write(map.trap.Count(t => t != null && t.active));
-                foreach (Trap trap in map.trap)
+                bw.Write(Main.trap.Count(t => t != null && t.active));
+                foreach (Trap trap in Main.trap)
                 {
                     if (trap != null && trap.active)
                     {
@@ -482,8 +482,8 @@ namespace cotf.Base
                     }
                 }
                 int stashLen = 0;
-                bw.Write(map.stash.Count(t => t != null && t.active));
-                foreach (cotf.Collections.Stash stash in map.stash)
+                bw.Write(Main.stash.Count(t => t != null && t.active));
+                foreach (cotf.Collections.Stash stash in Main.stash)
                 {
                     if (stash != null && stash.active)
                     {
@@ -525,39 +525,39 @@ namespace cotf.Base
             {
                 int tileLen = br.ReadInt32();
                 int size = (int)Math.Sqrt(tileLen);
-                map.tile = new Tile[size, size];
+                Main.tile = new Tile[size, size];
                 int num = 0;
                 for (int k = 0; k < size; k++)
                     for (int l = 0; l < size; l++)
                     {
                         string name = $"tile{num}";
-                        map.tile[k, l] = new Tile(k, l);
-                        map.tile[k, l].whoAmI = br.ReadInt32();
+                        Main.tile[k, l] = new Tile(k, l);
+                        Main.tile[k, l].whoAmI = br.ReadInt32();
                         var v2 = br.ReadVector2();
-                        map.tile[k, l].X = (int)v2.X;
-                        map.tile[k, l].Y = (int)v2.Y;
-                        map.tile[k, l].active(br.ReadBoolean());
-                        map.tile[k, l].discovered = br.ReadBoolean();
-                        map.tile[k, l].solid = br.ReadBoolean();
-                        map.tile[k, l].width = br.ReadInt32();
-                        map.tile[k, l].height = br.ReadInt32();
-                        map.tile[k, l].color = br.ReadColor();
+                        Main.tile[k, l].X = (int)v2.X;
+                        Main.tile[k, l].Y = (int)v2.Y;
+                        Main.tile[k, l].active(br.ReadBoolean());
+                        Main.tile[k, l].discovered = br.ReadBoolean();
+                        Main.tile[k, l].solid = br.ReadBoolean();
+                        Main.tile[k, l].width = br.ReadInt32();
+                        Main.tile[k, l].height = br.ReadInt32();
+                        Main.tile[k, l].color = br.ReadColor();
                         num++;
                     }
                 int num2 = 0;
-                map.background = new Background[size, size];
+                Main.background = new Background[size, size];
                 for (int k = 0; k < size; k++)
                     for (int l = 0; l < size; l++)
                     {
                         string name = $"background{num2}";
-                        map.background[k, l] = new Background(k, l, Tile.Size);
-                        map.background[k, l].whoAmI = br.ReadInt32();
-                        map.background[k, l].position = br.ReadVector2();
-                        map.background[k, l].active = br.ReadBoolean();
-                        map.background[k, l].discovered = br.ReadBoolean();
-                        map.background[k, l].width = br.ReadInt32();
-                        map.background[k, l].height = br.ReadInt32();
-                        map.background[k, l].color = br.ReadColor();
+                        Main.background[k, l] = new Background(k, l, Tile.Size);
+                        Main.background[k, l].whoAmI = br.ReadInt32();
+                        Main.background[k, l].position = br.ReadVector2();
+                        Main.background[k, l].active = br.ReadBoolean();
+                        Main.background[k, l].discovered = br.ReadBoolean();
+                        Main.background[k, l].width = br.ReadInt32();
+                        Main.background[k, l].height = br.ReadInt32();
+                        Main.background[k, l].color = br.ReadColor();
                         num2++;
                     }
                 int roomLen = br.ReadInt32();
@@ -571,7 +571,7 @@ namespace cotf.Base
                     int width = br.ReadInt32();
                     int height = br.ReadInt32();
                     short type = br.ReadInt16();
-                    map.room.Add(num3++, new Room(type)    //  TODO: create way to init region (scenery) array on load from file
+                    Main.room.Add(num3++, new Room(type)    //  TODO: create way to init region (scenery) array on load from file
                     {
                         bounds = new Rectangle(x, y, width, height),
                     });
@@ -581,11 +581,11 @@ namespace cotf.Base
                 {
                     string name = $"stair{i}";
                     int whoAmI = br.ReadInt32();
-                    map.staircase[whoAmI] = new Staircase();
-                    map.staircase[whoAmI].whoAmI = whoAmI;
-                    map.staircase[whoAmI].position = br.ReadVector2();
-                    map.staircase[whoAmI].discovered = br.ReadBoolean();
-                    map.staircase[whoAmI].direction = (StaircaseDirection)br.ReadByte();
+                    Main.staircase[whoAmI] = new Staircase();
+                    Main.staircase[whoAmI].whoAmI = whoAmI;
+                    Main.staircase[whoAmI].position = br.ReadVector2();
+                    Main.staircase[whoAmI].discovered = br.ReadBoolean();
+                    Main.staircase[whoAmI].direction = (StaircaseDirection)br.ReadByte();
                     br.ReadInt32();   //  unused
                 }
                 int sceneryLen = br.ReadInt32();
@@ -601,9 +601,9 @@ namespace cotf.Base
                     int h = br.ReadInt32();
                     short t = br.ReadInt16();
                     int j = Scenery.NewScenery((int)v2.X, (int)v2.Y, w, h, t);
-                    map.scenery[j].active = a;
-                    map.scenery[j].discovered = d;
-                    map.scenery[j].solid = s;
+                    Main.scenery[j].active = a;
+                    Main.scenery[j].discovered = d;
+                    Main.scenery[j].solid = s;
                 }
                 int lampLen = br.ReadInt32();
                 for (int i = 0; i < lampLen; i++)
@@ -636,9 +636,9 @@ namespace cotf.Base
                     //  If cursed or enchanted, save -- or if items carried are such and so on
                     //  Look into saving items carried
                     int j = Npc.NewNPC(v2.X, v2.Y, t);
-                    map.npc[j].active = a;
-                    map.npc[j].life = l;
-                    map.npc[j].defaultColor = c;
+                    Main.npc[j].active = a;
+                    Main.npc[j].life = l;
+                    Main.npc[j].defaultColor = c;
                 }
                 int itemLen = br.ReadInt32();
                 for (int i = 0; i < itemLen; i++)
@@ -654,7 +654,7 @@ namespace cotf.Base
                     short t = br.ReadInt16();
                     var s = br.ReadPurse();
                     int whoAmI = Item.NewItem(v2.X, v2.Y, w, h, t, (byte)o);
-                    map.item[whoAmI].purse = s;
+                    Main.item[whoAmI].purse = s;
                 }
                 int trapLen = br.ReadInt32();
                 for (int i = 0; i < trapLen; i++)

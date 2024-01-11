@@ -70,9 +70,10 @@ namespace cotf
 
         public void Init()
         {
+            Main.map = Map.Create();
             if (!Main.DoesMapExist("_map", Main.FloorNum))
             {
-                Main.GenerateFloor(new Margin(3000));
+                Map.Create().GenerateFloor(new Margin(3000));
             }
             else
             {
@@ -271,8 +272,8 @@ namespace cotf
                         break;
                     case StaircaseDirection.LeadingUp:
                         Main.FloorTransition(stair.direction);
-                        //var entrance = Main.staircase.FirstOrDefault(t => t != null && t.X != 0 && t.Y != 0 && t.active && t.direction == StaircaseDirection.LeadingDown);
-                        //position = entrance.position;
+                        var entrance = Main.staircase.FirstOrDefault(t => t != null && t.X != 0 && t.Y != 0 && t.active && t.direction == StaircaseDirection.LeadingDown);
+                        position = entrance.position;
                         break;
                     case StaircaseDirection.LeadingDown:
                         Main.FloorTransition(stair.direction);

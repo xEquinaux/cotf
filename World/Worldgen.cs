@@ -87,7 +87,7 @@ namespace cotf.World
             Main.WorldWidth = width;
             Main.WorldHeight = height;
 
-            Main.tile = Worldgen.Instance.CastleGen(size, width, height, maxNodes, range, nodeDistance);
+            Main.map.tile = Worldgen.Instance.CastleGen(size, width, height, maxNodes, range, nodeDistance);
             
             if (Main.FloorNumber > 0)
             {
@@ -102,7 +102,7 @@ namespace cotf.World
             width += width % size;
             height += height % size;
             var brush = new Tile[width / size, height / size];
-            Main.background = new Background[width / size, height / size];
+            Main.map.background = new Background[width / size, height / size];
 
             Vector2[] nodes = new Vector2[maxNodes];
             int numNodes = 0;
