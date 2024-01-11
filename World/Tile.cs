@@ -198,8 +198,11 @@ namespace cotf.World
             this.active(false);
             this.X = 0;
             this.Y = 0;
-            Main.tile[i, j].whoAmI = 0;
-            Main.tile[i, j] = null;
+            if (Main.tile[i, j] != null)
+            {
+                Main.tile[i, j].active(false);
+                Main.tile[i, j] = null;
+            }
         }
     }
     sealed class OutOfBoundsException : Exception

@@ -34,26 +34,18 @@ namespace cotf.World
             {
                 item1?.Dispose();
             }
-            Main.tile = null;
             foreach (Background item2 in Main.background)
             {
                 item2?.Dispose();
             }
-            Main.background = null;
             Main.room.Clear();
-            Main.room = null;
+            //Main.room = null; //  Not reinitialized anywhere
             Array.ForEach(Main.staircase, t => t?.Dispose());
             Array.ForEach(Main.scenery, t => t?.Dispose());
             Array.ForEach(Main.lamp, t => t?.Dispose());
             Array.ForEach(Main.npc, t => t?.Dispose());
             Array.ForEach(Main.item, t => t?.Dispose(true));
             Array.ForEach(Main.trap, t => t?.Dispose());
-            Main.staircase = null;
-            Main.scenery = null;
-            Main.lamp = null;
-            Main.npc = null;
-            Main.item = null;
-            Main.trap = null;
         }
         public static void GenerateFloor(Margin margin)
         {

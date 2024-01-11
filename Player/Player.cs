@@ -70,10 +70,9 @@ namespace cotf
 
         public void Init()
         {
-            Main.map = Map.Create();
             if (!Main.DoesMapExist("_map", Main.FloorNum))
             {
-                Map.Create().GenerateFloor(new Margin(3000));
+                Map.GenerateFloor(new Margin(3000));
             }
             else
             {
@@ -81,7 +80,7 @@ namespace cotf
                 ent2.SetSuffix(Main.setMapName("_map", Main.FloorNum));
                 using (TagCompound tag = new TagCompound(ent2, SaveType.Map))
                 {
-                    tag.WorldMap(Map.Create(), Manager.Load);
+                    tag.WorldMap(Manager.Load);
                 }
             }
             width = 28;
@@ -272,8 +271,8 @@ namespace cotf
                         break;
                     case StaircaseDirection.LeadingUp:
                         Main.FloorTransition(stair.direction);
-                        var entrance = Main.staircase.FirstOrDefault(t => t != null && t.X != 0 && t.Y != 0 && t.active && t.direction == StaircaseDirection.LeadingDown);
-                        position = entrance.position;
+                        //var entrance = Main.staircase.FirstOrDefault(t => t != null && t.X != 0 && t.Y != 0 && t.active && t.direction == StaircaseDirection.LeadingDown);
+                        //position = entrance.position;
                         break;
                     case StaircaseDirection.LeadingDown:
                         Main.FloorTransition(stair.direction);

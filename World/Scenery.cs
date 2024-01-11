@@ -86,11 +86,11 @@ namespace cotf.World
             
             //  Checking tile collision and out of map region
             Vector2 position = new Vector2(x + (x % (Tile.Size / 2)), y + (y % (Tile.Size / 2)));
-            Tile tile = Tile.GetSafely(position.X + width / 2, position.Y + height / 2);
-            if (tile.Active && tile.hitbox.IntersectsWith(new Rectangle((int)position.X, (int)position.Y, width, height)))
-                return num;
-            if (position.X + Tile.Size / 2 > Main.WorldWidth || position.Y + Tile.Size / 2 > Main.WorldHeight)
-                return num;
+            //Tile tile = Tile.GetSafely(position.X + width / 2, position.Y + height / 2);
+            //if (tile.Active && tile.hitbox.IntersectsWith(new Rectangle((int)position.X, (int)position.Y, width, height)))
+            //    return num;
+            //if (position.X + Tile.Size / 2 > Main.WorldWidth || position.Y + Tile.Size / 2 > Main.WorldHeight)
+            //    return num;
             
             for (int i = 0; i < Main.scenery.Length; i++)
             {
@@ -180,7 +180,7 @@ namespace cotf.World
         }
         public override void Dispose()
         {
-            if (Main.scenery[whoAmI] == null)
+            if (Main.scenery[whoAmI] != null)
             {
                 Main.scenery[whoAmI].active = false;
                 if (Main.scenery[whoAmI].lamp != null)

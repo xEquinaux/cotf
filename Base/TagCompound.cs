@@ -2,6 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Text;
 using cotf.World;
 using cotf.World.Traps;
@@ -310,6 +311,7 @@ namespace cotf.Base
         }
         public void WorldMap(Manager manager)
         {
+            file.Position = 0;
             if (manager == Manager.Save)
             {
                 int tileLen = 0;
@@ -318,7 +320,7 @@ namespace cotf.Base
                     for (int l = 0; l < Main.tile.GetLength(1); l++)
                     {
                         Tile item1 = Main.tile[k, l];
-                        if (item1 != null && item1.Active)
+                        if (item1 != null)
                         {
                             string name = $"tile{tileLen}";
                             bw.Write(item1.whoAmI);
@@ -333,10 +335,10 @@ namespace cotf.Base
                         }
                     }
                 int bgLen = 0;
-                //bw.Write("backgroundLen", Main.background.Length);
+                bw.Write(Main.background.Length);
                 foreach (Background item2 in Main.background)
                 {
-                    if (item2 != null && item2.active)
+                    if (item2 != null)
                     {
                         string name = $"background{bgLen}";
                         bw.Write(item2.whoAmI);
@@ -523,6 +525,7 @@ namespace cotf.Base
             }
             else if (manager == Manager.Load)
             {
+                Map.Unload();
                 int tileLen = br.ReadInt32();
                 int size = (int)Math.Sqrt(tileLen);
                 Main.tile = new Tile[size, size];
@@ -545,6 +548,7 @@ namespace cotf.Base
                         num++;
                     }
                 int num2 = 0;
+                int bgLen = br.ReadInt32();
                 Main.background = new Background[size, size];
                 for (int k = 0; k < size; k++)
                     for (int l = 0; l < size; l++)
@@ -581,11 +585,11 @@ namespace cotf.Base
                 {
                     string name = $"stair{i}";
                     int whoAmI = br.ReadInt32();
-                    Main.staircase[whoAmI] = new Staircase();
-                    Main.staircase[whoAmI].whoAmI = whoAmI;
-                    Main.staircase[whoAmI].position = br.ReadVector2();
-                    Main.staircase[whoAmI].discovered = br.ReadBoolean();
-                    Main.staircase[whoAmI].direction = (StaircaseDirection)br.ReadByte();
+                    Vector2 v2 = br.ReadVector2();
+                    bool d = br.ReadBoolean();
+                    StaircaseDirection dir = (StaircaseDirection)br.ReadByte();
+                    int index = Staircase.NewStaircase((int)v2.X, (int)v2.Y, dir);
+                    Main.staircase[index].discovered = d;
                     br.ReadInt32();   //  unused
                 }
                 int sceneryLen = br.ReadInt32();
@@ -618,7 +622,7 @@ namespace cotf.Base
                     int o = br.ReadInt32();
                     Color c = br.ReadColor();
                     float r = br.ReadSingle();
-                    Lamp.NewLamp(v2, r, c, Entity.None, statLamp, o);
+                    Lamp.NewLamp(v2, r, c, Entity.None, statLamp);
                 }
                 int npcLen = br.ReadInt32();
                 for (int i = 0; i < npcLen; i++)
@@ -653,8 +657,8 @@ namespace cotf.Base
                     Color c = br.ReadColor();
                     short t = br.ReadInt16();
                     var s = br.ReadPurse();
-                    int whoAmI = Item.NewItem(v2.X, v2.Y, w, h, t, (byte)o);
-                    Main.item[whoAmI].purse = s;
+                    int index = Item.NewItem(v2.X, v2.Y, w, h, t, (byte)o);
+                    Main.item[index].purse = s;
                 }
                 int trapLen = br.ReadInt32();
                 for (int i = 0; i < trapLen; i++)
