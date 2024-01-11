@@ -205,6 +205,53 @@ namespace cotf.Base
             int b = copy.B;
             return Color.FromArgb(a, r, g, b);
         }
+        public static void Write(this BinaryWriter bw, Vector2 vector2)
+        {
+            bw.Write(vector2.X);
+            bw.Write(vector2.Y);
+        }
+        public static void Write(this BinaryWriter bw, Color color)
+        {
+            bw.Write(color.A);
+            bw.Write(color.R);
+            bw.Write(color.G);
+            bw.Write(color.B);
+        }
+        public static void Write(this BinaryWriter bw, Purse purse)
+        {
+            bw.Write(purse.Content.copper);
+            bw.Write(purse.Content.silver);
+            bw.Write(purse.Content.gold);
+            bw.Write(purse.Content.platinum);
+        }
+        public static Vector2 ReadVector2(this BinaryReader br)
+        {
+            Vector2 v2 = Vector2.Zero;
+            v2.X = br.ReadSingle();
+            v2.Y = br.ReadSingle();
+            return v2;
+        }
+        public static Color ReadColor(this BinaryReader br)
+        {
+            byte a = br.ReadByte();
+            byte r = br.ReadByte();
+            byte g = br.ReadByte();
+            byte b = br.ReadByte();
+            return Color.FromArgb(a, r, g, b);
+        }
+        public static Purse ReadPurse(this BinaryReader br)
+        {
+            uint c = br.ReadUInt32();
+            int s = br.ReadInt32();
+            int g = br.ReadInt32();
+            int p = br.ReadInt32();
+            Purse purse = new Purse(0);
+            purse.Content.copper = c;
+            purse.Content.silver = s;
+            purse.Content.gold = g;
+            purse.Content.platinum = p;
+            return purse;
+        }
     }
     public static class Helper
     {

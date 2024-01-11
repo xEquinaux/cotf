@@ -143,7 +143,7 @@ namespace cotf.World
             }
         }
     }
-    public enum StaircaseDirection
+    public enum StaircaseDirection : byte
     {
         None,
         LeadingUp,

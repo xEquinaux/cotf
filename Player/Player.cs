@@ -18,6 +18,7 @@ using Rectangle = System.Drawing.Rectangle;
 using Color = System.Drawing.Color;
 using RUDD;
 using Vector2 = Microsoft.Xna.Framework.Vector2;
+using static cotf.Base.TagCompound;
 
 namespace cotf
 {
@@ -69,6 +70,19 @@ namespace cotf
 
         public void Init()
         {
+            if (!Main.DoesMapExist("_map", Main.FloorNum))
+            {
+                Main.GenerateFloor(new Margin(3000));
+            }
+            else
+            {
+                Entity ent2 = Entity.None;
+                ent2.SetSuffix(Main.setMapName("_map", Main.FloorNum));
+                using (TagCompound tag = new TagCompound(ent2, SaveType.Map))
+                {
+                    tag.WorldMap(Map.Create(), Manager.Load);
+                }
+            }
             width = 28;
             height = 42;
             TextureName = "temp";
@@ -256,16 +270,14 @@ namespace cotf
                     case StaircaseDirection.None:
                         break;
                     case StaircaseDirection.LeadingUp:
-                        Main.FloorNum--;
+                        Main.FloorTransition(stair.direction);
+                        //var entrance = Main.staircase.FirstOrDefault(t => t != null && t.X != 0 && t.Y != 0 && t.active && t.direction == StaircaseDirection.LeadingDown);
+                        //position = entrance.position;
                         break;
                     case StaircaseDirection.LeadingDown:
-                        Main.FloorNum++;
-                        if (!Main.DoesMapExist("_map", Main.FloorNum))
-                        { 
-                            Main.GenerateFloor(true);
-                            var entrance = Main.staircase.FirstOrDefault(t => t != null && t.X != 0 && t.Y != 0 && t.active && t.direction == StaircaseDirection.LeadingUp);
-                            position = entrance.position;
-                        }
+                        Main.FloorTransition(stair.direction);
+                        var entrance2 = Main.staircase.FirstOrDefault(t => t != null && t.X != 0 && t.Y != 0 && t.active && t.direction == StaircaseDirection.LeadingUp);
+                        position = entrance2.position;
                         break;
                     default:
                         break;

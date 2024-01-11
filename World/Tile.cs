@@ -65,6 +65,8 @@ namespace cotf.World
                 gfx.FillRectangle(Brushes.LightGray, new Rectangle(0, 0, 50, 50));
             texture = preTexture = bmp;
 
+            return;
+            //  Debugging
             int num = Main.tile.Length - 1;
             for (int i = 0; i < Main.tile.GetLength(0); i++)
             {
@@ -196,6 +198,7 @@ namespace cotf.World
             this.active(false);
             this.X = 0;
             this.Y = 0;
+            Main.tile[i, j].whoAmI = 0;
             Main.tile[i, j] = null;
         }
     }

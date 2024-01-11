@@ -3,10 +3,17 @@ using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 using System.Text;
+using cotf.World;
+using cotf.World.Traps;
 using Microsoft.Xna.Framework;
-using RUDD;
+using Stash = RUDD.Stash;
+using SharpDX.MediaFoundation;
+using static System.Windows.Forms.VisualStyles.VisualStyleElement.TrayNotify;
+using static System.Windows.Forms.VisualStyles.VisualStyleElement;
 using Color = System.Drawing.Color;
 using Vector2 = Microsoft.Xna.Framework.Vector2;
+using Background = cotf.World.Background;
+using Rectangle = System.Drawing.Rectangle;
 
 namespace cotf.Base
 {
@@ -27,6 +34,7 @@ namespace cotf.Base
         {
             this.subject = subject;
             this.type = type;
+            Init(subject.Name);
         }
         private static string 
             psPath, 
@@ -36,6 +44,7 @@ namespace cotf.Base
         private FileStream file;
         private BinaryReader br;
         private BinaryWriter bw;
+        private string content;
         internal static void SetPaths(string playerSavePath, string mapSavePath)   //  Called in Game.Initialize
         {
             psPath = playerSavePath;
@@ -70,6 +79,7 @@ namespace cotf.Base
             file = new FileStream(name, FileMode.OpenOrCreate);
             br = new BinaryReader(file);
             bw = new BinaryWriter(file);
+            content = new StreamReader(file).ReadToEnd();
         }
         public void WorldInit(string name)
         {
@@ -78,9 +88,10 @@ namespace cotf.Base
             br = new BinaryReader(file);
             bw = new BinaryWriter(file);
         }
-        private object GetValue(string tag, Type type)
+        [Obsolete("Searching an entire file stream one byte at a time is expensive.")]
+        private object GetValue(string tag, Type type, bool _OLD)
         {
-            object value = -1f;
+            object value = -1;
             while (file.Position < file.Length)
             {
                 int read = 0;
@@ -163,7 +174,91 @@ namespace cotf.Base
                     }
                 }
             }
+            if (file.Position == file.Length)
+            {
+                file.Position = 0;
+            }
             return value;
+        }
+        private object GetValue(string tag, Type type)
+        {
+            object value = -1;
+            if (!content.Contains(tag))
+            {
+                throw TagDoesNotExistException(tag);
+            }
+            br.BaseStream.Seek(content.IndexOf(tag), SeekOrigin.Begin);
+            byte[] search = Encoding.ASCII.GetBytes(tag);
+            int len = search.Length;
+            byte[] buffer = new byte[len];
+            while (br.Read(buffer, 0, len) == len)
+            {
+                if (buffer.SequenceEqual(search))
+                {
+                    break;
+                }
+            }
+            if (type == typeof(bool))
+            {
+                return value = br.ReadBoolean();
+            }
+            else if (type == typeof(byte))
+            {
+                return value = br.ReadByte();
+            }
+            else if (type == typeof(Int16))
+            {
+                return value = br.ReadInt16();
+            }
+            else if (type == typeof(Int32))
+            {
+                return value = br.ReadInt32();
+            }
+            else if (type == typeof(UInt16))
+            {
+                return value = br.ReadUInt16();
+            }
+            else if (type == typeof(float))
+            {
+                return value = br.ReadSingle();
+            }
+            else if (type == typeof(string))
+            {
+                return value = br.ReadString();
+            }
+            else if (type == typeof(Int64))
+            {
+                return value = br.ReadInt64();
+            }
+            else if (type == typeof(double))
+            {
+                return value = br.ReadDouble();
+            }
+            else if (type == typeof(Vector2))
+            {
+                float x = br.ReadSingle();
+                float y = br.ReadSingle();
+                return value = new Vector2(x, y);
+            }
+            else if (type == typeof(Color))
+            {
+                byte a = br.ReadByte();
+                byte r = br.ReadByte();
+                byte g = br.ReadByte();
+                byte b = br.ReadByte();
+                return value = Color.FromArgb(a, r, g, b);
+            }
+            else if (type == typeof(Purse))
+            {
+                Purse purse = new Purse(0);
+                purse.Content = new Stash();
+                purse.Content.copper = br.ReadUInt32();
+                purse.Content.silver = br.ReadInt32();
+                purse.Content.gold = br.ReadInt32();
+                purse.Content.platinum = br.ReadInt32();
+                return value = purse;
+            }
+            else return value;
         }
         private bool TagExists(string tag)
         {
@@ -172,6 +267,7 @@ namespace cotf.Base
                 int read = 0;
                 if ((read = file.ReadByte()) != -1)
                 {
+                    long current = Math.Min(file.Length - 1, file.Position + 1);
                     if (Encoding.ASCII.GetString(new []{ (byte)read }).StartsWith(tag[0].ToString()))
                     {
                         byte[] buf = Encoding.ASCII.GetBytes(tag);
@@ -192,109 +288,506 @@ namespace cotf.Base
             }
             return false;
         }
+        public long Position
+        {
+            get { return file.Position; }
+            set { file.Position = value; }
+        }
+        public void Seek(long offset, SeekOrigin origin)
+        {
+            switch (origin)
+            { 
+                case SeekOrigin.Begin:
+                    file.Position = offset;
+                    break;
+                case SeekOrigin.Current:
+                    file.Position += offset;
+                    break;
+                case SeekOrigin.End:
+                    file.Position = file.Length + offset;
+                    break;
+            }
+        }
+        public void WorldMap(Map map, Manager manager)
+        {
+            if (manager == Manager.Save)
+            {
+                int tileLen = 0;
+                bw.Write(map.tile.Length);
+                for (int k = 0; k < map.tile.GetLength(0); k++)
+                    for (int l = 0; l < map.tile.GetLength(1); l++)
+                    {
+                        Tile item1 = map.tile[k, l];
+                        if (item1 != null && item1.Active)
+                        {
+                            string name = $"tile{tileLen}";
+                            bw.Write(item1.whoAmI);
+                            bw.Write(item1.position);
+                            bw.Write(item1.Active);
+                            bw.Write(item1.discovered);
+                            bw.Write(item1.solid);
+                            bw.Write(item1.width);
+                            bw.Write(item1.height);
+                            bw.Write(item1.color);
+                            tileLen++;
+                        }
+                    }
+                int bgLen = 0;
+                //bw.Write("backgroundLen", map.background.Length);
+                foreach (Background item2 in map.background)
+                {
+                    if (item2 != null && item2.active)
+                    {
+                        string name = $"background{bgLen}";
+                        bw.Write(item2.whoAmI);
+                        bw.Write(item2.position);
+                        bw.Write(item2.active);
+                        bw.Write(item2.discovered);
+                        bw.Write(item2.width);
+                        bw.Write(item2.height);
+                        bw.Write(item2.color);
+                        bgLen++;
+                    }
+                }
+                int roomLen = 0;
+                bw.Write(map.room.Values.Count(t => t != null));
+                for (int i = 0; i < map.room.Count; i++)
+                {
+                    Room item3 = map.room[i];
+                    if (item3 != null)
+                    {
+                        string name = $"room{roomLen}";
+                        //bw.Write(i);
+                        bw.Write(item3.bounds.X);
+                        bw.Write(item3.bounds.Y);
+                        bw.Write(item3.bounds.Width);
+                        bw.Write(item3.bounds.Height);
+                        bw.Write(item3.type);
+                        roomLen++;
+                    }
+                }
+                int stairLen = 0;
+                bw.Write(map.staircase.Count(t => t != null && t.active));
+                foreach (Staircase s in map.staircase)
+                {
+                    if (s != null && s.active)
+                    {
+                        string name = $"stair{stairLen}";
+                        bw.Write(s.whoAmI);
+                        bw.Write(s.position);
+                        bw.Write(s.discovered);
+                        bw.Write((byte)s.direction);
+                        bw.Write(Tile.Size);
+                        stairLen++;
+                    }
+                }
+                int sceneryLen = 0;
+                bw.Write(map.scenery.Count(t => t != null && t.active));
+                foreach (Scenery scenery in map.scenery)
+                {
+                    if (scenery != null && scenery.active)
+                    {
+                        string name = $"scenery{sceneryLen}";
+                        bw.Write(scenery.whoAmI);
+                        bw.Write(scenery.position);
+                        bw.Write(scenery.active);
+                        bw.Write(scenery.discovered);
+                        bw.Write(scenery.solid);
+                        bw.Write(scenery.width);
+                        bw.Write(scenery.height);
+                        bw.Write(scenery.type);
+                        sceneryLen++;
+                    }
+                }
+                int lampLen = 0;
+                bw.Write(map.lamp.Count(t => t != null && t.active));
+                foreach (Lamp lamp in map.lamp)
+                {
+                    if (lamp != null && lamp.active)
+                    {
+                        string name = $"lamp{lampLen}";
+                        bw.Write(lamp.whoAmI);
+                        bw.Write(lamp.position);
+                        bw.Write(lamp.active);
+                        bw.Write(lamp.staticLamp);
+                        bw.Write(lamp.width);
+                        bw.Write(lamp.height);
+                        bw.Write(lamp.owner);
+                        bw.Write(lamp.lampColor);
+                        bw.Write(lamp.range);
+                        lampLen++;
+                    }
+                }
+                int npcLen = 0;
+                bw.Write(map.npc.Count(t => t != null && t.active));
+                foreach (Npc npc in map.npc)
+                {
+                    if (npc != null && npc.active)
+                    {
+                        string name = $"npc{npcLen}";
+                        bw.Write(npc.whoAmI);
+                        bw.Write(npc.position);
+                        bw.Write(npc.active);
+                        bw.Write(npc.width);
+                        bw.Write(npc.height);
+                        bw.Write(npc.life);
+                        bw.Write(npc.defaultColor);
+                        //  If mana value, save here
+                        bw.Write(npc.type);
+                        //  If cursed or enchanted, save -- or if items carried are such and so on
+                        //  Look into saving items carried
+                        npcLen++;
+                    }
+                }
+                int itemLen = 0;
+                bw.Write(map.item.Count(t => t != null && t.active));
+                foreach (Item item in map.item)
+                {
+                    if (item != null && item.active)
+                    {
+                        string name = $"item{itemLen}";
+                        bw.Write(item.whoAmI);
+                        bw.Write(item.position);
+                        bw.Write(item.active);
+                        bw.Write(item.width);
+                        bw.Write(item.height);
+                        bw.Write(item.owner);
+                        bw.Write(item.defaultColor);
+                        bw.Write(item.type);
+                        if (item.purse == null || item.purse.Content == null)
+                        {
+                            item.purse = new Purse(0);
+                        }
+                        bw.Write(item.purse);
+                        itemLen++;
+                    }
+                }
+                int trapLen = 0;
+                bw.Write(map.trap.Count(t => t != null && t.active));
+                foreach (Trap trap in map.trap)
+                {
+                    if (trap != null && trap.active)
+                    {
+                        string name = $"trap{trapLen}";
+                        bw.Write(trap.whoAmI);
+                        bw.Write(trap.position);
+                        bw.Write(trap.active);
+                        bw.Write(trap.width);
+                        bw.Write(trap.height);
+                        bw.Write(trap.life);
+                        bw.Write(trap.defaultColor);
+                        bw.Write(trap.type);
+                        bw.Write(trap.rotation);
+                        trapLen++;
+                    }
+                }
+                int stashLen = 0;
+                bw.Write(map.stash.Count(t => t != null && t.active));
+                foreach (cotf.Collections.Stash stash in map.stash)
+                {
+                    if (stash != null && stash.active)
+                    {
+                        string name = $"stash{stashLen}";
+                        bw.Write(stash.whoAmI);
+                        bw.Write(stash.position);
+                        bw.Write(stash.active);
+                        bw.Write(stash.width);
+                        bw.Write(stash.height);
+                        bw.Write(stash.defaultColor);
+                        int len = stash.content == null ? 0 : stash.content.Length;
+                        bw.Write(len);
+                        if (stash.content != null && stash.content.Length > 0)
+                        {
+                            int contentLen = 0;
+                            foreach (Item i in stash.content)
+                            {
+                                string _name = $"stash{stashLen}_content{contentLen}";
+                                bw.Write(i.whoAmI);
+                                bw.Write(i.position);
+                                bw.Write(i.active);
+                                bw.Write(i.width);
+                                bw.Write(i.height);
+                                bw.Write(i.defaultColor);
+                                bw.Write(i.type);
+                                if (i.purse != null && i.purse.Content != null)
+                                {
+                                    bw.Write(i.purse);
+                                }
+                                else bw.Write(new Purse(0));
+                                contentLen++;
+                            }
+                        }
+                        stashLen++;
+                    }
+                }
+            }
+            else if (manager == Manager.Load)
+            {
+                int tileLen = br.ReadInt32();
+                int size = (int)Math.Sqrt(tileLen);
+                map.tile = new Tile[size, size];
+                int num = 0;
+                for (int k = 0; k < size; k++)
+                    for (int l = 0; l < size; l++)
+                    {
+                        string name = $"tile{num}";
+                        map.tile[k, l] = new Tile(k, l);
+                        map.tile[k, l].whoAmI = br.ReadInt32();
+                        var v2 = br.ReadVector2();
+                        map.tile[k, l].X = (int)v2.X;
+                        map.tile[k, l].Y = (int)v2.Y;
+                        map.tile[k, l].active(br.ReadBoolean());
+                        map.tile[k, l].discovered = br.ReadBoolean();
+                        map.tile[k, l].solid = br.ReadBoolean();
+                        map.tile[k, l].width = br.ReadInt32();
+                        map.tile[k, l].height = br.ReadInt32();
+                        map.tile[k, l].color = br.ReadColor();
+                        num++;
+                    }
+                int num2 = 0;
+                map.background = new Background[size, size];
+                for (int k = 0; k < size; k++)
+                    for (int l = 0; l < size; l++)
+                    {
+                        string name = $"background{num2}";
+                        map.background[k, l] = new Background(k, l, Tile.Size);
+                        map.background[k, l].whoAmI = br.ReadInt32();
+                        map.background[k, l].position = br.ReadVector2();
+                        map.background[k, l].active = br.ReadBoolean();
+                        map.background[k, l].discovered = br.ReadBoolean();
+                        map.background[k, l].width = br.ReadInt32();
+                        map.background[k, l].height = br.ReadInt32();
+                        map.background[k, l].color = br.ReadColor();
+                        num2++;
+                    }
+                int roomLen = br.ReadInt32();
+                int num3 = 0;
+                for (int i = 0; i < roomLen; i++)
+                {
+                    string name = $"room{i}";
+                    //int id = br.ReadInt32();
+                    int x = br.ReadInt32();
+                    int y = br.ReadInt32();
+                    int width = br.ReadInt32();
+                    int height = br.ReadInt32();
+                    short type = br.ReadInt16();
+                    map.room.Add(num3++, new Room(type)    //  TODO: create way to init region (scenery) array on load from file
+                    {
+                        bounds = new Rectangle(x, y, width, height),
+                    });
+                }
+                int stairLen = br.ReadInt32();
+                for (int i = 0; i < stairLen; i++)
+                {
+                    string name = $"stair{i}";
+                    int whoAmI = br.ReadInt32();
+                    map.staircase[whoAmI] = new Staircase();
+                    map.staircase[whoAmI].whoAmI = whoAmI;
+                    map.staircase[whoAmI].position = br.ReadVector2();
+                    map.staircase[whoAmI].discovered = br.ReadBoolean();
+                    map.staircase[whoAmI].direction = (StaircaseDirection)br.ReadByte();
+                    br.ReadInt32();   //  unused
+                }
+                int sceneryLen = br.ReadInt32();
+                for (int i = 0; i < sceneryLen; i++)
+                {
+                    string name = $"scenery{i}";
+                    int whoAmI = br.ReadInt32();
+                    Vector2 v2 = br.ReadVector2();
+                    bool a = br.ReadBoolean();
+                    bool d = br.ReadBoolean();
+                    bool s = br.ReadBoolean();
+                    int w = br.ReadInt32();
+                    int h = br.ReadInt32();
+                    short t = br.ReadInt16();
+                    int j = Scenery.NewScenery((int)v2.X, (int)v2.Y, w, h, t);
+                    map.scenery[j].active = a;
+                    map.scenery[j].discovered = d;
+                    map.scenery[j].solid = s;
+                }
+                int lampLen = br.ReadInt32();
+                for (int i = 0; i < lampLen; i++)
+                {
+                    string name = $"lamp{i}";
+                    int id = br.ReadInt32();
+                    Vector2 v2 = br.ReadVector2();
+                    bool a = br.ReadBoolean();
+                    bool statLamp = br.ReadBoolean();
+                    int w = br.ReadInt32();
+                    int h = br.ReadInt32();
+                    int o = br.ReadInt32();
+                    Color c = br.ReadColor();
+                    float r = br.ReadSingle();
+                    Lamp.NewLamp(v2, r, c, Entity.None, statLamp, o);
+                }
+                int npcLen = br.ReadInt32();
+                for (int i = 0; i < npcLen; i++)
+                {
+                    string name = $"npc{i}";
+                    int id = br.ReadInt32();
+                    Vector2 v2 = br.ReadVector2();
+                    bool a = br.ReadBoolean();
+                    int w = br.ReadInt32();
+                    int h = br.ReadInt32();
+                    int l = br.ReadInt32();
+                    Color c = br.ReadColor();
+                    //  If mana value, save here
+                    short t = br.ReadInt16();
+                    //  If cursed or enchanted, save -- or if items carried are such and so on
+                    //  Look into saving items carried
+                    int j = Npc.NewNPC(v2.X, v2.Y, t);
+                    map.npc[j].active = a;
+                    map.npc[j].life = l;
+                    map.npc[j].defaultColor = c;
+                }
+                int itemLen = br.ReadInt32();
+                for (int i = 0; i < itemLen; i++)
+                {
+                    string name = $"item{i}";
+                    int id = br.ReadInt32();
+                    Vector2 v2 = br.ReadVector2();
+                    bool a = br.ReadBoolean();
+                    int w = br.ReadInt32();
+                    int h = br.ReadInt32();
+                    int o = br.ReadInt32();
+                    Color c = br.ReadColor();
+                    short t = br.ReadInt16();
+                    var s = br.ReadPurse();
+                    int whoAmI = Item.NewItem(v2.X, v2.Y, w, h, t, (byte)o);
+                    map.item[whoAmI].purse = s;
+                }
+                int trapLen = br.ReadInt32();
+                for (int i = 0; i < trapLen; i++)
+                {
+                    string name = $"trap{i}";
+                    int id = br.ReadInt32();
+                    Vector2 v2 = br.ReadVector2();
+                    bool a = br.ReadBoolean();
+                    int w = br.ReadInt32();
+                    int h = br.ReadInt32();
+                    int l = br.ReadInt32();
+                    Color c = br.ReadColor();
+                    short t = br.ReadInt16();
+                    float r = br.ReadSingle();
+                    Trap.NewTrap(v2.X, v2.Y, w, h, t, active: a);
+                }
+                int stashLen = br.ReadInt32();
+                for (int i = 0; i < stashLen; i++)
+                {
+                    string name = $"stash{i}";
+                    int id = br.ReadInt32();
+                    Vector2 v2 = br.ReadVector2();
+                    bool a = br.ReadBoolean();
+                    int w = br.ReadInt32();
+                    int h = br.ReadInt32();
+                    Color c = br.ReadColor();
+                    int contentLen = br.ReadInt32();
+                    if (contentLen > 0)
+                    {
+                        Item[] content = new Item[contentLen];
+                        for (int j = 0; j < content.Length; j++)
+                        {
+                            string _name = $"stash{i}_content{j}";
+                            content[j] = new Item();
+                            content[j].whoAmI = br.ReadInt32();
+                            content[j].position = br.ReadVector2();
+                            content[j].active = br.ReadBoolean();
+                            content[j].width = br.ReadInt32();
+                            content[j].height = br.ReadInt32();
+                            content[j].defaultColor = br.ReadColor();
+                            content[j].type = br.ReadInt16();
+                            content[j].purse = br.ReadPurse();
+                        }
+                        cotf.Collections.Stash.NewStash((int)v2.X, (int)v2.Y, 0, content);
+                    }
+                    else continue;
+                }
+            }
+        }
         #region save value
         public void SaveValue(string tag, bool value)
         {
-            Init(subject.Name);
             if (!TagExists(tag))
             {
                 //throw new Exception($"Tag, {tag}, already exists");
                 bw.Write(tag);
             }
             bw.Write(value);
-            Dispose();
         }
         public void SaveValue(string tag, byte value)
         {
-            Init(subject.Name);
             if (!TagExists(tag))
             {
                 //throw new Exception($"Tag, {tag}, already exists");
                 bw.Write(tag);
             }
             bw.Write(value);
-            Dispose();
         }
         public void SaveValue(string tag, Int16 value)
         {
-            Init(subject.Name);
             if (!TagExists(tag))
             {
                 //throw new Exception($"Tag, {tag}, already exists");
                 bw.Write(tag);
             }
             bw.Write(value);
-            Dispose();
         }
         public void SaveValue(string tag, Int32 value)
         {
-            Init(subject.Name);
             if (!TagExists(tag))
             {
                 //throw new Exception($"Tag, {tag}, already exists");
                 bw.Write(tag);
             }
             bw.Write(value);
-            Dispose();
         }
         public void SaveValue(string tag, Int64 value)
         {
-            Init(subject.Name);
             if (!TagExists(tag))
             {
                 //throw new Exception($"Tag, {tag}, already exists");
                 bw.Write(tag);
             }
             bw.Write(value);
-            Dispose();
         }
         public void SaveValue(string tag, UInt16 value)
         {
-            Init(subject.Name);
             if (!TagExists(tag))
             {
                 //throw new Exception($"Tag, {tag}, already exists");
                 bw.Write(tag);
             }
             bw.Write(value);
-            Dispose();
         }
         public void SaveValue(string tag, Single value)
         {
-            Init(subject.Name);
             if (!TagExists(tag))
             {
                 //throw new Exception($"Tag, {tag}, already exists");
                 bw.Write(tag);
             }
             bw.Write(value);
-            Dispose();
         }
         public void SaveValue(string tag, Double value)
         {
-            Init(subject.Name);
             if (!TagExists(tag))
             {
                 //throw new Exception($"Tag, {tag}, already exists");
                 bw.Write(tag);
             }
             bw.Write(value);
-            Dispose();
         }
         public void SaveValue(string tag, string value)
         {
-            Init(subject.Name);
             if (!TagExists(tag))
             {
                 //throw new Exception($"Tag, {tag}, already exists");
                 bw.Write(tag);
             }
             bw.Write(value);
-            Dispose();
         }
         public void SaveValue(string tag, Vector2 value)
         {
-            Init(subject.Name);
             if (!TagExists(tag))
             {
                 //throw new Exception($"Tag, {tag}, already exists");
@@ -302,11 +795,9 @@ namespace cotf.Base
             }
             bw.Write(value.X);
             bw.Write(value.Y);
-            Dispose();
         }
         public void SaveValue(string tag, Color value)
         {
-            Init(subject.Name);
             if (!TagExists(tag))
             {
                 //throw new Exception($"Tag, {tag}, already exists");
@@ -316,11 +807,9 @@ namespace cotf.Base
             bw.Write(value.R);
             bw.Write(value.G);
             bw.Write(value.B);
-            Dispose();
         }
         public void SaveValue(string tag, Purse value)
         {
-            Init(subject.Name);
             if (!TagExists(tag))
             {
                 //throw new Exception($"Tag, {tag}, already exists");
@@ -330,174 +819,129 @@ namespace cotf.Base
             bw.Write(value.Content.silver);
             bw.Write(value.Content.gold);
             bw.Write(value.Content.platinum);
-            Dispose();
         }
         #endregion
         #region variable retrieve
         public bool GetBool(string name)
         {
-            Init(subject.Name);
-            bool value = false;
             try
             {
-                value = (bool)GetValue(name, typeof(bool));
+                return (bool)GetValue(name, typeof(bool));
             }
-            catch { }
-            finally
-            {
-                Dispose();
+            catch 
+            { 
+                return default;
             }
-            return value;
         }
         public byte GetByte(string name)
         {
-            Init(subject.Name);
-            byte value = 0;
             try
-            {
-                value = (byte)GetValue(name, typeof(byte));
+            { 
+                return (byte)GetValue(name, typeof(byte));
             }
-            catch { }
-            finally
+            catch
             {
-                Dispose();
+                return default;
             }
-            return value;
         }
         public short GetInt16(string name)
         {
-            Init(subject.Name);
-            Int16 value = 0;
             try
-            {
-                value = (Int16)GetValue(name, typeof(Int16));
+            { 
+                return (Int16)GetValue(name, typeof(Int16));
             }
-            catch { }
-            finally
+            catch
             {
-                Dispose();
+                return default;
             }
-            return value;
         }
         public int GetInt32(string name)
         {
-            Init(subject.Name);
-            Int32 value = 0;
             try
-            {
-                value = (Int32)GetValue(name, typeof(Int32));
+            { 
+                return (Int32)GetValue(name, typeof(Int32));
             }
-            catch { }
-            finally
+            catch
             {
-                Dispose();
+                return default;
             }
-            return value;
         }
         public long GetInt64(string name)
         {
-            Init(subject.Name);
-            Int64 value = 0;
             try
-            {
-                value = (Int64)GetValue(name, typeof(Int64));
+            { 
+                return (Int64)GetValue(name, typeof(Int64));
             }
-            catch { }
-            finally
+            catch
             {
-                Dispose();
+                return default;
             }
-            return value;
         }
         public float GetSingle(string name)
         {
-            Init(subject.Name);
-            float value = -1f;
             try
             { 
-                value = (float)GetValue(name, typeof(float));
+                return (Single)GetValue(name, typeof(Single));
             }
-            catch { }
-            finally
+            catch
             {
-                Dispose();
+                return default;
             }
-            return value;
         }
         public double GetDouble(string name)
         {
-            Init(subject.Name);
-            double value = 0;
             try
-            {
-                value = (double)GetValue(name, typeof(double));
+            { 
+                return (double)GetValue(name, typeof(double));
             }
-            catch { }
-            finally
+            catch
             {
-                Dispose();
+                return default;
             }
-            return value;
         }
         public string GetString(string name)
         {
-            Init(subject.Name);
-            string value = string.Empty;
             try
-            {
-                value = (string)GetValue(name, typeof(string));
+            { 
+                return (string)GetValue(name, typeof(string));
             }
-            catch { }
-            finally
+            catch
             {
-                Dispose();
+                return default;
             }
-            return value;
         }
         public Vector2 GetVector2(string name)
         {
-            Init(subject.Name);
-            Vector2 value = Vector2.Zero;
             try
-            {
-                value = (Vector2)GetValue(name, typeof(Vector2));
+            { 
+                return (Vector2)GetValue(name, typeof(Vector2));
             }
-            catch { }
-            finally
+            catch
             {
-                Dispose();
+                return default;
             }
-            return value;
         }
         public Color GetColor(string name)
         {
-            Init(subject.Name);
-            Color value = Color.Gray;
             try
-            {
-                value = (Color)GetValue(name, typeof(Color));
+            { 
+                return (Color)GetValue(name, typeof(Color));
             }
-            catch { }
-            finally
+            catch
             {
-                Dispose();
+                return default;
             }
-            return value;
         }
         public Stash GetStash(string name)
         {
-            Init(subject.Name);
-            Stash value = new Stash();
             try
-            {
-                value = (Stash)GetValue(name, typeof(Stash));
+            { 
+                return (Stash)GetValue(name, typeof(Stash));
             }
-            catch { }
-            finally
+            catch
             {
-                Dispose();
+                return default;
             }
-            return value;
         }
         #endregion
         public void Dispose()
@@ -505,6 +949,19 @@ namespace cotf.Base
             br.Dispose();
             bw.Dispose();
             file.Dispose();
+        }
+        public enum Manager
+        {
+            Save,
+            Load
+        }
+        private Exception TagAlreadyExistsException(string tag)
+        {
+            return new Exception($"Tag, {tag}, already exists.");
+        }
+        private Exception TagDoesNotExistException(string tag)
+        {
+            return new Exception($"Tag, {tag}, does not exist.");
         }
     }
 }
