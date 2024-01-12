@@ -170,11 +170,11 @@ namespace cotf
         }
         public virtual bool NpcItemHit(Item item)
         {
-            return iFrames == 0 && item.inUse && item.equipped && item.type != ItemID.Torch && item.friendly && item.InProximity(this, 100f) && item.hurtbox.IntersectsWith(hitbox);
+            return Main.TimeScale > 0 && iFrames == 0 && item.inUse && item.equipped && item.type != ItemID.Torch && item.friendly && item.InProximity(this, 100f) && item.hurtbox.IntersectsWith(hitbox);
         }
         public virtual bool NpcProjHit(Projectile projectile)
         {
-            return iFrames == 0 && projectile.InProximity(this, 100f) && projectile.hitbox.IntersectsWith(hitbox) && projectile.friendly;
+            return Main.TimeScale > 0 && iFrames == 0 && projectile.InProximity(this, 100f) && projectile.hitbox.IntersectsWith(hitbox) && projectile.friendly;
         }
         public virtual void NpcHurt(int damage, float knockBack, float angle)
         {

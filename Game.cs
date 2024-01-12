@@ -127,6 +127,10 @@ namespace cotf
                     Main.KeyPressTimer++;
                     if (!Main.open)
                     {
+                        //for (int i = 0; i < Main.player.Length; i++)
+                        //{
+                        //    Main.player[i]?.Save(false);
+                        //}
                         Exit();
                     }
                 }
@@ -171,10 +175,7 @@ namespace cotf
             }
             if (!Main.open)                                                     
             {
-                for (int i = 0; i < Main.effect.Count; i++)
-                {
-                    Main.effect[i]?.Draw(_spriteBatch);
-                } 
+                Main.Instance.PostDraw(_spriteBatch);
             }
             if (!Main.mainMenu && !Main.open)
             { 
@@ -274,7 +275,9 @@ namespace cotf
         private void Draw(Graphics graphics)
         {
             if (!Main.mainMenu && Main.Instance.PreDraw(graphics))
+            { 
                 Main.Instance.Draw(graphics);
+            }
         }
         private void Update()
         {
@@ -304,9 +307,9 @@ namespace cotf
                 return;
             Main.Instance.Camera(Main.camera1);
             if (Main.camera1.follow && Main.camera1.isMoving)
-            {
-                Main.ScreenX = (int)-Main.camera1.position.X + Main.ScreenWidth / 2;
-                Main.ScreenY = (int)-Main.camera1.position.Y + Main.ScreenHeight / 2;
+            {                                                                       
+                Main.ScreenX = (int)-Main.camera1.position.X + Main.ScreenWidth / 2 - Main.myPlayer.width;
+                Main.ScreenY = (int)-Main.camera1.position.Y + Main.ScreenHeight / 2 - Main.myPlayer.height;
             }
             graphics.RenderingOrigin = new System.Drawing.Point((int)Main.camera1.position.X, (int)Main.camera1.position.Y);
             graphics.TranslateTransform(

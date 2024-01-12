@@ -19,6 +19,7 @@ using Color = System.Drawing.Color;
 using RUDD;
 using Vector2 = Microsoft.Xna.Framework.Vector2;
 using static cotf.Base.TagCompound;
+using Point = System.Drawing.Point;
 
 namespace cotf
 {
@@ -33,6 +34,7 @@ namespace cotf
             statMaxMana = 10;
             life = lifeMax;
             statMana = statMaxMana;
+            name = "plr";
         }
         public static Player myPlayer => Main.myPlayer;
         public float 
@@ -107,6 +109,28 @@ namespace cotf
             if (moveToTile)
                 position = new Vector2(t.X, t.Y);
         }
+        public void Save(bool onExit)
+        {
+            using (TagCompound tag = new TagCompound(this, SaveType.Player))
+            {
+                tag.SaveValue(name + "_name", name);
+                tag.SaveValue(name + "_life", life);
+                tag.SaveValue(name + "_lifeMax", lifeMax);
+                tag.SaveValue(name + "_mana", statMana);
+                tag.SaveValue(name + "_manaMax", statMaxMana);
+                tag.SaveValue(name + "_position", position);
+                int num = 0;
+                for (int i = 0; i < equipment.Length; i++)
+                {
+                    //tag.SaveValue($"{name}_equip{num}", )
+                    num++;
+                }
+                for (int i = 0; i < inventory.Count; i++)
+                {
+
+                }
+            }
+        }
         public override void Update()
         {
             base.Update();
@@ -124,11 +148,12 @@ namespace cotf
             //  Inventory interaction
             if (Main.open)
             {
+                Point offset = new System.Drawing.Point(mouse.X + -Main.offX, mouse.Y + -Main.offY);
                 if (itemTextBox == null || !itemTextBox.active)
                 { 
                     for (int i = 0; i < Item.nearby.Count; i++)
                     {
-                        if (Main.mouseLeft && Item.nearby[i].hitbox.Contains(mouse))
+                        if (Main.mouseLeft && Item.nearby[i].hitbox.Contains(offset))
                         {
                             itemTextBox = new UI.Textbox(Item.nearby[i], Item.nearby[i].texture, Item.nearby[i].ToolTip.name, Item.nearby[i].Text(), Main.InventoryCenter, (int)Main.InventoryCenter.X / 2, ButtonStyle.PickupCancel, true, whoAmI);
                             return;
@@ -152,7 +177,7 @@ namespace cotf
                         return;
                     if (Main.mouseLeft)
                     {
-                        if (inventory[i].hitbox.Contains(mouse))
+                        if (inventory[i].hitbox.Contains(offset))
                         {
                             itemTextBox = new UI.Textbox(inventory[i], inventory[i].texture, inventory[i].ToolTip.name, inventory[i].Text(), Main.InventoryCenter, (int)Main.InventoryCenter.X / 2, ButtonStyle.EquipDropCancel, true, whoAmI);
                             return;

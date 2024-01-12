@@ -59,6 +59,8 @@ namespace cotf
             internal int index = 0;
             public override int X => (int)position.X;
             public override int Y => (int)position.Y;
+            private int offX => -Main.myPlayer.width;
+            private int offY => -Main.myPlayer.height;
             private Font font = System.Drawing.SystemFonts.DialogFont;
             private new Rectangle box => new Rectangle(parent.padded.Right - (Button.Width + 10) * (index + 1), parent.padded.Bottom + Button.Height, Width, Height);
             private Rectangle padded => new Rectangle(box.X - margin.Left, box.Y - margin.Top, box.Width + margin.Right * 2, box.Height + margin.Bottom * 2);
@@ -66,8 +68,8 @@ namespace cotf
             private StringFormat format;
             private Pen outline = Pens.SlateBlue;
             private Vector2 mouse => Main.MouseWorld;
-            private bool clicked() => Main.mouseLeft && box.Contains((int)Main.MouseWorld.X, (int)Main.MouseWorld.Y);
-            private bool hover() => padded.Contains((int)Main.MouseWorld.X, (int)Main.MouseWorld.Y);
+            private bool clicked() => Main.mouseLeft && box.Contains((int)Main.MouseWorld.X + offX, (int)Main.MouseWorld.Y + offY);
+            private bool hover() => padded.Contains((int)Main.MouseWorld.X + offX, (int)Main.MouseWorld.Y + offY);
             #endregion
             public static event EventHandler<ButtonEventArgs> ButtonClickEvent;
             public Button(Textbox parent, ButtonOption option, bool active = false)
@@ -271,8 +273,8 @@ namespace cotf
                 this.Init(graphics);
                 if (active)
                 { 
-                    int offX = Main.ScreenX;
-                    int offY = Main.ScreenY;
+                    int offX = Main.ScreenX - Main.myPlayer.width;
+                    int offY = Main.ScreenY - Main.myPlayer.height;
                     Rectangle _padded = new Rectangle(padded.X + offX, padded.Y + offY, padded.Width, padded.Height);
                     if (heading != null)
                     {
@@ -325,7 +327,9 @@ namespace cotf
             internal static void DrawItems(IList<Item> list, Scroll bar, Graphics graphics)
             {
                 const int offset = 6;
-                int c = (int)bar.parent.X + offset, r = (int)bar.parent.Y + offset;
+                int offX = 0;
+                int offY = 0;
+                int c = (int)bar.parent.X + offset + offX, r = (int)bar.parent.Y + offset + offY;
                 foreach (Item i in list)
                 {
                     if (i == null) continue;
@@ -377,14 +381,16 @@ namespace cotf
             }
             internal static void MouseInteract(Scroll bar)
             {
-                if (Main.mouseLeft && bar.hitbox.Contains((int)Main.MouseWorld.X, (int)Main.MouseWorld.Y))
+                int offX = Main.myPlayer.width;
+                int offY = Main.myPlayer.height;
+                if (Main.mouseLeft && bar.hitbox.Contains((int)Main.MouseWorld.X - offX, (int)Main.MouseWorld.Y - offY))
                     bar.clicked = true;
                 bar.flag = Main.LeftMouse();
                 if (!Main.LeftMouse())
                     bar.clicked = false;
                 if (bar.clicked && bar.flag)
                 { 
-                    Vector2 mouse = new Vector2(Main.MouseWorld.X, Main.MouseWorld.Y - bar.parent.Top - Height / 2);
+                    Vector2 mouse = new Vector2(Main.MouseWorld.X, Main.MouseWorld.Y - bar.parent.Top - Height / 2 - offY);
                     bar.value = Math.Max(0f, Math.Min(mouse.Y / bar.parent.Height, 1f));
                 }
             }
@@ -480,9 +486,11 @@ namespace cotf
         }
         public void DrawUI(Graphics graphics)
         {
+            int offX = Main.myPlayer.width * 2;
+            int offY = Main.myPlayer.height;
             for (int i = 0; i < icon.Length; i++)
             {
-                Rectangle h = new Rectangle(icon[i].hitbox.X + Main.ScreenX, icon[i].hitbox.Y + Main.ScreenY, icon[i].hitbox.Width, icon[i].hitbox.Height);
+                Rectangle h = new Rectangle(icon[i].hitbox.X + Main.ScreenX - offX, icon[i].hitbox.Y + Main.ScreenY - offY, icon[i].hitbox.Width, icon[i].hitbox.Height);
                 graphics.DrawImage(image, h);
                 if (icon[i].color != default || selectedIndex == icon[i])
                 {

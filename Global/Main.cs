@@ -26,6 +26,11 @@ using System.Xml.Linq;
 using static System.Windows.Forms.VisualStyles.VisualStyleElement;
 using System.Security.Cryptography;
 using System.Runtime.Versioning;
+using Microsoft.Xna.Framework.Graphics;
+using System.Drawing.Imaging;
+using SpriteBatch = Microsoft.Xna.Framework.Graphics.SpriteBatch;
+using Bitmap = System.Drawing.Bitmap;
+using System.Reflection.Metadata;
 
 namespace cotf
 {
@@ -184,6 +189,8 @@ namespace cotf
             CurrentFloor = 1;
         public static int netMode = 0;
         private static int floorNum = 1; // Default is set to start at floor 1
+        public static int offX => Main.myPlayer.width;
+        public static int offY => Main.myPlayer.height;
         public static int ScreenX
         {
             get { return screenX; }
@@ -527,6 +534,26 @@ namespace cotf
             if (Thumbnail.showDateTime)
             {
                 graphics.DrawString(DateTime.Now.ToString(), System.Drawing.SystemFonts.DialogFont, Brushes.White, 0f, 0f);
+            }
+        }
+        public void PostDraw(SpriteBatch sb)
+        {
+            using (Bitmap bmp = new Bitmap(Main.ScreenWidth, Main.ScreenHeight))
+            {
+                using (Graphics g = Graphics.FromImage(bmp))
+                {
+                    g.FillRectangle(new SolidBrush(Color.Black), new Rectangle(0, 0, Main.ScreenWidth, Main.ScreenHeight));
+                    g.FillEllipse(new SolidBrush(Main.Mask), new Rectangle(Main.ScreenWidth / 2 - (int)Main.myPlayer.lightRange, Main.ScreenHeight / 2 - (int)Main.myPlayer.lightRange, (int)Main.myPlayer.lightRange * 2, (int)Main.myPlayer.lightRange * 2));
+                    // TODO: apply a textured brush
+                    bmp.MakeTransparent(Main.Mask);
+                    using (MemoryStream stream = new MemoryStream())
+                    {
+                        bmp.Save(stream, ImageFormat.Png);
+                        Texture2D surface = Texture2D.FromStream(sb.GraphicsDevice, stream);
+                        sb.Draw(surface, Vector2.Zero, Microsoft.Xna.Framework.Color.White);
+                        surface.Dispose();
+                    }
+                }
             }
         }
 

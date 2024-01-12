@@ -33,7 +33,7 @@ namespace cotf.World.Traps
         {
             if (!base.PreUpdate(true))
                 return;
-            Bitmap tex = Drawing.Mask_Circle(100, Main.Mask);
+            Bitmap tex = Drawing.Mask_Circle(50, Main.Mask);
             Bitmap result = (Bitmap)Drawing.TextureMask((Bitmap)texture, tex, Main.Mask);
             Drawing.TextureLighting(result, hitbox, this, graphics);
         }

@@ -37,6 +37,7 @@ namespace cotf.Legacy
         public static Color TorchLight = Color.Orange;
         public void Draw(SpriteBatch sb)
         {
+            // Drawing each opaque graphic manually
             float alpha = 1f;
             //  Leaving discovered areas dim
             {
