@@ -278,6 +278,7 @@ namespace cotf
                 scroll[i] = new UI.Scroll();
             worldgen = new Worldgen();
             var box = CenterBox(ScreenWidth, ScreenHeight, 300, 75);
+            Main.worldgen.InitLightmap(3000, 3000); //  TODO: assign width and height for this via a variable
             #region DEBUG
             return;
             Trap.NewTrap(myPlayer.X, myPlayer.Y, 32, 32, ID.TrapID.FlameGeyser);
@@ -542,8 +543,37 @@ namespace cotf
             {
                 using (Graphics g = Graphics.FromImage(bmp))
                 {
-                    g.FillRectangle(new SolidBrush(Color.Black), new Rectangle(0, 0, Main.ScreenWidth, Main.ScreenHeight));
-                    g.FillEllipse(new SolidBrush(Main.Mask), new Rectangle(Main.ScreenWidth / 2 - (int)Main.myPlayer.lightRange, Main.ScreenHeight / 2 - (int)Main.myPlayer.lightRange, (int)Main.myPlayer.lightRange * 2, (int)Main.myPlayer.lightRange * 2));
+                    Rectangle box = new Rectangle(0, 0, Main.ScreenWidth, Main.ScreenHeight);
+                    g.FillRectangle(new SolidBrush(Color.Black), box);
+                    for (int i = 0; i < Main.lightmap.GetLength(0); i++)
+                    {
+                        for (int j = 0; j < Main.lightmap.GetLength(1); j++)
+                        {
+                            Lightmap map = Main.lightmap[i, j];
+                            if (map == null)
+                                return;
+                            if (map.active && box.IntersectsWith(map.Hitbox))
+                            {
+                                if (map.DefaultColor != Color.FromArgb(255, 20, 20, 20))
+                                {
+                                    g.FillRectangle(new SolidBrush(Main.Mask), map.Hitbox);
+                                }
+                            }
+                        }
+                    }
+                    for (int i = 0; i < Main.lamp.Length; i++)
+                    {
+                        if (Main.lamp[i] != null && Main.lamp[i].active)
+                        { 
+                            g.FillEllipse(new SolidBrush(Main.Mask), new Rectangle((int)(Main.lamp[i].Center.X + Main.ScreenPosition.X) - (int)Main.lamp[i].range / 2, (int)(Main.lamp[i].Center.Y + Main.ScreenPosition.Y) - (int)Main.lamp[i].range / 2, (int)Main.lamp[i].range, (int)Main.lamp[i].range));
+                        }
+                    }
+                    float range = Main.myPlayer.lightRange;
+                    if (Main.myPlayer.lamp == null)
+                    {
+                        range /= 2f;
+                    }
+                    g.FillEllipse(new SolidBrush(Main.Mask), new Rectangle(Main.ScreenWidth / 2 - (int)range, Main.ScreenHeight / 2 - (int)range, (int)range * 2, (int)range * 2));
                     // TODO: apply a textured brush
                     bmp.MakeTransparent(Main.Mask);
                     using (MemoryStream stream = new MemoryStream())

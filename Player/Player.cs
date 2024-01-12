@@ -296,8 +296,8 @@ namespace cotf
                         break;
                     case StaircaseDirection.LeadingUp:
                         Main.FloorTransition(stair.direction);
-                        //var entrance = Main.staircase.FirstOrDefault(t => t != null && t.X != 0 && t.Y != 0 && t.active && t.direction == StaircaseDirection.LeadingDown);
-                        //position = entrance.position;
+                        var entrance = Main.staircase.FirstOrDefault(t => t != null && t.X != 0 && t.Y != 0 && t.active && t.direction == StaircaseDirection.LeadingDown);
+                        position = entrance.position;
                         break;
                     case StaircaseDirection.LeadingDown:
                         Main.FloorTransition(stair.direction);

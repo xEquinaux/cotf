@@ -173,7 +173,7 @@ namespace cotf
                     surface.Dispose();
                 }
             }
-            if (!Main.open)                                                     
+            if (!Main.open && !Main.mainMenu)                                                     
             {
                 Main.Instance.PostDraw(_spriteBatch);
             }

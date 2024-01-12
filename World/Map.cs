@@ -19,6 +19,7 @@ namespace cotf.World
         {
             Main.tile = new Tile[,] { };
             Main.background = new Background[,] { };
+            //Main.lightmap = new Lightmap[,] { };
             Main.room = new Dictionary<int, Room>();
             Main.staircase = new Staircase[6];
             Main.scenery = new Scenery[256];
@@ -38,6 +39,10 @@ namespace cotf.World
             {
                 item2?.Dispose();
             }
+            //foreach (Lightmap item3 in Main.lightmap)
+            //{
+            //    item3?.Dispose();
+            //}
             Main.room.Clear();
             //Main.room = null; //  Not reinitialized anywhere
             Array.ForEach(Main.staircase, t => t?.Dispose());
