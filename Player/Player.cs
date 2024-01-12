@@ -417,7 +417,7 @@ namespace cotf
             //playerData?.Draw(graphics);   //  Testing drawing this with higher priority
             //lamp?.WorldLighting();
             //color = Ext.Divide(color, lightColor);
-            Drawing.LightmapHandling(texture, this, 1.2f, graphics);
+            Drawing.LightmapHandling(texture, this, Main.Gamma, graphics);
             //Drawing.TextureLighting(Main.texture, box, this, graphics);
             //  Debug
             //graphics.DrawString(GetControlType().ToString(), Main.DefaultFont, Brushes.White, X - width / 2, Y + height + 10, StringFormat.GenericDefault);

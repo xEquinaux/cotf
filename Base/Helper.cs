@@ -15,6 +15,7 @@ using Rectangle = System.Drawing.Rectangle;
 using Color = System.Drawing.Color;
 using Point = System.Drawing.Point;
 using Matrix = System.Drawing.Drawing2D.Matrix;
+using Microsoft.Xna.Framework.Graphics.PackedVector;
 
 namespace cotf.Base
 {
@@ -703,25 +704,24 @@ namespace cotf.Base
         }
         public static Bitmap Lightpass0(List<Tile> brush, Bitmap bitmap, Vector2 topLeft, Lamp light, float range)
         {
-            Margin size = new Margin(50);
             Bitmap layer0 = (Bitmap)bitmap.Clone();
-            using (Bitmap layer1 = new Bitmap(size.Right, size.Top))
+            using (Bitmap layer1 = new Bitmap(bitmap.Width, bitmap.Height))
             {
-                for (int i = 0; i < size.Right; i++)
+                for (int i = 0; i < bitmap.Width; i++)
                 {
-                    for (int j = 0; j < size.Top; j++)
+                    for (int j = 0; j < bitmap.Height; j++)
                     {
                         float distance = (float)Helper.Distance(topLeft + new Vector2(i, j), light.position);
                         float radius = Helper.NormalizedRadius(distance, range);
                         if (radius > 0f && dynamic(brush, new Vector2(i, j), topLeft, light, range))
                         {
                             Color srcPixel = layer0.GetPixel(i, j);
-                            layer1.SetPixel(i, j, Ext.Multiply(srcPixel, light.lampColor, radius));
+                            layer1.SetPixel(i, j, Ext.AdditiveV2(srcPixel, light.lampColor, radius));
                         }
                     }
                 }
                 using (Graphics gfx = Graphics.FromImage(layer0))
-                    gfx.DrawImage(layer1, new Rectangle(0, 0, size.Right, size.Top));
+                    gfx.DrawImage(layer1, new Rectangle(0, 0, bitmap.Width, bitmap.Height));
             }
             return layer0;
         }
@@ -863,7 +863,6 @@ namespace cotf.Base
             using (Graphics gfx = Graphics.FromImage(bitmap))
             {
                 gfx.DrawImage(texture, new Rectangle(0, 0, ent.width, ent.height));
-                graphics.DrawImage(bitmap, hitbox);
                 if (alpha > 0f)
                 {
                     ent.colorTransform = Drawing.SetColor(Ext.AdditiveV2(Ext.NonAlpha(map.color), map.DefaultColor, alpha));
@@ -872,6 +871,10 @@ namespace cotf.Base
                         ent.colorTransform.SetGamma(gamma);
                     }
                     graphics.DrawImage(bitmap, hitbox, 0, 0, hitbox.Width, hitbox.Height, GraphicsUnit.Pixel, ent.colorTransform);
+                }
+                else
+                {
+                    graphics.DrawImage(bitmap, hitbox);
                 }
             }
             map.alpha = alpha;
@@ -934,6 +937,14 @@ namespace cotf.Base
             }
             alpha = 0f;
             color = startColor;
+        }
+        public static Bitmap RecolorTexture(ref Bitmap texture, Color color)
+        {
+            using (Graphics gfx = Graphics.FromImage(texture))
+            {
+                gfx.DrawImage(texture, new Rectangle(0, 0, texture.Width, texture.Height), 0, 0, texture.Width, texture.Height, GraphicsUnit.Pixel, Drawing.SetColor(color));
+            }
+            return texture;
         }
         [Obsolete("Drawing with a light map is currently not integrated.")]
         public static void BrushLighting(Image texture, Lightmap map, Background ent, Lamp light, Graphics graphics)

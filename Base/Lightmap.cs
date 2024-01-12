@@ -18,7 +18,8 @@ namespace cotf.Base
         public bool active;
         private int i, j;
         public Color color;
-        public Color DefaultColor = Color.FromArgb(20, 20, 20);
+        public Color DefaultColor = _DefaultColor;
+        public static Color _DefaultColor => Color.FromArgb(255, 20, 20, 20);
         public Vector2 position;
         public Vector2 Center => position + new Vector2(Size.Width / 2, Size.Height / 2);
         public Rectangle Hitbox => new Rectangle((int)position.X, (int)position.Y, Size.Width, Size.Height);

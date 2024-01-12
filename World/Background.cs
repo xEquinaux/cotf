@@ -46,7 +46,8 @@ namespace cotf.World
             //Bitmap bmp = new Bitmap(50, 50);
             //using (Graphics gfx = Graphics.FromImage(bmp))
                 //gfx.FillRectangle(new SolidBrush(defaultColor), new Rectangle(0, 0, 50, 50));
-            texture = preTexture = (Bitmap)Main.square;
+            Bitmap clone = (Bitmap)Main.square.Clone();
+            texture = preTexture = clone;
         }
         private bool PreUpdate()
         {
@@ -66,6 +67,8 @@ namespace cotf.World
         }
         public void Draw(Graphics graphics)
         {
+            //Drawing.DrawTexture(preTexture, hitbox, width, height, graphics, null);
+            //return;
             if (!active || !onScreen || !discovered)
                 return;
             if (alpha > 0f)
