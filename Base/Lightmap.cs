@@ -64,6 +64,9 @@ namespace cotf.Base
         {
             if (!onScreen || !active)
                 return;
+            // Ignore world lamps due to prerendered lighting
+            if (lamp.owner == 255 && parent != null && parent.GetType() == typeof(Background))
+                return;
             if (parent != null && !parent.solid && !Entity.SightLine(lamp.Center, parent, Tile.Size / 3)) 
                 return;
             float num = keepLit ? 0.5f : Background.RangeNormal(lamp.Center, this.Center, Tile.Range);

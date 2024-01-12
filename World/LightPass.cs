@@ -36,81 +36,53 @@ namespace cotf
             }
             return brush;
         }
-        public static void PreProcessing()
+        public static List<Background> NearbyFloor(Lamp lamp)
         {
-            //  DEBUG: comment out for lighting
-            return;
-            for (int n = 0; n < Main.lamp.Length; n++)
+            List<Background> brush = new List<Background>();
+            for (int i = 0; i < Main.background.GetLength(0); i++)
             {
-                Lamp lamp = Main.lamp[n];
-                if (lamp == null || !lamp.active || lamp.owner != 255 || lamp.parent == null)
-                    continue;
-
-                List<Tile> brush = NearbyTile(lamp);
-
-                for (int i = 0; i < Main.background.GetLength(0); i++)
+                for (int j = 0; j < Main.background.GetLength(1); j++)
                 {
-                    for (int j = 0; j < Main.background.GetLength(1); j++)
+                    if (Main.background[i, j] != null && Main.background[i, j].active)
                     {
-                        if (Main.background[i, j] == null || !Main.background[i, j].active)
-                            continue;
-                        Main.background[i, j].preTexture = Drawing.Lightpass0(brush, Main.background[i, j].preTexture, Main.background[i, j].position, lamp, lamp.range);
-                    }
-                    //if (i % Main.background.GetLength(0) / 5 == 0)
-                    //    GC.Collect();
-                } 
-                /*
-                for (int i = 0; i < Main.tile.GetLength(0); i++)
-                {
-                    for (int j = 0; j < Main.tile.GetLength(1); j++)
-                    {
-                        if (!Main.tile[i, j].Active)
-                            continue;
-                        Main.tile[i, j].preTexture = Drawing.Lightpass0(brush, Main.tile[i, j].preTexture, Main.tile[i, j].position, lamp, lamp.range / 2);
-                    }
-                    if (i % Main.tile.GetLength(0) / 5 == 0)
-                        GC.Collect();
-                }                       */
-            }
-            return;
-            #region for lighting objects based on average texture pixel value
-            for (int k = 0; k < Main.lightmap.GetLength(0); k++)
-            {
-                for (int l = 0; l < Main.lightmap.GetLength(1); l++)
-                {
-                    Background bgr = Main.background[Math.Max(k / 2 - 1, 0), Math.Max(l / 2 - 1, 0)];
-                    if (bgr != null && bgr.active)
-                    {
-                        Main.lightmap[k, l] = new Lightmap(k, l);
-                        Main.lightmap[k, l].active = true;
-                        Main.lightmap[k, l].color = Drawing.LightAverage(bgr.preTexture);
-                        Main.lightmap[k, l].parent = bgr;
+                        if (Helper.Distance(Main.background[i, j].Center, lamp.position) < lamp.range)
+                        {
+                            brush.Add(Main.background[i, j]);
+                        }
                     }
                 }
             }
-            #endregion
-            #region one light bounce onto the tile objects
-            return;
-            Main.tile[0, 0].active(false);
-            Background bg = new Background(0, 0, 50);
-            bg.color = Color.DarkBlue;
-            bg.defaultColor = bg.color;
-            for (int i = 0; i < 3; i++)
+            return brush;
+        }
+        public static void PreProcessing()
+        {
+            //  DEBUG: comment out for lighting
+            //  return;
+            for (int n = 0; n < Main.lamp.Length; n++)
             {
-                for (int j = 0; j < 3; j++)
+                n = Math.Min(9, n);
+                Lamp lamp = Main.lamp[n];
+                if (lamp == null || !lamp.active || lamp.owner != 255 || lamp.parent == null)
+                    return;
+
+                List<Background> bg = NearbyFloor(lamp);
+                List<Tile> brush = NearbyTile(lamp);
+
+                foreach (Background b in bg)
                 {
-                    if (!Main.tile[i, j].Active)
+                    if (b == null || !b.active)
                         continue;
-                    //WaitCallback callback = delegate(object sender)
-                    //{ 
-                    Tile.GetSafely(i, j).preTexture = Drawing.Lightpass1((i + j) / (float)Main.tile.LongLength, new Surface(Tile.GetSafely(i, j).preTexture, Tile.GetSafely(i, j).position, Tile.GetSafely(i, j).width, Tile.GetSafely(i, j).height), Surface.GetSurface(Tile.GetSafely(i, j).hitbox, Main.background), Tile.GetSafely(i, j));
-                    //};
-                    //ThreadPool.QueueUserWorkItem(callback);
-                }                                              
-                if (i % Main.tile.GetLength(0) / 5 == 0)
-                    GC.Collect();
+                    b.preTexture = Drawing.Lightpass0(brush, b.preTexture, b.position, lamp, lamp.range);
+                }
+                #region one light bounce onto the tile objects
+                //foreach (Tile t in brush)
+                //{
+                //    if (t == null || !t.Active)
+                //        continue;
+                //    t.preTexture = Drawing.Lightpass1(0f, new Surface(t.preTexture, t.position, t.width, t.height), Surface.GetSurface(t.hitbox, Main.background), t);
+                //}
+                #endregion
             }
-            #endregion
         }
     }
     public class Surface

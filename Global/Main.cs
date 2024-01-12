@@ -278,7 +278,6 @@ namespace cotf
                 scroll[i] = new UI.Scroll();
             worldgen = new Worldgen();
             var box = CenterBox(ScreenWidth, ScreenHeight, 300, 75);
-            Main.worldgen.InitLightmap(3000, 3000); //  TODO: assign width and height for this via a variable
             #region DEBUG
             return;
             Trap.NewTrap(myPlayer.X, myPlayer.Y, 32, 32, ID.TrapID.FlameGeyser);

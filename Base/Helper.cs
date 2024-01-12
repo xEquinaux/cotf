@@ -436,7 +436,6 @@ namespace cotf.Base
                     return default(Bitmap);
                 Bitmap layer0 = (Bitmap)start.bitmap.Clone();
                 Bitmap layer1 = pass1(layer0, start, src, new Point(1, 1));
-                Main.Progress = progress;
                 return layer1;
             }
             catch
@@ -704,12 +703,13 @@ namespace cotf.Base
         }
         public static Bitmap Lightpass0(List<Tile> brush, Bitmap bitmap, Vector2 topLeft, Lamp light, float range)
         {
+            Margin size = new Margin(50);
             Bitmap layer0 = (Bitmap)bitmap.Clone();
-            using (Bitmap layer1 = new Bitmap(bitmap.Width, bitmap.Height))
-            { 
-                for (int i = 0; i < bitmap.Width; i++)
+            using (Bitmap layer1 = new Bitmap(size.Right, size.Top))
+            {
+                for (int i = 0; i < size.Right; i++)
                 {
-                    for (int j = 0; j < bitmap.Height; j++)
+                    for (int j = 0; j < size.Top; j++)
                     {
                         float distance = (float)Helper.Distance(topLeft + new Vector2(i, j), light.position);
                         float radius = Helper.NormalizedRadius(distance, range);
@@ -721,7 +721,7 @@ namespace cotf.Base
                     }
                 }
                 using (Graphics gfx = Graphics.FromImage(layer0))
-                    gfx.DrawImage(layer1, new Rectangle(0, 0, bitmap.Width, bitmap.Height));
+                    gfx.DrawImage(layer1, new Rectangle(0, 0, size.Right, size.Top));
             }
             return layer0;
         }
