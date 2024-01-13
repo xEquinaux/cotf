@@ -63,14 +63,24 @@ namespace cotf.Base
         }
         public void LampEffect(Lamp lamp)
         {
+            float num = 0;
             if (!onScreen || !active)
                 return;
             // Ignore world lamps due to prerendered lighting
-            //if (lamp.owner == 255 && parent != null && parent.GetType() == typeof(Background))
-            //    return;
-            if (parent != null && !parent.solid && !Entity.SightLine(lamp.Center, parent, Tile.Size / 3)) 
+            if (lamp.owner == 255 && parent != null && parent.GetType() == typeof(Background))
+            {
+                num = keepLit ? 0.5f : Background.RangeNormal(lamp.Center, this.Center, Tile.Range);
+                if (num == 0f)
+                    return;
+                alpha = 0f;
+                alpha += Math.Max(0, num);
+                alpha = Math.Min(alpha, 1f);
+                color = Ext.AdditiveV2(color, lamp.lampColor, num / 2f);
                 return;
-            float num = keepLit ? 0.5f : Background.RangeNormal(lamp.Center, this.Center, Tile.Range);
+            }
+            if (parent != null && !parent.solid && !Entity.SightLine(lamp.Center, parent, Tile.Size / 5)) 
+                return;
+            num = keepLit ? 0.5f : Background.RangeNormal(lamp.Center, this.Center, Tile.Range);
             if (num == 0f)
                 return;
             alpha = 0f;

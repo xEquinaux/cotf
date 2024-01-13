@@ -59,7 +59,8 @@ namespace cotf.World.Traps
         public float CenterY(Player player) => player.Center.Y;
         public virtual void Draw(Graphics graphics)
         {
-            Drawing.LightmapHandling(Main.grass, this, Main.Gamma, graphics);
+            this.PostFX();
+            Drawing.LightmapHandling(Main.grass, this, gamma, graphics);
         }
         private static void newObj(int index, int type)
         {

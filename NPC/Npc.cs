@@ -160,12 +160,13 @@ namespace cotf
         {
             if (active && discovered)
             {
+                this.PostFX();
                 if (iFrames > 0)
                 {
                     iFrames--;
                     color = color.Transparency(iFrames % 4 == 0 ? 1f : 0f);
                 }
-                Drawing.LightmapHandling(texture, this, Main.Gamma, graphics);
+                Drawing.LightmapHandling(texture, this, gamma, graphics);
             }
         }
         public virtual bool NpcItemHit(Item item)

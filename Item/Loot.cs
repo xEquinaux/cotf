@@ -80,7 +80,7 @@ namespace cotf
                 return;
             if (pile.Count > 0)
             {
-                Drawing.LightmapHandling(texture, this, Main.Gamma, graphics);
+                Drawing.LightmapHandling(texture, this, gamma, graphics);
                 //  Original
                 //Drawing.DrawScale(Main.texture90, position, width, height, Color.Black, graphics, Drawing.SetColor(Color.LightYellow));
             }
@@ -94,7 +94,7 @@ namespace cotf
                     if (!InProximity(Main.myPlayer, Sight))
                         return;
                 }
-                Drawing.LightmapHandling(item.texture, this, Main.Gamma, graphics);
+                Drawing.LightmapHandling(item.texture, this, gamma, graphics);
             }
         }
         public override void Dispose()

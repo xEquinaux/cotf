@@ -63,6 +63,7 @@ namespace cotf.Base
         public float scale;
         public float alpha = 0f;
         public float knockBack = 1f;
+        public float gamma = 1f;
         public Debuff debuff;
         public Purse purse;
         public Bitmap texture;
@@ -114,6 +115,10 @@ namespace cotf.Base
                     position.Y <= Main.myPlayer.position.Y + Main.ScreenHeight / 2;
             }
             return true;
+        }
+        public virtual void PostFX()
+        {
+            //gamma = (float)Helper.NormalizedRadius((float)Main.myPlayer.Center.Distance(this.Center), Main.ScreenWidth);
         }
         public virtual void Update()
         {

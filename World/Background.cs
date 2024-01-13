@@ -57,7 +57,7 @@ namespace cotf.World
                 position.Y >= Main.myPlayer.position.Y - Main.ScreenHeight / 2 &&
                 position.Y <= Main.myPlayer.position.Y + Main.ScreenHeight / 2;
         }
-        public new void Update()
+        public override void Update()
         {
             if (!PreUpdate())
                 return;
@@ -69,12 +69,13 @@ namespace cotf.World
         {
             if (!active || !onScreen || !discovered)
                 return;
+            base.PostFX();
             if (alpha > 0f)
             {
                 Lightmap map;
                 //  Lightmap interaction
                 (map = Main.lightmap[box.X / Tile.Size, box.Y / Tile.Size]).Update(this);
-                Drawing.TextureLighting(preTexture, hitbox, map, this, Main.Gamma, alpha, graphics);
+                Drawing.TextureLighting(preTexture, hitbox, map, this, gamma, alpha, graphics);
             }
             if (alpha < 1f)
             {

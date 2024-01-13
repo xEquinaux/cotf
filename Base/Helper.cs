@@ -21,6 +21,10 @@ namespace cotf.Base
 {
     public static class Ext
     {
+        public static double Distance(this Vector2 one, Vector2 v2)
+        {
+            return Math.Sqrt(Math.Pow(v2.X - one.X, 2) + Math.Pow(v2.Y - one.Y, 2));
+        }
         public static Vector2 ToVector2(this Point a)
         {
             return new Vector2(a.X, a.Y);
@@ -870,7 +874,7 @@ namespace cotf.Base
             {
                 if (alpha > 0f)
                 {
-                    ent.colorTransform = Drawing.SetColor(Ext.AdditiveV2(LightAverage(ent.preTexture), map.color, alpha));
+                    ent.colorTransform = Drawing.SetColor(Ext.AdditiveV2(ent.color, map.color, alpha));
                     if (ent.inShadow)
                     {
                         ent.colorTransform.SetGamma(gamma);

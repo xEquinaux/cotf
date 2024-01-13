@@ -387,11 +387,11 @@ namespace cotf
                 {
                     if (preTexture != null)
                     { 
-                        Drawing.LightmapHandling(preTexture, this, Main.Gamma, graphics);
+                        Drawing.LightmapHandling(preTexture, this, gamma, graphics);
                     }
                     else
                     {
-                        Drawing.LightmapHandling(texture, this, Main.Gamma, graphics);
+                        Drawing.LightmapHandling(texture, this, gamma, graphics);
                     }
                 }
             }

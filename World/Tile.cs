@@ -105,12 +105,13 @@ namespace cotf.World
             {
                 if (preTexture == null)
                     return;
+                base.PostFX();
                 Lightmap map;
                 if (alpha > 0f)
                 {
                     //  Lightmap interaction
                     (map = Main.lightmap[hitbox.X / Tile.Size, hitbox.Y / Tile.Size]).Update(this);
-                    Drawing.TextureLighting(preTexture, hitbox, map, this, Main.Gamma, alpha, graphics);
+                    Drawing.TextureLighting(preTexture, hitbox, map, this, gamma, alpha, graphics);
                 }
                 if (alpha < 1f)
                 {

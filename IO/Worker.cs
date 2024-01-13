@@ -1,21 +1,17 @@
-﻿using System;
+﻿using cotf.Base;
+using cotf.World;
+using System;
 using System.Collections.Generic;
-using System.Drawing;
-using System.Drawing.Drawing2D;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using System.Windows;
-using System.Windows.Input;
-using cotf.Base;
-using cotf.World;
-using System.Threading;
-using Microsoft.Xna.Framework;
-using Color = System.Drawing.Color;
-using Rectangle = System.Drawing.Rectangle;
 
-namespace cotf
+namespace cotf.IO
 {
+    internal class Worker
+    {
+
+    }
     public sealed class LightPass
     {
         public static List<Tile> NearbyTile(Lamp lamp)
@@ -57,7 +53,6 @@ namespace cotf
         public static void PreProcessing()
         {
             //  DEBUG: comment out for lighting
-            return;
             for (int n = 0; n < Main.lamp.Length; n++)
             {
                 Lamp lamp = Main.lamp[n];
@@ -132,53 +127,6 @@ namespace cotf
                     GC.Collect();
             }
             #endregion
-        }
-    }
-    public class Surface
-    {
-        public Color value;
-        public Bitmap bitmap;
-        public Vector2 topLeft;
-        public int 
-            width, 
-            height;
-        public float range;
-        public const int Range = 50;
-        public Surface()
-        {
-        }
-        public Surface(Bitmap bitmap, Vector2 topLeft, int width, int height)
-        {
-            this.bitmap = bitmap;
-            this.topLeft = topLeft;
-            this.width = width;
-            this.height = height;
-        }
-        public static Surface[] GetSurface(Rectangle hitbox, Background[,] bg)
-        {
-            List<Surface> list = new List<Surface>();
-            for (int i = 0; i < bg.GetLength(0); i++)
-            {
-                for (int j = 0; j < bg.GetLength(1); j++)
-                {
-                    if (bg[i, j] == null || !bg[i, j].active)
-                        continue;
-                    if (bg[i, j].hitbox.IntersectsWith(new Rectangle(hitbox.X - Range, hitbox.Y - Range, Range * 2, Range * 2)))
-                    {
-                        list.Add(new Surface() 
-                        { 
-                            width = bg[i, j].width,
-                            height = bg[i, j].height,
-                            bitmap = bg[i, j].preTexture,
-                            topLeft = bg[i, j].position,
-                            range = Range
-                        });
-                    }
-                }
-            }
-            if (list.Count > 0)
-                return list.ToArray();
-            else return new Surface[] { };
         }
     }
 }
