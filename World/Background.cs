@@ -47,8 +47,7 @@ namespace cotf.World
             //Bitmap bmp = new Bitmap(50, 50);
             //using (Graphics gfx = Graphics.FromImage(bmp))
                 //gfx.FillRectangle(new SolidBrush(defaultColor), new Rectangle(0, 0, 50, 50));
-            Bitmap clone = (Bitmap)Main.square.Clone();
-            texture = preTexture = clone;
+            texture = preTexture = (Bitmap)Main.square.Clone();
         }
         private bool PreUpdate()
         {

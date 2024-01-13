@@ -193,9 +193,9 @@ namespace cotf.Base
         public static Color MultiplyV2(this Color one, Color two, float range)
         {
             int a = (int)Math.Max(Math.Min(255f * Math.Min(range, 1f), 255), 1f);
-            int r = (int)Math.Min(Math.Max(one.R, 1f) * Math.Max((two.B / 255f + 10f) * range, 1f), 255);
-            int g = (int)Math.Min(Math.Max(one.G, 1f) * Math.Max((two.B / 255f + 10f) * range, 1f), 255);
-            int b = (int)Math.Min(Math.Max(one.B, 1f) * Math.Max((two.B / 255f + 10f) * range, 1f), 255);
+            int r = (int)Math.Min(Math.Max(one.R, 1f) * Math.Max((two.R / 255f + 1f) * range, 1f), 255);
+            int g = (int)Math.Min(Math.Max(one.G, 1f) * Math.Max((two.G / 255f + 1f) * range, 1f), 255);
+            int b = (int)Math.Min(Math.Max(one.B, 1f) * Math.Max((two.B / 255f + 1f) * range, 1f), 255);
             return Color.FromArgb(a, r, g, b);
         }
         public static Color NonAlpha(this Color color)
@@ -720,17 +720,10 @@ namespace cotf.Base
                 {
                     float distance = (float)Helper.Distance(topLeft + new Vector2(i, j), light.position);
                     float radius = Helper.NormalizedRadius(distance, range);
-                    if (radius > 0f)
+                    if (radius > 0f && dynamic(brush, new Vector2(i, j), topLeft, light, range))
                     {
-                        if (dynamic(brush, new Vector2(i, j), topLeft, light, range))
-                        { 
-                            Color srcPixel = layer0.GetPixel(i, j);
-                            layer1.SetPixel(i, j, Ext.MultiplyV2(srcPixel, light.lampColor, radius));
-                        }
-                        else
-                        {
-                            layer1.SetPixel(i, j, Color.Transparent);
-                        }
+                        Color srcPixel = layer0.GetPixel(i, j);
+                        layer1.SetPixel(i, j, Ext.Multiply(srcPixel, light.lampColor, radius));
                     }
                 }
             }
@@ -875,19 +868,18 @@ namespace cotf.Base
             Bitmap bitmap = new Bitmap(ent.width, ent.height);
             using (Graphics gfx = Graphics.FromImage(bitmap))
             {
-                gfx.DrawImage(texture, new Rectangle(0, 0, ent.width, ent.height));
                 if (alpha > 0f)
                 {
-                    ent.colorTransform = Drawing.SetColor(Ext.AdditiveV2(Ext.NonAlpha(map.color), map.DefaultColor, alpha));
+                    ent.colorTransform = Drawing.SetColor(Ext.AdditiveV2(LightAverage(ent.preTexture), map.color, alpha));
                     if (ent.inShadow)
                     {
                         ent.colorTransform.SetGamma(gamma);
                     }
-                    graphics.DrawImage(bitmap, hitbox, 0, 0, hitbox.Width, hitbox.Height, GraphicsUnit.Pixel, ent.colorTransform);
+                    graphics.DrawImage(texture, hitbox, 0, 0, hitbox.Width, hitbox.Height, GraphicsUnit.Pixel, ent.colorTransform);
                 }
                 else
                 {
-                    graphics.DrawImage(bitmap, hitbox);
+                    graphics.DrawImage(texture, hitbox);
                 }
             }
             map.alpha = alpha;
