@@ -72,7 +72,12 @@ namespace cotf
                     {
                         if (Main.background[i, j] == null || !Main.background[i, j].active)
                             continue;
-                        Main.background[i, j].preTexture = Drawing.Lightpass0(brush, Main.background[i, j].preTexture, Main.background[i, j].position, lamp, lamp.range);
+                        if (Helper.Distance(Main.background[i, j].Center, lamp.Center) <= lamp.range)
+                        {
+                            //Drawing.RecolorTexture(ref Main.background[i, j].texture, Lightmap._DefaultColor);
+                            Main.background[i, j].preTexture = Drawing.Lightpass0(brush, Main.background[i, j].preTexture, Main.background[i, j].position, lamp, lamp.range);
+                            Main.background[i, j].preRendered = true;
+                        }
                     }
                     //if (i % Main.background.GetLength(0) / 5 == 0)
                     //    GC.Collect();

@@ -65,7 +65,7 @@ namespace cotf.Base
         public float knockBack = 1f;
         public Debuff debuff;
         public Purse purse;
-        public Image texture;
+        public Bitmap texture;
         public Color color;
         public Color defaultColor;
         public Color lightColor;

@@ -34,7 +34,7 @@ namespace cotf
         }
         protected override void Init()
         { 
-            texture = Main.texture;
+            texture = (Bitmap)Main.texture;
             int i = Lamp.NewLamp(new Vector2(X, Y), 50f, defaultColor, this, false, this.whoAmI);
             light = Main.lamp[i];
             light.isProj = true;

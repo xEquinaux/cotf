@@ -24,6 +24,7 @@ namespace cotf.World
         public DoorFacing doorFace = DoorFacing.None;
         public List<Entity> ent = new List<Entity>();
         public int size;
+        public bool preRendered = false;
 
         public Background(int i, int j, int size)
         {
@@ -67,8 +68,6 @@ namespace cotf.World
         }
         public void Draw(Graphics graphics)
         {
-            //Drawing.DrawTexture(preTexture, hitbox, width, height, graphics, null);
-            //return;
             if (!active || !onScreen || !discovered)
                 return;
             if (alpha > 0f)

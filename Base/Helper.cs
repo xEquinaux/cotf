@@ -190,6 +190,14 @@ namespace cotf.Base
             int b = (int)Math.Min(Math.Max(one.B, 1f) * ((two.B / 255f) + 1), 255);
             return Color.FromArgb(a, r, g, b);
         }
+        public static Color MultiplyV2(this Color one, Color two, float range)
+        {
+            int a = (int)Math.Max(Math.Min(255f * Math.Min(range, 1f), 255), 1f);
+            int r = (int)Math.Min(Math.Max(one.R, 1f) * Math.Max((two.B / 255f + 10f) * range, 1f), 255);
+            int g = (int)Math.Min(Math.Max(one.G, 1f) * Math.Max((two.B / 255f + 10f) * range, 1f), 255);
+            int b = (int)Math.Min(Math.Max(one.B, 1f) * Math.Max((two.B / 255f + 10f) * range, 1f), 255);
+            return Color.FromArgb(a, r, g, b);
+        }
         public static Color NonAlpha(this Color color)
         {
             int a = 255;
@@ -705,24 +713,29 @@ namespace cotf.Base
         public static Bitmap Lightpass0(List<Tile> brush, Bitmap bitmap, Vector2 topLeft, Lamp light, float range)
         {
             Bitmap layer0 = (Bitmap)bitmap.Clone();
-            using (Bitmap layer1 = new Bitmap(bitmap.Width, bitmap.Height))
+            Bitmap layer1 = new Bitmap(bitmap.Width, bitmap.Height);
+            for (int i = 0; i < bitmap.Width; i++)
             {
-                for (int i = 0; i < bitmap.Width; i++)
+                for (int j = 0; j < bitmap.Height; j++)
                 {
-                    for (int j = 0; j < bitmap.Height; j++)
+                    float distance = (float)Helper.Distance(topLeft + new Vector2(i, j), light.position);
+                    float radius = Helper.NormalizedRadius(distance, range);
+                    if (radius > 0f)
                     {
-                        float distance = (float)Helper.Distance(topLeft + new Vector2(i, j), light.position);
-                        float radius = Helper.NormalizedRadius(distance, range);
-                        if (radius > 0f && dynamic(brush, new Vector2(i, j), topLeft, light, range))
-                        {
+                        if (dynamic(brush, new Vector2(i, j), topLeft, light, range))
+                        { 
                             Color srcPixel = layer0.GetPixel(i, j);
-                            layer1.SetPixel(i, j, Ext.AdditiveV2(srcPixel, light.lampColor, radius));
+                            layer1.SetPixel(i, j, Ext.MultiplyV2(srcPixel, light.lampColor, radius));
+                        }
+                        else
+                        {
+                            layer1.SetPixel(i, j, Color.Transparent);
                         }
                     }
                 }
-                using (Graphics gfx = Graphics.FromImage(layer0))
-                    gfx.DrawImage(layer1, new Rectangle(0, 0, bitmap.Width, bitmap.Height));
             }
+            using (Graphics gfx = Graphics.FromImage(layer0))
+                gfx.DrawImage(layer1, new Rectangle(0, 0, bitmap.Width, bitmap.Height));
             return layer0;
         }
         public static Bitmap Lightpass0(Bitmap bitmap, Vector2 topLeft, Lamp light, float range)

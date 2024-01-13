@@ -34,8 +34,8 @@ namespace cotf.World.Traps
         protected void _init()
         {
             defaultColor = Color.White;
-            texture = Main.trapTexture[type];
-            texture = Asset<Image>.Request(TextureName);
+            texture = (Bitmap)Main.trapTexture[type];
+            texture = Asset<Bitmap>.Request(TextureName);
             preTexture = (Bitmap)texture;
         }
         public virtual bool ItemHit(Item item)
