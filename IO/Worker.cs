@@ -8,9 +8,34 @@ using System.Threading.Tasks;
 
 namespace cotf.IO
 {
+    internal class Container
+    {
+        public bool active;
+        public float range;
+        public float distance;
+        public Bitmap texture;
+        public Color[] color;
+    }
     internal class Worker
     {
+        public Bitmap[,] array;
+        
+        public static Bitmap IngestLightPass(Container o)
+        {
+            for (int n = 0; n < o.color.Length; n++)
+            {
+                if (o == null || !o.active)
+                    continue;
+                Color c = o.color[n];
 
+                List<Tile> brush = LightPass.NearbyTile(lamp);
+                if (Helper.Distance(array[i, j].Center, lamp.Center) <= lamp.range)
+                {
+                    array[i, j].preTexture = Drawing.Lightpass0(brush, array[i, j].preTexture, array[i, j].position, lamp, lamp.range);
+                }
+            }
+            return array;
+        }
     }
     public sealed class LightPass
     {

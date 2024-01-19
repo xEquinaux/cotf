@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Diagnostics;
 using System.Drawing.Imaging;
 using System.Linq;
@@ -10,8 +11,8 @@ namespace cotf.Base
 {
     internal class BitmapStream : Stream
     {
-        public override bool CanRead => true;
-        public override bool CanSeek => true;
+        public override bool CanRead => false;
+        public override bool CanSeek => false;
         public override bool CanWrite => true;
         public override long Length => Buffer.Count;
         public override long Position { get; set; }
@@ -19,9 +20,19 @@ namespace cotf.Base
         public List<byte> Buffer = new List<byte>();
 
         private Dictionary<int, byte[]> lexicon = new Dictionary<int, byte[]>();
-        private int index;
+        private int index = 0;
         public BitmapStream()
         {
+        }
+        public BitmapStream(byte[] buffer)
+        {
+            int num = 0;
+            while (num < buffer.Length)
+            {
+                int size = BitConverter.ToInt32(buffer.Take(num + 4).ToArray(), num += 4);
+                byte[] frame = buffer.ToList().GetRange(num += size, size).ToArray();
+                Write(frame, 0, 0);
+            }
         }
         public override void Flush()
         {
@@ -55,7 +66,7 @@ namespace cotf.Base
             Buffer.InsertRange((int)(Position += size.Length), size);
             Buffer.InsertRange((int)(Position += (buffer.Length + offset)), buffer);
             lexicon.Add(index++, buffer);
-        }
+        }                                          
         public Bitmap[] GetAllBitmaps()
         {
             Bitmap[] frames = new Bitmap[lexicon.Keys.Count];
@@ -81,6 +92,17 @@ namespace cotf.Base
             Bitmap frame = new Bitmap(mem);
             mem.Dispose();
             return frame;
+        }
+        public byte[] GetBuffer()
+        {
+            List<byte> buffer = new List<byte>();
+            for (int i = 0; i < lexicon.Keys.Count; i++)
+            {
+                byte[] size = BitConverter.GetBytes(lexicon[i].Length);
+                buffer.AddRange(size);
+                Array.ForEach(lexicon[i], (e) => { buffer.Add(e); });
+            }
+            return buffer.ToArray();
         }
     }
 }
