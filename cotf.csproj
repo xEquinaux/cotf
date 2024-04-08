@@ -31,7 +31,6 @@
   <ItemGroup>
     <PackageReference Include="MonoGame.Framework.WindowsDX" Version="3.8.1.303" />
     <PackageReference Include="MonoGame.Content.Builder.Task" Version="3.8.1.303" />
-    <ProjectReference Include="..\..\..\Desktop\desktop\Apps\src\CirclePrefect dll\CirclePrefect.csproj" />
 	  <Referece Include="System.Drawing.Common">
 		  <HintPath>C:\Program Files (x86)\dotnet\shared\Microsoft.WindowsDesktop.App\6.0.6\System.Drawing.Common.dll</HintPath>
 	  </Referece>

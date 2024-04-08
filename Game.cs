@@ -299,10 +299,10 @@ namespace cotf
     }
     public class Camera
     {
-        public CirclePrefect.Vector2 oldPosition;
-        public CirclePrefect.Vector2 position;
-        public CirclePrefect.Vector2 velocity;
-        public bool isMoving => velocity != CirclePrefect.Vector2.Zero || oldPosition != position;
+        public Vector2 oldPosition;
+        public Vector2 position;
+        public Vector2 velocity;
+        public bool isMoving => velocity != Vector2.Zero || oldPosition != position;
         public bool follow = false;
         public bool active = false;
     }
