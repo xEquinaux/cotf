@@ -129,6 +129,7 @@ namespace cotf
 
         protected override void Draw(GameTime gameTime)
         {
+            // TODO: fix this GC collection bug
             GC.TryStartNoGCRegion(6144000);
             using (Bitmap bmp = new Bitmap(_bounds.Width, _bounds.Height))
             {
